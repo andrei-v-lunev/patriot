@@ -1,0 +1,80 @@
+{
+  "_comment": "VO manifest for «ПАТРИОТ». Source of truth: tasks/AUDIO_GENERATION_TASK.md §4. 'line' holds the exact document text including «ёлочки»; 'tts' is what is actually sent to the engine (guillemets stripped, delivery markers added). temp:true marks clips the brief says must NOT be TTS (non-verbal exertion) — shipped as clearly-labelled placeholders pending a real session.",
+  "voices": {
+    "announcer": {
+      "reference_id": "e28a451d352e452387388995c97897b8",
+      "_note": "Idris's voice ID, processed hard per §4 chain step 2 (bitcrush ~12-bit + bright plate). Operator decision 2026-08-19: no dedicated announcer ID was supplied.",
+      "bus": "announcer",
+      "lufs": -12.0,
+      "speed": 0.92,
+      "temperature": 0.75,
+      "reverb": true
+    },
+    "idris": {
+      "reference_id": "e28a451d352e452387388995c97897b8",
+      "bus": "character",
+      "lufs": -14.0,
+      "speed": 0.95,
+      "temperature": 0.6,
+      "reverb": false
+    },
+    "otajon": {
+      "reference_id": "399dfb6e654f46b381fd9c02fd445e45",
+      "bus": "character",
+      "lufs": -14.0,
+      "speed": 1.03,
+      "temperature": 0.7,
+      "reverb": false
+    }
+  },
+  "clips": [
+    { "id": "vo_ann_round1",      "voice": "announcer", "line": "«РАУНД ПЕРВЫЙ… ХАДЗИМЭ!»",      "tts": "[booming arena announcer] РАУНД ПЕРВЫЙ… ХАДЗИМЭ!" },
+    { "id": "vo_ann_round2",      "voice": "announcer", "line": "«РАУНД ВТОРОЙ… ХАДЗИМЭ!»",       "tts": "[booming arena announcer] РАУНД ВТОРОЙ… ХАДЗИМЭ!" },
+    { "id": "vo_ann_final",       "voice": "announcer", "line": "«ФИНАЛЬНЫЙ РАУНД… ХАДЗИМЭ!»",    "tts": "[booming arena announcer, maximum drama] ФИНАЛЬНЫЙ РАУНД… ХАДЗИМЭ!" },
+    { "id": "vo_ann_ippon",       "voice": "announcer", "line": "«ИППОН!»",                       "tts": "[shouted with total conviction] ИППОН!" },
+    { "id": "vo_ann_wazaari",     "voice": "announcer", "line": "«ВАЗА-АРИ!»",                    "tts": "[shouted, sharp] ВАЗА-АРИ!" },
+    { "id": "vo_ann_osaekomi",    "voice": "announcer", "line": "«ОСАЭКОМИ!»",                    "tts": "[called sharply, referee voice] ОСАЭКОМИ!" },
+    { "id": "vo_ann_toketa",      "voice": "announcer", "line": "«ТОКЭТА!»",                      "tts": "[called sharply, referee voice] ТОКЭТА!" },
+    { "id": "vo_ann_matte",       "voice": "announcer", "line": "«МАТЭ!»",                        "tts": "[called firmly, halting] МАТЭ!" },
+    { "id": "vo_ann_soremade",    "voice": "announcer", "line": "«СОРЭ-МАДЭ!»",                   "tts": "[called with finality] СОРЭ-МАДЭ!" },
+    { "id": "vo_ann_ko",          "voice": "announcer", "line": "«НОКАУТ!»",                      "tts": "[shouted, dramatic] НОКАУТ!" },
+    { "id": "vo_ann_perfect",     "voice": "announcer", "line": "«БЕЗУПРЕЧНО!»",                  "tts": "[shouted, impressed] БЕЗУПРЕЧНО!" },
+    { "id": "vo_ann_continue",    "voice": "announcer", "line": "«ПРОДОЛЖИТЬ?»",                  "tts": "[rising intonation, slightly taunting] ПРОДОЛЖИТЬ?" },
+    { "id": "vo_ann_timeup",      "voice": "announcer", "line": "«ВРЕМЯ ВЫШЛО!»",                 "tts": "[shouted] ВРЕМЯ ВЫШЛО!" },
+    { "id": "vo_ann_newrecord",   "voice": "announcer", "line": "«НОВЫЙ РЕКОРД!»",                "tts": "[shouted, celebratory] НОВЫЙ РЕКОРД!" },
+    { "id": "vo_ann_ready",       "voice": "announcer", "line": "«ПРИГОТОВИТЬСЯ!»",               "tts": "[called out, building tension] ПРИГОТОВИТЬСЯ!" },
+    { "id": "vo_ann_boss",        "voice": "announcer", "line": "«ОСТОРОЖНО — ОН ОПАСЕН!»",       "tts": "[cheesy nineties sports commentary, warning] ОСТОРОЖНО — ОН ОПАСЕН!" },
+    { "id": "vo_ann_offtrain",    "voice": "announcer", "line": "«С ПОЕЗДА!»",                    "tts": "[shouted, alarmed] С ПОЕЗДА!" },
+    { "id": "vo_ann_ippon_gachi", "voice": "announcer", "line": "«ИППОН-ГАТИ!»",                  "tts": "[shouted with total conviction] ИППОН-ГАТИ!" },
+
+    { "id": "vo_idris_effort_a",       "voice": "idris", "line": "— non-verbal", "tts": "[sharp effort grunt, throwing] Хгх!",        "temp": true },
+    { "id": "vo_idris_effort_b",       "voice": "idris", "line": "— non-verbal", "tts": "[sharp effort grunt, throwing] Хэх!",        "temp": true },
+    { "id": "vo_idris_effort_c",       "voice": "idris", "line": "— non-verbal", "tts": "[short effort grunt, throwing] Ррх!",        "temp": true },
+    { "id": "vo_idris_effort_heavy_a", "voice": "idris", "line": "— non-verbal", "tts": "[deep straining grunt, heavy lift] Хгаа!",   "temp": true },
+    { "id": "vo_idris_effort_heavy_b", "voice": "idris", "line": "— non-verbal", "tts": "[deep straining grunt, heavy lift] Аргх!",   "temp": true },
+    { "id": "vo_idris_hurt_a",         "voice": "idris", "line": "— non-verbal", "tts": "[pained grunt, taking a hit] Агх!",          "temp": true },
+    { "id": "vo_idris_hurt_b",         "voice": "idris", "line": "— non-verbal", "tts": "[pained grunt, taking a hit] Ух!",           "temp": true },
+    { "id": "vo_idris_down",           "voice": "idris", "line": "— non-verbal", "tts": "[long defeated exhale, falling] Хаааа…",     "temp": true },
+    { "id": "vo_idris_breath_a",       "voice": "idris", "line": "— non-verbal", "tts": "[tired heavy breathing, recovering] Хх… хх…","temp": true },
+    { "id": "vo_idris_breath_b",       "voice": "idris", "line": "— non-verbal", "tts": "[tired heavy breathing, recovering] Ха… ху…","temp": true },
+    { "id": "vo_idris_kiai",           "voice": "idris", "line": "«ХА!»",              "tts": "[sharp explosive kiai shout] ХА!" },
+    { "id": "vo_idris_quip_ippon",     "voice": "idris", "line": "«Чисто.»",           "tts": "[low, calm, deadpan assessment] Чисто." },
+    { "id": "vo_idris_quip_boss",      "voice": "idris", "line": "«Сядь.»",            "tts": "[low, calm, dismissive] Сядь." },
+    { "id": "vo_idris_quip_stage",     "voice": "idris", "line": "«Дальше.»",          "tts": "[low, calm, matter of fact] Дальше." },
+    { "id": "vo_idris_quip_grip",      "voice": "idris", "line": "«Взял.»",            "tts": "[low, calm, quietly satisfied] Взял." },
+
+    { "id": "vo_ota_effort_a",       "voice": "otajon", "line": "— non-verbal", "tts": "[energetic high effort grunt, throwing] Хэй!", "temp": true },
+    { "id": "vo_ota_effort_b",       "voice": "otajon", "line": "— non-verbal", "tts": "[energetic high effort grunt, throwing] Хья!", "temp": true },
+    { "id": "vo_ota_effort_c",       "voice": "otajon", "line": "— non-verbal", "tts": "[energetic high effort grunt, throwing] Хап!", "temp": true },
+    { "id": "vo_ota_effort_heavy_a", "voice": "otajon", "line": "— non-verbal", "tts": "[strained grunt, heavy lift] Ыых!",            "temp": true },
+    { "id": "vo_ota_effort_heavy_b", "voice": "otajon", "line": "— non-verbal", "tts": "[strained grunt, heavy lift] Аргх!",           "temp": true },
+    { "id": "vo_ota_hurt_a",         "voice": "otajon", "line": "— non-verbal", "tts": "[short yelp] Ай!",                             "temp": true },
+    { "id": "vo_ota_hurt_b",         "voice": "otajon", "line": "— non-verbal", "tts": "[yelp of pain, taking a hit] Ох!",             "temp": true },
+    { "id": "vo_ota_down",           "voice": "otajon", "line": "— non-verbal", "tts": "[falling yelp, dismayed] Аааай…",              "temp": true },
+    { "id": "vo_ota_kiai",           "voice": "otajon", "line": "«ЭЙ-ЯХ!»",             "tts": "[enthusiastic explosive kiai shout] ЭЙ-ЯХ!" },
+    { "id": "vo_ota_quip_ippon",     "voice": "otajon", "line": "«Тренер, видел?!»",    "tts": "[delighted, excited, calling out] Тренер, видел?!" },
+    { "id": "vo_ota_quip_boss",      "voice": "otajon", "line": "«Вот так и надо!»",    "tts": "[triumphant, pleased with himself] Вот так и надо!" },
+    { "id": "vo_ota_quip_stage",     "voice": "otajon", "line": "«Погнали!»",           "tts": "[eager, bright, moving out] Погнали!" },
+    { "id": "vo_ota_quip_hurt",      "voice": "otajon", "line": "«Ай, больно!»",        "tts": "[pained but comic complaint] Ай, больно!" }
+  ]
+}

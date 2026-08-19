@@ -1,0 +1,135 @@
+{
+  "idris-idle": {
+    "path": "assets/heroes/idris-idle.sheet.png",
+    "fw": 96,
+    "fh": 96,
+    "frames": 6,
+    "fps": 5
+  },
+  "idris-walk": {
+    "path": "assets/heroes/idris-walk.sheet.png",
+    "fw": 96,
+    "fh": 96,
+    "frames": 6,
+    "fps": 7
+  },
+  "idris-throw": {
+    "path": "assets/heroes/idris-throw.sheet.png",
+    "fw": 160,
+    "fh": 128,
+    "frames": 5,
+    "fps": 15
+  },
+  "otajon-idle": {
+    "path": "assets/heroes/otajon-idle.sheet.png",
+    "fw": 96,
+    "fh": 96,
+    "frames": 6,
+    "fps": 5
+  },
+  "otajon-walk": {
+    "path": "assets/heroes/otajon-walk.sheet.png",
+    "fw": 96,
+    "fh": 96,
+    "frames": 6,
+    "fps": 7
+  },
+  "otajon-throw": {
+    "path": "assets/heroes/otajon-throw.sheet.png",
+    "fw": 160,
+    "fh": 128,
+    "frames": 5,
+    "fps": 15
+  },
+  "e1-idle": {
+    "path": "assets/enemies/e1-idle.sheet.png",
+    "fw": 80,
+    "fh": 80,
+    "frames": 4,
+    "fps": 8
+  },
+  "e1-walk": {
+    "path": "assets/enemies/e1-walk.sheet.png",
+    "fw": 80,
+    "fh": 80,
+    "frames": 6,
+    "fps": 10
+  },
+  "e1-attack": {
+    "path": "assets/enemies/e1-attack.sheet.png",
+    "fw": 80,
+    "fh": 80,
+    "frames": 5,
+    "fps": 12
+  },
+  "e2-idle": {
+    "path": "assets/enemies/e2-idle.sheet.png",
+    "fw": 80,
+    "fh": 80,
+    "frames": 4,
+    "fps": 8
+  },
+  "e2-walk": {
+    "path": "assets/enemies/e2-walk.sheet.png",
+    "fw": 80,
+    "fh": 80,
+    "frames": 6,
+    "fps": 10
+  },
+  "e2-attack": {
+    "path": "assets/enemies/e2-attack.sheet.png",
+    "fw": 80,
+    "fh": 80,
+    "frames": 5,
+    "fps": 12
+  },
+  "fx-hit-spark": {
+    "path": "assets/fx/hit-spark.sheet.png",
+    "fw": 32,
+    "fh": 32,
+    "frames": 5,
+    "fps": 20
+  },
+  "w1-ground": {
+    "path": "assets/bg/w1-ground.png",
+    "fw": 960,
+    "fh": 96,
+    "frames": 1,
+    "fps": 0
+  },
+  "w1-sky": {
+    "path": "assets/bg/w1-sky.png",
+    "fw": 480,
+    "fh": 270,
+    "frames": 1,
+    "fps": 0
+  },
+  "w1-far": {
+    "path": "assets/bg/w1-far.png",
+    "fw": 960,
+    "fh": 180,
+    "frames": 1,
+    "fps": 0
+  },
+  "w1-mid": {
+    "path": "assets/bg/w1-mid.png",
+    "fw": 960,
+    "fh": 220,
+    "frames": 1,
+    "fps": 0
+  },
+  "hud-idris": {
+    "path": "assets/ui/hud-idris-64.png",
+    "fw": 64,
+    "fh": 64,
+    "frames": 1,
+    "fps": 0
+  },
+  "hud-otajon": {
+    "path": "assets/ui/hud-otajon-64.png",
+    "fw": 64,
+    "fh": 64,
+    "frames": 1,
+    "fps": 0
+  }
+}

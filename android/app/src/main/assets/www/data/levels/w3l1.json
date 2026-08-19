@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "id": "w3l1",
+  "world": 3,
+  "name": "Последний поезд",
+  "worldName": "НОЧНОЙ ПОЕЗД",
+  "music": { "stem": "w3" },
+  "parTime": 50,
+  "train": true,
+  "autoScroll": 40,
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "plat",
+      "width": 1440,
+      "dLock": 20,
+      "solids": [
+        { "x": 0, "z": 0, "w": 420, "h": 16, "type": "solid" },
+        { "x": 460, "z": 0, "w": 420, "h": 16, "type": "solid" },
+        { "x": 920, "z": 0, "w": 520, "h": 16, "type": "solid" }
+      ],
+      "hazards": [
+        { "type": "off_train", "x": 420, "w": 40, "announce": "С ПОЕЗДА!" },
+        { "type": "off_train", "x": 880, "w": 40, "announce": "С ПОЕЗДА!" }
+      ],
+      "checkpoints": [{ "x": 80, "d": 20 }, { "x": 960, "d": 20 }],
+      "exit": { "type": "next" }
+    },
+    {
+      "id": "s2",
+      "mode": "belt",
+      "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 40, "backdrop": "coach" },
+      "waves": [
+        {
+          "id": "w1",
+          "trigger": { "type": "enter" },
+          "spawns": [
+            { "archetype": "E6", "x": 400, "d": 20, "delayFrames": 0 },
+            { "archetype": "E1", "x": 40, "d": 12, "delayFrames": 24 }
+          ]
+        }
+      ],
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true }
+    }
+  ]
+}

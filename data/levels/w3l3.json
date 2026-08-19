@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "w3l3",
+  "world": 3,
+  "name": "Бокскар",
+  "worldName": "НОЧНОЙ ПОЕЗД",
+  "music": { "stem": "w3" },
+  "parTime": 100,
+  "vs": "B3",
+  "train": true,
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "belt",
+      "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 50, "backdrop": "freight" },
+      "gimmick": "tunnel-charge",
+      "waves": [
+        {
+          "id": "boss",
+          "trigger": { "type": "enter" },
+          "boss": true,
+          "spawns": [{ "archetype": "B3", "x": 360, "d": 24, "delayFrames": 0 }]
+        }
+      ],
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true }
+    }
+  ]
+}

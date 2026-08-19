@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "id": "w4l2",
+  "world": 4,
+  "name": "Контейнерный забег",
+  "worldName": "ПОРТ И СУХОГРУЗ",
+  "music": { "stem": "w4" },
+  "parTime": 40,
+  "chase": true,
+  "autoScroll": 120,
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "plat",
+      "width": 2400,
+      "dLock": 20,
+      "solids": [
+        { "x": 0, "z": 0, "w": 280, "h": 16, "type": "solid" },
+        { "x": 320, "z": 24, "w": 80, "h": 10, "type": "oneway" },
+        { "x": 440, "z": 0, "w": 200, "h": 16, "type": "solid" },
+        { "x": 700, "z": 32, "w": 90, "h": 10, "type": "oneway" },
+        { "x": 840, "z": 0, "w": 200, "h": 16, "type": "solid" },
+        { "x": 1100, "z": 40, "w": 90, "h": 10, "type": "oneway" },
+        { "x": 1240, "z": 0, "w": 200, "h": 16, "type": "solid" },
+        { "x": 1500, "z": 28, "w": 90, "h": 10, "type": "oneway" },
+        { "x": 1640, "z": 0, "w": 760, "h": 16, "type": "solid" }
+      ],
+      "hazards": [
+        { "type": "pit", "x": 280, "w": 40, "damage": 18 },
+        { "type": "pit", "x": 640, "w": 60, "damage": 18 },
+        { "type": "pit", "x": 1040, "w": 60, "damage": 18 },
+        { "type": "container", "x": 900, "w": 48, "telegraphFrames": 18 },
+        { "type": "container", "x": 1400, "w": 48, "telegraphFrames": 18 }
+      ],
+      "checkpoints": [
+        { "x": 80, "d": 20 },
+        { "x": 860, "d": 20 },
+        { "x": 1660, "d": 20 }
+      ],
+      "exit": { "type": "next" }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "id": "w2l1",
+  "world": 2,
+  "name": "Всё на продажу",
+  "worldName": "БАЗАР И КРЫШИ",
+  "music": { "stem": "w2" },
+  "parTime": 48,
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "plat",
+      "width": 1100,
+      "dLock": 24,
+      "solids": [
+        { "x": 0, "z": 0, "w": 1100, "h": 16, "type": "solid" },
+        { "x": 200, "z": 40, "w": 70, "h": 8, "type": "oneway" },
+        { "x": 420, "z": 56, "w": 70, "h": 8, "type": "oneway" }
+      ],
+      "checkpoints": [{ "x": 80, "d": 24 }],
+      "exit": { "type": "next" }
+    },
+    {
+      "id": "s2",
+      "mode": "belt",
+      "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 60, "backdrop": "bazaar" },
+      "waves": [
+        {
+          "id": "w1",
+          "trigger": { "type": "enter" },
+          "spawns": [
+            { "archetype": "E1", "x": 400, "d": 18, "delayFrames": 0 },
+            { "archetype": "E3", "x": 40, "d": 50, "delayFrames": 24 },
+            { "archetype": "E1", "x": 430, "d": 40, "delayFrames": 12 }
+          ]
+        }
+      ],
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true }
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "id": "w2l2",
+  "world": 2,
+  "name": "Над навесами",
+  "worldName": "БАЗАР И КРЫШИ",
+  "music": { "stem": "w2" },
+  "parTime": 60,
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "plat",
+      "width": 1600,
+      "dLock": 24,
+      "solids": [
+        { "x": 0, "z": 0, "w": 240, "h": 16, "type": "solid" },
+        { "x": 280, "z": 32, "w": 80, "h": 10, "type": "oneway" },
+        { "x": 400, "z": 56, "w": 80, "h": 10, "type": "oneway" },
+        { "x": 520, "z": 80, "w": 80, "h": 10, "type": "oneway" },
+        { "x": 640, "z": 56, "w": 80, "h": 10, "type": "oneway" },
+        { "x": 760, "z": 32, "w": 80, "h": 10, "type": "oneway" },
+        { "x": 880, "z": 0, "w": 720, "h": 16, "type": "solid" }
+      ],
+      "hazards": [{ "type": "pit", "x": 240, "w": 640, "damage": 18 }],
+      "checkpoints": [{ "x": 60, "d": 24 }, { "x": 900, "d": 24 }],
+      "spawns": [{ "archetype": "E7", "x": 500, "d": 24, "z": 120, "delayFrames": 0 }],
+      "exit": { "type": "next" }
+    },
+    {
+      "id": "s2",
+      "mode": "belt",
+      "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 60, "backdrop": "roofs" },
+      "waves": [
+        {
+          "id": "w1",
+          "trigger": { "type": "enter" },
+          "spawns": [
+            { "archetype": "E4", "x": 420, "d": 20, "delayFrames": 0 },
+            { "archetype": "E7", "x": 40, "d": 48, "delayFrames": 20 },
+            { "archetype": "E4", "x": 400, "d": 44, "delayFrames": 40 }
+          ]
+        }
+      ],
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true }
+    }
+  ]
+}

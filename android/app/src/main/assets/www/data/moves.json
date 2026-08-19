@@ -1,0 +1,143 @@
+{
+  "schema": 1,
+  "moves": {
+    "grip_idris": {
+      "name": "кумиката",
+      "input": { "button": "grip", "onGround": true },
+      "startup": 7, "active": 6, "recovery": 11,
+      "meterGain": 2
+    },
+    "grip_otajon": {
+      "name": "кумиката",
+      "input": { "button": "grip", "onGround": true },
+      "startup": 5, "active": 6, "recovery": 11,
+      "meterGain": 2
+    },
+    "sweep_idris": {
+      "name": "подсечка",
+      "input": { "button": "throw", "onGround": true },
+      "startup": 9, "active": 4, "recovery": 16,
+      "damage": 7, "hitstop": 4, "hitstun": 12,
+      "knockback": { "vx": 170, "vz": 0 },
+      "meterGain": 3, "otgScale": 0.6
+    },
+    "sweep_otajon": {
+      "name": "подсечка",
+      "input": { "button": "throw", "onGround": true },
+      "startup": 6, "active": 4, "recovery": 12,
+      "damage": 5, "hitstop": 4, "hitstun": 12,
+      "knockback": { "vx": 170, "vz": 0 },
+      "meterGain": 3, "otgScale": 0.6
+    },
+    "i1_ogoshi": {
+      "name": "о-госи", "hero": "idris", "dir": 0,
+      "startup": 12, "active": 6, "recovery": 20,
+      "damage": 18, "meterGain": 8, "chain": true,
+      "throw": { "vx": 340, "vz": 190, "profile": "standard" }
+    },
+    "i2_ouchigari": {
+      "name": "о-ути-гари", "hero": "idris", "dir": 2,
+      "startup": 14, "active": 5, "recovery": 22,
+      "damage": 22, "meterGain": 8, "chain": true, "slam": true,
+      "throw": { "vx": 120, "vz": 60, "profile": "slam" }
+    },
+    "i3_seoi": {
+      "name": "иппон-сэои-нагэ", "hero": "idris", "dir": 6,
+      "startup": 16, "active": 6, "recovery": 24,
+      "damage": 20, "meterGain": 8, "chain": true, "launch": true,
+      "throw": { "vx": 260, "vz": 420, "profile": "launch" }
+    },
+    "i4_uranage": {
+      "name": "ура-нагэ", "hero": "idris", "dir": 4,
+      "startup": 15, "active": 6, "recovery": 26,
+      "damage": 26, "meterGain": 8, "chain": true, "armored": true,
+      "throw": { "vx": -300, "vz": 250, "profile": "reverse" }
+    },
+    "i5_uchimata": {
+      "name": "ути-мата", "hero": "idris", "dir": 1, "minTier": 1,
+      "startup": 18, "active": 7, "recovery": 28,
+      "damage": 30, "meterGain": 8, "chain": true,
+      "throw": { "vx": 430, "vz": 330, "profile": "power" }
+    },
+    "i6_seoiotoshi": {
+      "name": "сэои-отоси", "hero": "idris", "dir": 0, "minTier": 2, "screenSlam": true,
+      "startup": 20, "active": 8, "recovery": 30,
+      "damage": 34, "meterGain": 10, "chain": true
+    },
+    "i7_tomoe": {
+      "name": "томоэ-нагэ", "hero": "idris", "dir": 6, "aerial": true,
+      "startup": 8, "active": 6, "recovery": 18,
+      "damage": 24, "meterGain": 8, "chain": true,
+      "throw": { "vx": -380, "vz": -260, "profile": "counter" }
+    },
+    "i8_kesa": {
+      "name": "кэса-гатамэ", "hero": "idris", "pin": true,
+      "startup": 10, "active": 0, "recovery": 24,
+      "damage": 8, "ticks": 3, "meterGain": 6, "chain": false
+    },
+    "idris_special": {
+      "name": "IPPON RUSH", "hero": "idris", "special": true,
+      "startup": 14, "active": 96, "recovery": 24,
+      "damage": 26, "meterCost": 100, "chain": true,
+      "throw": { "vx": 500, "vz": 300, "profile": "special" }
+    },
+    "o1_deashi": {
+      "name": "дэ-аси-барай", "hero": "otajon", "dir": 0,
+      "startup": 8, "active": 5, "recovery": 14,
+      "damage": 12, "meterGain": 8, "chain": true,
+      "throw": { "vx": 300, "vz": 90, "profile": "skim" }
+    },
+    "o2_tai": {
+      "name": "тай-отоси", "hero": "otajon", "dir": 2,
+      "startup": 11, "active": 5, "recovery": 17,
+      "damage": 16, "meterGain": 8, "chain": true,
+      "throw": { "vx": 280, "vz": 140, "profile": "standard" }
+    },
+    "o3_sumi": {
+      "name": "суми-гаэси", "hero": "otajon", "dir": 6,
+      "startup": 13, "active": 6, "recovery": 20,
+      "damage": 15, "meterGain": 8, "chain": true, "launch": true,
+      "throw": { "vx": 180, "vz": 430, "profile": "launch" }
+    },
+    "o4_kosoto": {
+      "name": "ко-сото-гари", "hero": "otajon", "dir": 4,
+      "startup": 10, "active": 5, "recovery": 18,
+      "damage": 14, "meterGain": 8, "chain": true,
+      "throw": { "vx": -280, "vz": 150, "profile": "reverse" }
+    },
+    "o5_harai": {
+      "name": "харай-госи", "hero": "otajon", "dir": 1,
+      "startup": 15, "active": 6, "recovery": 22,
+      "damage": 23, "meterGain": 8, "chain": true,
+      "throw": { "vx": 390, "vz": 280, "profile": "power" }
+    },
+    "o6_uki": {
+      "name": "уки-отоси", "hero": "otajon", "dir": 5,
+      "startup": 17, "active": 8, "recovery": 26,
+      "damage": 19, "meterGain": 8, "chain": true,
+      "throw": { "vx": 330, "vz": 220, "profile": "power", "spin": 1.4 }
+    },
+    "o7_tomoe": {
+      "name": "томоэ-нагэ", "hero": "otajon", "dir": 6, "aerial": true,
+      "startup": 6, "active": 6, "recovery": 15,
+      "damage": 20, "meterGain": 8, "chain": true,
+      "throw": { "vx": -400, "vz": -240, "profile": "counter" }
+    },
+    "o8_sutemi": {
+      "name": "сутэми-барай", "hero": "otajon", "running": true,
+      "startup": 7, "active": 6, "recovery": 16,
+      "damage": 10, "meterGain": 8, "chain": true,
+      "throw": { "vx": 210, "vz": 40, "profile": "skim" }
+    },
+    "otajon_special": {
+      "name": "KAITEN-BARAI", "hero": "otajon", "special": true,
+      "startup": 10, "active": 80, "recovery": 20,
+      "damage": 14, "meterCost": 100, "chain": true
+    },
+    "test_12f": {
+      "name": "test12",
+      "startup": 4, "active": 4, "recovery": 4,
+      "damage": 1
+    }
+  }
+}

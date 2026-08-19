@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "id": "w4l1",
+  "world": 4,
+  "name": "Причал под дождём",
+  "worldName": "ПОРТ И СУХОГРУЗ",
+  "music": { "stem": "w4" },
+  "parTime": 52,
+  "slippery": true,
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "plat",
+      "width": 1200,
+      "dLock": 24,
+      "solids": [
+        { "x": 0, "z": 0, "w": 500, "h": 16, "type": "solid" },
+        { "x": 560, "z": 0, "w": 640, "h": 16, "type": "solid" }
+      ],
+      "hazards": [{ "type": "pit", "x": 500, "w": 60, "damage": 18 }],
+      "checkpoints": [{ "x": 80, "d": 24 }, { "x": 600, "d": 24 }],
+      "exit": { "type": "next" }
+    },
+    {
+      "id": "s2",
+      "mode": "belt",
+      "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 60, "backdrop": "docks" },
+      "waves": [
+        {
+          "id": "w1",
+          "trigger": { "type": "enter" },
+          "spawns": [
+            { "archetype": "E8", "x": 420, "d": 24, "delayFrames": 0 },
+            { "archetype": "E1", "x": 40, "d": 40, "delayFrames": 20 },
+            { "archetype": "E6", "x": 400, "d": 48, "delayFrames": 36 }
+          ]
+        }
+      ],
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true }
+    }
+  ]
+}

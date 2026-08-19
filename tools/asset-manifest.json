@@ -1,0 +1,112 @@
+{
+  "styleSuffix": "16-bit SNES pixel art, chunky pixels, 1px dark hue-shifted outline, flat cluster shading 3-4 steps, no dithering, no anti-aliasing, no gradients, solid magenta #FF00FF background, no text, no grid lines, no watermarks",
+  "characters": {
+    "idris": "a 40-year-old heavyset judo coach from Dagestan, white judo gi with black belt, short dark receding hair, clean-shaven dignified serious masculine face (NO mustache, NO beard), barefoot",
+    "otajon": "a 25-year-old lean Uzbek judo assistant, blue judo gi with brown belt, yellow headband with trailing knot, dark hair, short dark beard, warm likable face, barefoot",
+    "e1": "a rubbery 90s American action-movie henchman gatekeeper in a cheap gray suit with yellow hi-vis vest, slicked black hair, angry sneer, waving a wooden clipboard, black dress shoes",
+    "e2": "a huge rubbery 90s American action-movie ex-linebacker heavy, bald with stubble, tight black tank top, purple striped pants, big black boots, gold wristbands"
+  },
+  "entries": [
+    {
+      "id": "idris-idle", "mode": "single-repeat", "src": "art/src/raw/idris-base.png",
+      "outPath": "assets/heroes/idris-idle.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 6 }, "fps": 5
+    },
+    {
+      "id": "idris-walk", "mode": "grok-sheet", "ref": "art/src/raw/idris-base.png",
+      "prompt": "ONE wide image: a horizontal row of exactly 6 separate poses of THE SAME character — {idris}, identical to the input reference image — as a walk cycle, side view facing right, feet on a common ground line, each pose clearly separated by wide gaps of pure magenta background, poses never touch or overlap. pose 1: right leg forward, heel striking the ground, arms mid-swing; pose 2: weight settling onto right leg, left heel lifting; pose 3: left leg passing under the body; pose 4: left leg forward, heel striking; pose 5: weight settling onto left leg, right heel lifting; pose 6: right leg passing under the body. FULL BODY visible in every pose, entire character head-to-feet, same size in every pose, wide shot, no close-ups, no comic panels. NO mustache, NO beard, clean-shaven exactly as the reference",
+      "outPath": "assets/heroes/idris-walk.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 6 }, "fps": 7,
+      "fallbackSrc": "art/src/raw/idris-base.png"
+    },
+    {
+      "id": "idris-throw", "mode": "grok-sheet", "ref": "art/src/raw/idris-base.png",
+      "prompt": "ONE wide image: a horizontal row of exactly 5 separate poses of THE SAME character — {idris}, identical to the reference image — performing a seoi-nage judo shoulder throw, side view, feet on a common ground line, each pose clearly separated by wide gaps of pure magenta background, poses never touch or overlap. pose 1: fighting stance reaching forward to grab; pose 2: gripping and pulling an invisible opponent, body coiled; pose 3: back turned to viewer, knees bent, pulling arms over his shoulder; pose 4: bent forward deeply, arms swinging down past knees in a slamming motion; pose 5: upright recovery stance. No opponent character, no extra people, no floating hands or objects, no mustache, no accessories that are not in the reference",
+      "outPath": "assets/heroes/idris-throw.sheet.png", "cells": { "fw": 160, "fh": 128, "frames": 5 }, "fps": 15,
+      "fallbackSrc": "art/src/raw/idris-base.png"
+    },
+    {
+      "id": "otajon-idle", "mode": "single-repeat", "src": "art/src/raw/otajon-base.png",
+      "outPath": "assets/heroes/otajon-idle.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 6 }, "fps": 5
+    },
+    {
+      "id": "otajon-walk", "mode": "grok-sheet", "ref": "art/src/raw/otajon-base.png",
+      "prompt": "ONE wide image: a horizontal row of exactly 6 separate poses of THE SAME character — {otajon}, identical to the input reference image — as a walk cycle, side view facing right, feet on a common ground line, each pose clearly separated by wide gaps of pure magenta background, poses never touch or overlap. pose 1: right leg forward, heel striking the ground, arms mid-swing; pose 2: weight settling onto right leg, left heel lifting; pose 3: left leg passing under the body; pose 4: left leg forward, heel striking; pose 5: weight settling onto left leg, right heel lifting; pose 6: right leg passing under the body. FULL BODY visible in every pose, entire character head-to-feet, same size in every pose, wide shot, no close-ups, no comic panels. Keep the yellow headband, brown belt and small sandwich satchel exactly as in the reference, no other accessories",
+      "outPath": "assets/heroes/otajon-walk.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 6 }, "fps": 7,
+      "fallbackSrc": "art/src/raw/otajon-base.png"
+    },
+    {
+      "id": "otajon-throw", "mode": "grok-sheet", "ref": "art/src/raw/otajon-base.png",
+      "prompt": "ONE wide image: a horizontal row of exactly 5 separate poses of THE SAME character — {otajon}, identical to the reference image — performing a seoi-nage judo shoulder throw, side view, feet on a common ground line, each pose clearly separated by wide gaps of pure magenta background, poses never touch or overlap. pose 1: fighting stance reaching forward to grab; pose 2: gripping and pulling an invisible opponent, body coiled; pose 3: back turned to viewer, knees bent, pulling arms over his shoulder; pose 4: bent forward deeply, arms swinging down past knees in a slamming motion; pose 5: upright recovery stance. No opponent character, no extra people, no floating hands or objects, exactly one yellow headband as in the reference, no other accessories",
+      "outPath": "assets/heroes/otajon-throw.sheet.png", "cells": { "fw": 160, "fh": 128, "frames": 5 }, "fps": 15,
+      "fallbackSrc": "art/src/raw/otajon-base.png"
+    },
+    {
+      "id": "e1-idle", "mode": "single-repeat", "src": "art/src/raw/e1-base.png",
+      "outPath": "assets/enemies/e1-idle.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 4 }, "fps": 8
+    },
+    {
+      "id": "e1-walk", "mode": "grok-sheet",
+      "prompt": "16-bit SNES pixel art sprite sheet, horizontal strip of exactly 6 evenly-spaced frames of {e1}, walk cycle side view facing right, full body, consistent character across all frames, same size in every frame",
+      "outPath": "assets/enemies/e1-walk.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 6 }, "fps": 10,
+      "fallbackSrc": "art/src/raw/e1-base.png"
+    },
+    {
+      "id": "e1-attack", "mode": "grok-sheet",
+      "prompt": "16-bit SNES pixel art sprite sheet, horizontal strip of exactly 5 evenly-spaced frames of {e1} swinging his clipboard as a weapon in a wide overhead arc, attack animation facing right, full body, consistent character across all frames",
+      "outPath": "assets/enemies/e1-attack.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 5 }, "fps": 12,
+      "fallbackSrc": "art/src/raw/e1-base.png"
+    },
+    {
+      "id": "e2-idle", "mode": "single-repeat", "src": "art/src/raw/e2-base.png",
+      "outPath": "assets/enemies/e2-idle.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 4 }, "fps": 8
+    },
+    {
+      "id": "e2-walk", "mode": "grok-sheet",
+      "prompt": "16-bit SNES pixel art sprite sheet, horizontal strip of exactly 6 evenly-spaced frames of {e2}, lumbering walk cycle side view facing right, full body, consistent character across all frames, same size in every frame",
+      "outPath": "assets/enemies/e2-walk.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 6 }, "fps": 10,
+      "fallbackSrc": "art/src/raw/e2-base.png"
+    },
+    {
+      "id": "e2-attack", "mode": "grok-sheet",
+      "prompt": "16-bit SNES pixel art sprite sheet, horizontal strip of exactly 5 evenly-spaced frames of {e2} throwing a heavy haymaker punch, attack animation facing right, full body, consistent character across all frames",
+      "outPath": "assets/enemies/e2-attack.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 5 }, "fps": 12,
+      "fallbackSrc": "art/src/raw/e2-base.png"
+    },
+    {
+      "id": "fx-hit-spark", "mode": "grok-sheet",
+      "prompt": "16-bit SNES pixel art sprite sheet, horizontal strip of exactly 5 evenly-spaced frames of a small white-and-yellow impact hit spark burst effect expanding then fading, classic beat-em-up style, centered in each frame",
+      "outPath": "assets/fx/hit-spark.sheet.png", "cells": { "fw": 32, "fh": 32, "frames": 5 }, "fps": 20,
+      "anchor": "center"
+    },
+    {
+      "id": "w1-ground", "mode": "grok-crop", "noSuffix": true,
+      "prompt": "16-bit SNES pixel art background texture, a wide horizontal strip completely filled edge-to-edge with the ground of a mountain village street at dawn: packed dirt road in warm ochre and brown tones with scattered flat grey-brown stones and pebbles, wheel ruts, patches and tufts of muted dusty green grass along the upper part, seen from a slightly top-down beat-em-up angle, painterly irregular clusters of flat color, 3-4 shade steps per hue, chunky pixels, no dithering, no anti-aliasing, no gradients, absolutely no visible grid or repeating tile pattern, CRITICAL: the texture must be SEAMLESSLY TILEABLE horizontally — the extreme left edge column and extreme right edge column of the image must match each other pixel-for-pixel in color and pattern so copies placed side by side show no seam, keep grass patches and stones away from the left and right edges, plain dirt at both edges, no sky, no horizon, no buildings, no characters, no objects, no text, no watermarks",
+      "rect": "0,0,1408,470", "size": "960,96", "wrap": "48",
+      "outPath": "assets/bg/w1-ground.png", "cells": { "fw": 960, "fh": 96, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w1-sky", "mode": "crop", "src": "assets/bg/w1-dawn.png",
+      "rect": "0,0,1280,55", "size": "480,270",
+      "outPath": "assets/bg/w1-sky.png", "cells": { "fw": 480, "fh": 270, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w1-far", "mode": "crop", "src": "assets/bg/w1-dawn.png",
+      "rect": "0,60,1280,240", "size": "960,180",
+      "outPath": "assets/bg/w1-far.png", "cells": { "fw": 960, "fh": 180, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w1-mid", "mode": "crop", "src": "assets/bg/w1-dawn.png",
+      "rect": "0,400,1280,293", "size": "960,220",
+      "outPath": "assets/bg/w1-mid.png", "cells": { "fw": 960, "fh": 220, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "hud-idris", "mode": "crop", "src": "assets/portraits/idris-192.png",
+      "rect": "450,50,400,400", "size": "64,64",
+      "outPath": "assets/ui/hud-idris-64.png", "cells": { "fw": 64, "fh": 64, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "hud-otajon", "mode": "crop", "src": "assets/portraits/otajon-192.png",
+      "rect": "450,50,400,400", "size": "64,64",
+      "outPath": "assets/ui/hud-otajon-64.png", "cells": { "fw": 64, "fh": 64, "frames": 1 }, "fps": 0
+    }
+  ]
+}

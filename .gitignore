@@ -1,0 +1,14 @@
+node_modules/
+.DS_Store
+dist/
+*.log
+shot*.png
+
+# Android build outputs
+android/app/build/
+android/.gradle/
+android/build/
+android/local.properties
+
+# Rejected/backup art intermediates
+art/src/raw/*.bak

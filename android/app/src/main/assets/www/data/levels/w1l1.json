@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "id": "w1l1",
+  "world": 1,
+  "name": "Утренняя тренировка",
+  "worldName": "ГОРНОЕ СЕЛО",
+  "music": { "stem": "w1", "intensity": "auto" },
+  "parTime": 40,
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "plat",
+      "width": 960,
+      "dLock": 24,
+      "floorZ": 0,
+      "solids": [
+        { "x": 0, "z": 0, "w": 400, "h": 16, "type": "solid" },
+        { "x": 440, "z": 0, "w": 520, "h": 16, "type": "solid" },
+        { "x": 280, "z": 48, "w": 96, "h": 10, "type": "oneway" }
+      ],
+      "hazards": [{ "type": "pit", "x": 400, "w": 40, "damage": 18, "respawn": "checkpoint" }],
+      "checkpoints": [{ "x": 80, "d": 24 }],
+      "spawns": [{ "archetype": "DUMMY", "x": 260, "d": 24, "delayFrames": 0 }],
+      "exit": { "type": "next" }
+    },
+    {
+      "id": "s2",
+      "mode": "belt",
+      "arena": {
+        "camX": 0,
+        "xMin": 0, "xMax": 480,
+        "dMin": 0, "dMax": 60,
+        "backdrop": "gym"
+      },
+      "waves": [
+        {
+          "id": "w1",
+          "trigger": { "type": "enter" },
+          "tokens": 2,
+          "spawns": [
+            { "archetype": "E1", "x": 400, "d": 20, "delayFrames": 0 },
+            { "archetype": "E1", "x": 420, "d": 40, "delayFrames": 20 }
+          ]
+        }
+      ],
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true },
+      "exit": { "type": "next" }
+    }
+  ]
+}

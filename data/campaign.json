@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "title": "ПАТРИОТ",
+  "worlds": [
+    {
+      "id": "W1",
+      "name": "ГОРНОЕ СЕЛО",
+      "levels": [
+        { "id": "w1l1", "name": "Утренняя тренировка", "boss": null },
+        { "id": "w1l2", "name": "Замок на дверях", "boss": null },
+        { "id": "w1l3", "name": "Пункт девятый", "boss": "B1" }
+      ]
+    },
+    {
+      "id": "W2",
+      "name": "БАЗАР И КРЫШИ",
+      "levels": [
+        { "id": "w2l1", "name": "Всё на продажу", "boss": null },
+        { "id": "w2l2", "name": "Над навесами", "boss": null },
+        { "id": "w2l3", "name": "Кайт", "boss": "B2" }
+      ]
+    },
+    {
+      "id": "W3",
+      "name": "НОЧНОЙ ПОЕЗД",
+      "train": true,
+      "offTrain": "С ПОЕЗДА!",
+      "levels": [
+        { "id": "w3l1", "name": "Последний поезд", "boss": null },
+        { "id": "w3l2", "name": "По крышам вагонов", "boss": null },
+        { "id": "w3l3", "name": "Бокскар", "boss": "B3" }
+      ]
+    },
+    {
+      "id": "W4",
+      "name": "ПОРТ И СУХОГРУЗ",
+      "levels": [
+        { "id": "w4l1", "name": "Причал под дождём", "boss": null },
+        { "id": "w4l2", "name": "Контейнерный забег", "boss": null, "chase": true },
+        { "id": "w4l3", "name": "Кран", "boss": "B4" }
+      ]
+    },
+    {
+      "id": "W5",
+      "name": "ЗОЛОТАЯ КЛЕТКА",
+      "levels": [
+        { "id": "w5l1", "name": "Правила заведения", "boss": null },
+        { "id": "w5l2", "name": "За кулисами", "boss": null },
+        { "id": "w5l3", "name": "Золотая клетка", "boss": "B5" }
+      ]
+    }
+  ]
+}

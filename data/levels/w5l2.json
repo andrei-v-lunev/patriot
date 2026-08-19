@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "id": "w5l2",
+  "world": 5,
+  "name": "За кулисами",
+  "worldName": "ЗОЛОТАЯ КЛЕТКА",
+  "music": { "stem": "w5" },
+  "parTime": 55,
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "plat",
+      "width": 1400,
+      "dLock": 20,
+      "solids": [
+        { "x": 0, "z": 0, "w": 200, "h": 16, "type": "solid" },
+        { "x": 240, "z": 40, "w": 80, "h": 10, "type": "oneway" },
+        { "x": 360, "z": 80, "w": 80, "h": 10, "type": "oneway" },
+        { "x": 480, "z": 120, "w": 80, "h": 10, "type": "oneway" },
+        { "x": 600, "z": 80, "w": 80, "h": 10, "type": "oneway" },
+        { "x": 720, "z": 40, "w": 80, "h": 10, "type": "oneway" },
+        { "x": 840, "z": 0, "w": 560, "h": 16, "type": "solid" }
+      ],
+      "hazards": [{ "type": "pit", "x": 200, "w": 640, "damage": 18 }],
+      "checkpoints": [{ "x": 60, "d": 20 }, { "x": 860, "d": 20 }],
+      "exit": { "type": "next" }
+    },
+    {
+      "id": "s2",
+      "mode": "belt",
+      "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 60, "backdrop": "backstage" },
+      "waves": [
+        {
+          "id": "w1",
+          "trigger": { "type": "enter" },
+          "spawns": [
+            { "archetype": "E8", "x": 420, "d": 24, "delayFrames": 0 },
+            { "archetype": "E8", "x": 40, "d": 40, "delayFrames": 24 }
+          ]
+        }
+      ],
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true }
+    }
+  ]
+}

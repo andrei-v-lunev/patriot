@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "w1l3",
+  "world": 1,
+  "name": "Пункт девятый",
+  "worldName": "ГОРНОЕ СЕЛО",
+  "music": { "stem": "w1" },
+  "parTime": 90,
+  "vs": "B1",
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "belt",
+      "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 60, "backdrop": "switchback" },
+      "props": [
+        { "type": "crate", "x": 120, "d": 20, "hp": 1, "throwable": true },
+        { "type": "crate", "x": 360, "d": 44, "hp": 1, "throwable": true }
+      ],
+      "waves": [
+        {
+          "id": "boss",
+          "trigger": { "type": "enter" },
+          "boss": true,
+          "spawns": [{ "archetype": "B1", "x": 360, "d": 30, "delayFrames": 0 }]
+        }
+      ],
+      "gimmick": "chain-one-hero",
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true }
+    }
+  ]
+}

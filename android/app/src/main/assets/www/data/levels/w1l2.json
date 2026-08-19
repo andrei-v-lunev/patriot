@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "id": "w1l2",
+  "world": 1,
+  "name": "Замок на дверях",
+  "worldName": "ГОРНОЕ СЕЛО",
+  "music": { "stem": "w1" },
+  "parTime": 55,
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "plat",
+      "width": 1280,
+      "dLock": 24,
+      "solids": [
+        { "x": 0, "z": 0, "w": 560, "h": 16, "type": "solid" },
+        { "x": 620, "z": 0, "w": 660, "h": 16, "type": "solid" },
+        { "x": 500, "z": 56, "w": 80, "h": 10, "type": "oneway" }
+      ],
+      "hazards": [{ "type": "pit", "x": 560, "w": 60, "damage": 18 }],
+      "checkpoints": [{ "x": 100, "d": 24 }, { "x": 700, "d": 24 }],
+      "exit": { "type": "next" }
+    },
+    {
+      "id": "s2",
+      "mode": "belt",
+      "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 60, "backdrop": "street" },
+      "waves": [
+        {
+          "id": "w1",
+          "trigger": { "type": "enter" },
+          "spawns": [
+            { "archetype": "E1", "x": 400, "d": 16, "delayFrames": 0 },
+            { "archetype": "E1", "x": 430, "d": 44, "delayFrames": 18 },
+            { "archetype": "E5", "x": 40, "d": 30, "delayFrames": 40 }
+          ]
+        },
+        {
+          "id": "w2",
+          "trigger": { "type": "cleared", "of": "w1", "delayFrames": 30 },
+          "spawns": [
+            { "archetype": "E2", "x": 420, "d": 28, "delayFrames": 0 },
+            { "archetype": "E1", "x": 30, "d": 18, "delayFrames": 20 }
+          ]
+        }
+      ],
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true }
+    }
+  ]
+}

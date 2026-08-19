@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "id": "w5l1",
+  "world": 5,
+  "name": "Правила заведения",
+  "worldName": "ЗОЛОТАЯ КЛЕТКА",
+  "music": { "stem": "w5" },
+  "parTime": 70,
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "plat",
+      "width": 1000,
+      "dLock": 24,
+      "solids": [{ "x": 0, "z": 0, "w": 1000, "h": 16, "type": "solid" }],
+      "checkpoints": [{ "x": 80, "d": 24 }],
+      "exit": { "type": "next" }
+    },
+    {
+      "id": "s2",
+      "mode": "belt",
+      "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 60, "backdrop": "casino" },
+      "waves": [
+        {
+          "id": "w1",
+          "trigger": { "type": "enter" },
+          "spawns": [
+            { "archetype": "E1", "x": 420, "d": 16, "delayFrames": 0 },
+            { "archetype": "E8", "x": 40, "d": 30, "delayFrames": 20 },
+            { "archetype": "E3", "x": 430, "d": 50, "delayFrames": 30 }
+          ]
+        },
+        {
+          "id": "w2",
+          "trigger": { "type": "cleared", "of": "w1", "delayFrames": 24 },
+          "spawns": [
+            { "archetype": "E5", "x": 40, "d": 24, "delayFrames": 0 },
+            { "archetype": "E6", "x": 420, "d": 40, "delayFrames": 12 },
+            { "archetype": "E2", "x": 400, "d": 20, "delayFrames": 30 }
+          ]
+        }
+      ],
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true }
+    }
+  ]
+}

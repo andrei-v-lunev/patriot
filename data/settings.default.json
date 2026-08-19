@@ -1,0 +1,11 @@
+{
+  "masterVol": 0.8,
+  "musicVol": 0.7,
+  "sfxVol": 1.0,
+  "crt": false,
+  "scaleMode": "integer",
+  "screenShake": 1.0,
+  "lang": "ru",
+  "showGlyphs": "auto",
+  "bindings": { "p1": null, "p2": null }
+}

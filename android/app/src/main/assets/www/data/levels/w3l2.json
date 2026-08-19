@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "id": "w3l2",
+  "world": 3,
+  "name": "По крышам вагонов",
+  "worldName": "НОЧНОЙ ПОЕЗД",
+  "music": { "stem": "w3" },
+  "parTime": 55,
+  "train": true,
+  "wind": -30,
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "plat",
+      "width": 1600,
+      "dLock": 16,
+      "solids": [{ "x": 0, "z": 0, "w": 1600, "h": 16, "type": "solid" }],
+      "hazards": [
+        { "type": "tunnel", "x": 300, "w": 80, "telegraphFrames": 180 },
+        { "type": "tunnel", "x": 700, "w": 80, "telegraphFrames": 180 },
+        { "type": "off_train", "x": -40, "w": 40, "announce": "С ПОЕЗДА!" }
+      ],
+      "checkpoints": [{ "x": 80, "d": 16 }, { "x": 800, "d": 16 }],
+      "exit": { "type": "next" }
+    },
+    {
+      "id": "s2",
+      "mode": "belt",
+      "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 40, "backdrop": "roof" },
+      "waves": [
+        {
+          "id": "w1",
+          "trigger": { "type": "enter" },
+          "spawns": [
+            { "archetype": "E4", "x": 420, "d": 10, "delayFrames": 0 },
+            { "archetype": "E4", "x": 40, "d": 28, "delayFrames": 16 }
+          ]
+        }
+      ],
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "w5l3",
+  "world": 5,
+  "name": "Золотая клетка",
+  "worldName": "ЗОЛОТАЯ КЛЕТКА",
+  "music": { "stem": "w5" },
+  "parTime": 150,
+  "vs": "B5",
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "belt",
+      "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 60, "backdrop": "cage" },
+      "gimmick": "cage",
+      "hazards": [
+        { "type": "cage_wall", "x": 0, "w": 8, "dMin": 0, "dMax": 60, "damage": 12 },
+        { "type": "cage_wall", "x": 472, "w": 8, "dMin": 0, "dMax": 60, "damage": 12 }
+      ],
+      "waves": [
+        {
+          "id": "boss",
+          "trigger": { "type": "enter" },
+          "boss": true,
+          "spawns": [{ "archetype": "B5", "x": 340, "d": 30, "delayFrames": 0 }]
+        }
+      ],
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true }
+    }
+  ]
+}

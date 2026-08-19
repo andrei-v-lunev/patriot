@@ -1,0 +1,13 @@
+{
+  "name": "the-patriot",
+  "private": true,
+  "scripts": {
+    "test": "node test/sim.test.js && node test/combat.test.js && node test/campaign.test.js && node test/determinism.test.js && node test/anim.test.js && node test/sim.lazy.test.js && node test/input.test.js && node test/pixelpipe.test.js",
+    "botfight": "node tools/botfight.js",
+    "start": "node server.js",
+    "android": "cd android && ./gradlew assembleDebug"
+  },
+  "devDependencies": {
+    "pngjs": "^7.0.0"
+  }
+}

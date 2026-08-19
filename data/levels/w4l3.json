@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "id": "w4l3",
+  "world": 4,
+  "name": "Кран",
+  "worldName": "ПОРТ И СУХОГРУЗ",
+  "music": { "stem": "w4" },
+  "parTime": 110,
+  "vs": "B4",
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "belt",
+      "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 60, "backdrop": "deck" },
+      "gimmick": "crane-cab",
+      "waves": [
+        {
+          "id": "boss",
+          "trigger": { "type": "enter" },
+          "boss": true,
+          "spawns": [{ "archetype": "B4", "x": 360, "d": 30, "delayFrames": 0 }]
+        }
+      ],
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true }
+    }
+  ]
+}

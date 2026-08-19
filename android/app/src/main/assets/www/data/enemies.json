@@ -1,0 +1,138 @@
+{
+  "schema": 1,
+  "archetypes": {
+    "E1": {
+      "id": "E1", "name": "Планшет", "hp": 24, "w": 30, "h": 40, "dw": 12,
+      "speed": 78, "speedD": 47, "score": 100,
+      "mash": 30, "resist": 1.0,
+      "grippable": true, "unlaunchable": false,
+      "tokenCost": 1, "ukemi": false,
+      "attack": { "startup": 24, "active": 4, "recovery": 22, "damage": 8 },
+      "ai": "approach"
+    },
+    "E2": {
+      "id": "E2", "name": "Бочка", "hp": 60, "w": 40, "h": 44, "dw": 16,
+      "speed": 52, "speedD": 31, "score": 250,
+      "mash": 22, "resist": 1.4,
+      "grippable": true, "unlaunchable": true, "ffMul": 0.7,
+      "tokenCost": 1, "ukemi": false,
+      "attack": { "startup": 34, "active": 6, "recovery": 30, "damage": 16, "armored": true },
+      "ai": "heavy"
+    },
+    "E3": {
+      "id": "E3", "name": "Арбузник", "hp": 20, "w": 30, "h": 40, "dw": 12,
+      "speed": 84, "speedD": 50, "score": 150,
+      "mash": 34, "resist": 0.8,
+      "grippable": true, "ranged": true, "melon": true,
+      "tokenCost": 1, "ukemi": false,
+      "attack": { "startup": 26, "active": 2, "recovery": 28, "damage": 10, "proj": true, "projSpeed": 300 },
+      "ai": "kite"
+    },
+    "E4": {
+      "id": "E4", "name": "Кроссовок", "hp": 30, "w": 28, "h": 38, "dw": 12,
+      "speed": 132, "speedD": 79, "score": 180,
+      "mash": 40, "resist": 0.9,
+      "grippable": true,
+      "tokenCost": 1, "ukemi": false,
+      "attack": { "startup": 24, "active": 10, "recovery": 34, "damage": 12, "dash": 150 },
+      "ai": "rush"
+    },
+    "E5": {
+      "id": "E5", "name": "Спортивка", "hp": 55, "w": 40, "h": 42, "dw": 14,
+      "speed": 92, "speedD": 55, "score": 300,
+      "mash": 72, "resist": 2.2, "reversal": true,
+      "grippable": true, "canGripHero": true,
+      "tokenCost": 1, "ukemi": false,
+      "attack": { "startup": 28, "active": 6, "recovery": 26, "damage": 6, "grab": true },
+      "ai": "grappler"
+    },
+    "E6": {
+      "id": "E6", "name": "Турникет", "hp": 50, "w": 40, "h": 42, "dw": 16,
+      "speed": 66, "speedD": 40, "score": 220,
+      "mash": 26, "resist": 1.3,
+      "grippable": true, "unthrowableFront": true, "turnRate": 180,
+      "tokenCost": 1, "ukemi": false,
+      "attack": { "startup": 30, "active": 5, "recovery": 26, "damage": 11 },
+      "ai": "shield"
+    },
+    "E7": {
+      "id": "E7", "name": "Летун", "hp": 26, "w": 30, "h": 36, "dw": 12,
+      "speed": 110, "speedD": 66, "score": 200,
+      "mash": 46, "resist": 0.85,
+      "grippable": true, "aerialOnly": true,
+      "tokenCost": 1, "ukemi": false,
+      "attack": { "startup": 24, "active": 8, "recovery": 24, "damage": 10, "jumpV": 380 },
+      "ai": "aerial"
+    },
+    "E8": {
+      "id": "E8", "name": "Золотой пиджак", "hp": 80, "w": 40, "h": 44, "dw": 14,
+      "speed": 96, "speedD": 58, "score": 400,
+      "mash": 38, "resist": 1.6, "counterStance": true,
+      "grippable": true,
+      "tokenCost": 2, "ukemi": true,
+      "attack": { "startup": 26, "active": 4, "recovery": 18, "damage": 11 },
+      "ai": "elite"
+    },
+    "B1": {
+      "id": "B1", "name": "Дэйл «Замок» Пруитт", "hp": 420, "w": 44, "h": 56, "dw": 16,
+      "speed": 70, "speedD": 40, "score": 5000, "boss": true,
+      "staggerMax": 100, "grippable": false, "unlaunchable": true,
+      "tokenCost": 2, "gimmick": "chain",
+      "phases": [
+        { "hp": 1.0, "pattern": "charge" },
+        { "hp": 0.66, "pattern": "pound" },
+        { "hp": 0.33, "pattern": "charge3" }
+      ]
+    },
+    "B2": {
+      "id": "B2", "name": "Клео «Кайт» Вэнс", "hp": 480, "w": 36, "h": 48, "dw": 14,
+      "speed": 100, "speedD": 70, "score": 6000, "boss": true,
+      "staggerMax": 120, "grippable": false, "unlaunchable": true,
+      "tokenCost": 2, "gimmick": "awning",
+      "phases": [
+        { "hp": 1.0, "pattern": "lash" },
+        { "hp": 0.70, "pattern": "spin" },
+        { "hp": 0.35, "pattern": "grab" }
+      ]
+    },
+    "B3": {
+      "id": "B3", "name": "«Бокскар» Бруно Маркетти", "hp": 520, "w": 48, "h": 58, "dw": 18,
+      "speed": 64, "speedD": 36, "score": 7000, "boss": true,
+      "staggerMax": 140, "grippable": false, "unlaunchable": true, "canGripHero": true,
+      "tokenCost": 2, "gimmick": "tunnel",
+      "phases": [
+        { "hp": 1.0, "pattern": "duel" },
+        { "hp": 0.65, "pattern": "stance" },
+        { "hp": 0.30, "pattern": "alt" }
+      ]
+    },
+    "B4": {
+      "id": "B4", "name": "Дэнни «Кран» Холлис", "hp": 600, "w": 44, "h": 52, "dw": 16,
+      "speed": 50, "speedD": 30, "score": 8000, "boss": true,
+      "staggerMax": 160, "grippable": false, "unlaunchable": true,
+      "tokenCost": 2, "gimmick": "crane",
+      "phases": [
+        { "hp": 1.0, "pattern": "armor" },
+        { "hp": 0.70, "pattern": "adds" },
+        { "hp": 0.35, "pattern": "hammer" }
+      ]
+    },
+    "B5": {
+      "id": "B5", "name": "Рекс «Змей» Стерлинг", "hp": 760, "w": 40, "h": 52, "dw": 16,
+      "speed": 88, "speedD": 50, "score": 20000, "boss": true,
+      "staggerMax": 180, "grippable": false, "unlaunchable": true,
+      "tokenCost": 2, "gimmick": "cage", "chipFloor": 0.1,
+      "phases": [
+        { "hp": 1.0, "pattern": "combo" },
+        { "hp": 0.70, "pattern": "crowd" },
+        { "hp": 0.35, "pattern": "enrage" }
+      ]
+    },
+    "DUMMY": {
+      "id": "DUMMY", "name": "МАНЕКЕН", "hp": 40, "w": 28, "h": 40, "dw": 12,
+      "speed": 0, "speedD": 0, "score": 0,
+      "mash": 0, "resist": 1.0, "grippable": true, "dummy": true,
+      "tokenCost": 0, "ai": "idle"
+    }
+  }
+}

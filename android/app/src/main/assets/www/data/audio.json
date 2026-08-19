@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "stems": {
+    "w1": { "base": "audio/w1_base.ogg", "drums": "audio/w1_drums.ogg", "loopStart": 0, "loopEnd": 16 },
+    "w2": { "base": "audio/w2_base.ogg", "drums": "audio/w2_drums.ogg", "loopStart": 0, "loopEnd": 16 },
+    "w3": { "base": "audio/w3_base.ogg", "drums": "audio/w3_drums.ogg", "loopStart": 0, "loopEnd": 16 },
+    "w4": { "base": "audio/w4_base.ogg", "drums": "audio/w4_drums.ogg", "loopStart": 0, "loopEnd": 16 },
+    "w5": { "base": "audio/w5_base.ogg", "drums": "audio/w5_drums.ogg", "loopStart": 0, "loopEnd": 16 }
+  },
+  "events": {
+    "hit_light": { "sfx": "beep", "vol": 0.6, "freq": 420 },
+    "throw_slam": { "sfx": "beep", "vol": 0.9, "freq": 180 },
+    "grip": { "sfx": "beep", "vol": 0.5, "freq": 320 },
+    "ippon": { "sfx": "beep", "vol": 1.0, "freq": 660 },
+    "hajime": { "sfx": "beep", "vol": 0.8, "freq": 520 },
+    "ukemi": { "sfx": "beep", "vol": 0.5, "freq": 280 },
+    "wave_cleared": { "sfx": "beep", "vol": 0.7, "freq": 880 },
+    "go": { "sfx": "beep", "vol": 0.7, "freq": 740 },
+    "hurt": { "sfx": "beep", "vol": 0.7, "freq": 140 },
+    "pickup": { "sfx": "beep", "vol": 0.6, "freq": 990 },
+    "off_train": { "sfx": "beep", "vol": 1.0, "freq": 110 }
+  }
+}

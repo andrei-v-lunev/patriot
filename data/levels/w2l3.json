@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "w2l3",
+  "world": 2,
+  "name": "Кайт",
+  "worldName": "БАЗАР И КРЫШИ",
+  "music": { "stem": "w2" },
+  "parTime": 95,
+  "vs": "B2",
+  "segments": [
+    {
+      "id": "s1",
+      "mode": "belt",
+      "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 60, "backdrop": "clocktower" },
+      "props": [
+        { "type": "awning", "x": 120, "d": 10, "z": 40, "hp": 2 },
+        { "type": "awning", "x": 240, "d": 30, "z": 40, "hp": 2 },
+        { "type": "awning", "x": 360, "d": 50, "z": 40, "hp": 2 }
+      ],
+      "waves": [
+        {
+          "id": "boss",
+          "trigger": { "type": "enter" },
+          "boss": true,
+          "spawns": [{ "archetype": "B2", "x": 360, "d": 40, "z": 80, "delayFrames": 0 }]
+        }
+      ],
+      "gimmick": "airborne-awning",
+      "gate": { "openOn": "allWavesCleared", "side": "right", "goArrow": true }
+    }
+  ]
+}
