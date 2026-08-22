@@ -4,7 +4,7 @@
   var CAP = 96;
   var rng = null;
 
-  /* hit-spark strip: 32x32 x 5 frames, 20fps (3 ticks per frame at 60fps) */
+  /* hit-spark strip: 32x32 x 5 frames, 20fps (3 render frames per cell). */
   var SPARK_FW = 32;
   var SPARK_FH = 32;
   var SPARK_FRAMES = 5;
@@ -38,7 +38,9 @@
   function drawSparkSprite(ctx, p, sx, sy) {
     var fr = null;
     if (typeof window !== "undefined" && window.PAnim && PAnim.frameOnce) {
-      try { fr = PAnim.frameOnce("fx-hit-spark", p.t / 60); } catch (e) { fr = null; }
+      /* PFx advances once per rendered ~60Hz frame; PAnim consumes 120Hz
+         simulation ticks, so convert render frames to sim ticks. */
+      try { fr = PAnim.frameOnce("fx-hit-spark", p.t * 2); } catch (e) { fr = null; }
       if (fr && fr.img) {
         ctx.drawImage(fr.img, fr.sx || 0, fr.sy || 0, fr.sw || SPARK_FW, fr.sh || SPARK_FH,
           sx - ((fr.sw || SPARK_FW) >> 1), sy - ((fr.sh || SPARK_FH) >> 1), fr.sw || SPARK_FW, fr.sh || SPARK_FH);
@@ -55,12 +57,24 @@
     return false;
   }
 
+  function drawAtlasFx(ctx, p, id, sx, sy) {
+    var fr = null;
+    if (typeof window === "undefined" || !window.PAnim || !PAnim.frameOnce || !PAnim.has(id)) return false;
+    try { fr = PAnim.frameOnce(id, p.t * 2); } catch (e) { fr = null; }
+    if (!fr || !fr.img) return false;
+    ctx.drawImage(fr.img, fr.sx, fr.sy, fr.sw, fr.sh,
+      sx - (fr.sw >> 1), sy - (fr.sh >> 1), fr.sw, fr.sh);
+    return true;
+  }
+
   function rnd() {
     if (!rng && window.PRng) rng = PRng.create((Date.now && Date.now()) || 1);
     return rng ? rng.next() : Math.random();
   }
 
   function spawn(kind, x, z, d) {
+    var still = kind === "impact_large" || kind === "shockwave" || kind === "throw_arc" || kind === "ko_stars";
+    var fixedLife = kind === "impact_large" ? 18 : kind === "shockwave" ? 24 : kind === "throw_arc" ? 18 : kind === "ko_stars" ? 30 : 0;
     if (parts.length >= CAP) parts.shift();
     if (kind === "spark") ensureSpark();
     parts.push({
@@ -68,10 +82,10 @@
       x: x,
       z: z,
       d: d || 0,
-      vx: (rnd() - 0.5) * 80,
-      vz: 40 + rnd() * 80,
+      vx: still ? 0 : (rnd() - 0.5) * 80,
+      vz: still ? 0 : 40 + rnd() * 80,
       t: 0,
-      life: 18 + (rnd() * 12) | 0,
+      life: fixedLife || (18 + (rnd() * 12) | 0),
       col: kind === "dust" ? "#C8A46A" : "#FFF3D6"
     });
   }
@@ -88,6 +102,30 @@
     }
   }
 
+  function drawFallback(ctx, p, sx, sy) {
+    var r, w;
+    if (p.kind === "impact_large") {
+      r = Math.max(2, Math.min(18, 2 + p.t * 2));
+      ctx.fillStyle = p.t < 5 ? "#FFFFFF" : "#FFD65C";
+      ctx.fillRect(sx - r, sy - 2, r * 2 + 1, 4);
+      ctx.fillRect(sx - 2, sy - r, 4, r * 2 + 1);
+      ctx.fillStyle = "#C86B2A";
+      ctx.fillRect(sx - r - 4, sy - 1, 3, 2);
+      ctx.fillRect(sx + r + 2, sy - 1, 3, 2);
+      return true;
+    }
+    if (p.kind === "shockwave") {
+      w = Math.max(8, Math.min(48, 8 + p.t * 3));
+      ctx.fillStyle = "#FFF3D6";
+      ctx.fillRect(sx - w, sy - 2, w * 2, 2);
+      ctx.fillStyle = "#C8A46A";
+      ctx.fillRect(sx - w - 3, sy, 7, 2);
+      ctx.fillRect(sx + w - 4, sy, 7, 2);
+      return true;
+    }
+    return false;
+  }
+
   function draw(ctx, cam) {
     var i, p, sx, sy, floorY, camx;
     camx = (cam && cam.x) || 0;
@@ -97,6 +135,12 @@
       sx = (p.x - camx) | 0;
       sy = (floorY - p.z) | 0;
       if (p.kind === "spark" && drawSparkSprite(ctx, p, sx, sy)) continue;
+      if (p.kind === "dust" && drawAtlasFx(ctx, p, "fx-dust", sx, sy)) continue;
+      if (p.kind === "impact_large" && drawAtlasFx(ctx, p, "fx-impact-large", sx, sy)) continue;
+      if (p.kind === "shockwave" && drawAtlasFx(ctx, p, "fx-shockwave", sx, sy)) continue;
+      if (p.kind === "throw_arc" && drawAtlasFx(ctx, p, "fx-throw-arc", sx, sy)) continue;
+      if (p.kind === "ko_stars" && drawAtlasFx(ctx, p, "fx-ko-stars", sx, sy)) continue;
+      if (drawFallback(ctx, p, sx, sy)) continue;
       ctx.fillStyle = p.col;
       ctx.fillRect(sx, sy, 2, 2);
     }
@@ -117,9 +161,16 @@
       for (i = 0; i < ev.length; i++) {
         f = ev[i];
         if (!f) continue;
-        if (f.name === "hit_light" || f.name === "throw_slam" || f.name === "ippon") {
+        if (f.name === "hit_light") {
           spawn("spark", f.x || 240, f.z || 40, f.d || 20);
         }
+        if (f.name === "throw_slam" || f.name === "ippon") {
+          spawn("impact_large", f.x || 240, f.z || 40, f.d || 20);
+        }
+        if (f.name === "throw_slam") spawn("dust", f.x || 240, 0, f.d || 20);
+        if (f.name === "shockwave") spawn("shockwave", f.x || 240, 0, f.d || 20);
+        if (f.name === "throw_arc") spawn("throw_arc", f.x || 240, f.z || 40, f.d || 20);
+        if (f.name === "ko") spawn("ko_stars", f.x || 240, f.z || 40, f.d || 20);
       }
     }
   }

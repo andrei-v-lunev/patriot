@@ -1,5 +1,7 @@
 "use strict";
 
+global.PConst = { SIM_HZ: 120 };
+
 /* Tests for js/render.anim.js — PAnim frame math.
    Phase 1: require the module with no window/Image/fetch present at all
    (the plain `node test/anim.test.js` environment) and confirm it degrades
@@ -107,33 +109,33 @@ PAnim2.load(function () {
   var m10 = PAnim2.meta("walk10");
   ok(!!m10 && m10.fps === 10 && m10.frames === 8, "meta() returns the atlas entry for a known id");
 
-  /* --- frame(): looping correctness at various fps, 60Hz tick base --- */
+  /* --- frame(): looping correctness at various fps, 120Hz tick base --- */
 
   function expectFrame(id, fps, n, tick) {
-    var want = Math.floor(((tick | 0) * fps) / 60) % n;
+    var want = Math.floor(((tick | 0) * fps) / 120) % n;
     var got = PAnim2.frame(id, tick);
     ok(!!got, "frame(" + id + "," + tick + ") is non-null");
     ok(got.sx === want * 8, "frame(" + id + "," + tick + ") step=" + want + " (fps=" + fps + ",n=" + n + ") sx=" + (got.sx) + " want " + (want * 8));
   }
 
-  // fps=10, n=8 -> 6 ticks/frame, wraps at tick 48
+  // fps=10, n=8 -> 12 ticks/frame, wraps at tick 96
   expectFrame("walk10", 10, 8, 0);
-  expectFrame("walk10", 10, 8, 5);
-  expectFrame("walk10", 10, 8, 6);
-  expectFrame("walk10", 10, 8, 47); // last frame before wrap
-  ok(PAnim2.frame("walk10", 48).sx === 0, "walk10 loops back to frame 0 at tick 48");
+  expectFrame("walk10", 10, 8, 11);
+  expectFrame("walk10", 10, 8, 12);
+  expectFrame("walk10", 10, 8, 95); // last frame before wrap
+  ok(PAnim2.frame("walk10", 96).sx === 0, "walk10 loops back to frame 0 at tick 96");
 
-  // fps=12, n=6 -> 5 ticks/frame, wraps at tick 30
-  expectFrame("walk12", 12, 6, 29);
-  ok(PAnim2.frame("walk12", 30).sx === 0, "walk12 loops back to frame 0 at tick 30");
+  // fps=12, n=6 -> 10 ticks/frame, wraps at tick 60
+  expectFrame("walk12", 12, 6, 59);
+  ok(PAnim2.frame("walk12", 60).sx === 0, "walk12 loops back to frame 0 at tick 60");
 
-  // fps=15, n=4 -> 4 ticks/frame, wraps at tick 16
-  expectFrame("walk15", 15, 4, 15);
-  ok(PAnim2.frame("walk15", 16).sx === 0, "walk15 loops back to frame 0 at tick 16");
+  // fps=15, n=4 -> 8 ticks/frame, wraps at tick 32
+  expectFrame("walk15", 15, 4, 31);
+  ok(PAnim2.frame("walk15", 32).sx === 0, "walk15 loops back to frame 0 at tick 32");
 
-  // fps=20, n=5 -> 3 ticks/frame, wraps at tick 15
-  expectFrame("walk20", 20, 5, 14);
-  ok(PAnim2.frame("walk20", 15).sx === 0, "walk20 loops back to frame 0 at tick 15");
+  // fps=20, n=5 -> 6 ticks/frame, wraps at tick 30
+  expectFrame("walk20", 20, 5, 29);
+  ok(PAnim2.frame("walk20", 30).sx === 0, "walk20 loops back to frame 0 at tick 30");
 
   // Negative/garbage tick never yields a negative step.
   var negFrame = PAnim2.frame("walk10", -3);
@@ -142,8 +144,8 @@ PAnim2.load(function () {
   /* --- frameOnce(): steps then clamps on the last frame --- */
 
   ok(PAnim2.frameOnce("onceMove", 0).sx === 0, "frameOnce() starts at frame 0");
-  ok(PAnim2.frameOnce("onceMove", 6).sx === 8, "frameOnce() advances one frame after 6 ticks at fps 10");
-  ok(PAnim2.frameOnce("onceMove", 24).sx === 4 * 8, "frameOnce() reaches the last frame (index 4) at tick 24");
+  ok(PAnim2.frameOnce("onceMove", 12).sx === 8, "frameOnce() advances one frame after 12 ticks at fps 10");
+  ok(PAnim2.frameOnce("onceMove", 48).sx === 4 * 8, "frameOnce() reaches the last frame (index 4) at tick 48");
   ok(PAnim2.frameOnce("onceMove", 1000).sx === 4 * 8, "frameOnce() clamps to the last frame far past the end");
   ok(PAnim2.frameOnce("onceMove", -5).sx === 0, "frameOnce() with a negative ticksSinceStart clamps to step 0");
 

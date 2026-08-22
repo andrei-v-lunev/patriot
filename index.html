@@ -2,17 +2,27 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover,interactive-widget=resizes-content">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ПАТРИОТ">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#000000">
   <meta name="color-scheme" content="dark">
   <title>ПАТРИОТ</title>
-  <link rel="stylesheet" href="css/style.css">
-  <style>html,body{background:#000;margin:0;padding:0}</style>
+  <link rel="icon" type="image/png" href="assets/ui/club-crest.png">
+  <link rel="apple-touch-icon" href="assets/ui/club-crest.png">
+  <link rel="manifest" href="assets/manifest.webmanifest">
+  <link rel="stylesheet" href="css/style.css?v=20260822-touch-rails">
+  <style>html,body{margin:0;padding:0}</style>
 </head>
 <body>
-  <canvas id="game" width="480" height="270"></canvas>
+  <canvas id="game" width="480" height="270" role="application" aria-label="ПАТРИОТ — аркадная игра"></canvas>
+  <div id="rotate" role="status" aria-live="polite">
+    <img src="assets/ui/club-crest.png" alt="">
+    <strong>ПОВЕРНИТЕ ТЕЛЕФОН</strong>
+    <span>ИГРА РАБОТАЕТ В АЛЬБОМНОМ РЕЖИМЕ</span>
+  </div>
   <!--
     Script order (Part 6 §3.1 / §3.11):
     1 data fallback → 2 engine const/rng/pools/data → 3 sim → 4 combat → 5 ai
@@ -28,6 +38,7 @@
   <script src="js/sim.belt.js"></script>
   <script src="js/sim.waves.js"></script>
   <script src="js/sim.camera.js"></script>
+  <script src="js/sim.tutorial.js"></script>
   <script src="js/combat.js"></script>
   <script src="js/combat.grip.js"></script>
   <script src="js/combat.throw.js"></script>
@@ -38,18 +49,27 @@
   <script src="js/sim.tag.js"></script>
   <script src="js/sim.pickups.js"></script>
   <script src="js/input.js"></script>
-  <script src="js/input.touch.js"></script>
+  <script src="js/input.touch.js?v=20260822-touch-rails"></script>
   <script src="js/render.js"></script>
   <script src="js/render.layers.js"></script>
+  <script src="js/render.dressing.js"></script>
   <script src="js/render.anim.js"></script>
   <script src="js/render.sprites.js"></script>
   <script src="js/fx.js"></script>
   <script src="js/ui.font.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/save.js"></script>
+  <script src="js/ui.map.js"></script>
+  <script src="js/ui.settings.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/ui.title.js"></script>
+  <script src="js/ui.presentation.js"></script>
+  <script src="js/ui.tutorial.js"></script>
   <script src="js/ui.screens.js"></script>
   <script src="js/audio.js"></script>
-  <script src="js/boot.js"></script>
+  <script src="js/audio.events.js"></script>
+  <script src="js/platform.js"></script>
+  <script src="js/boot.js?v=20260822-safari-fit"></script>
   <script src="js/game.js"></script>
 </body>
 </html>

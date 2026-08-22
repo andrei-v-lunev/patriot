@@ -13,6 +13,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 4.46,
       "final_lufs": null,
+      "final_rms_db": -13.62816,
       "ogg_bytes": 22780,
       "m4a_bytes": 28207
     },
@@ -28,6 +29,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 2.79,
       "final_lufs": null,
+      "final_rms_db": -12.797155,
       "ogg_bytes": 23327,
       "m4a_bytes": 28995
     },
@@ -43,6 +45,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 4.76,
       "final_lufs": null,
+      "final_rms_db": -13.354238,
       "ogg_bytes": 24616,
       "m4a_bytes": 34362
     },
@@ -58,6 +61,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 4.12,
       "final_lufs": null,
+      "final_rms_db": -13.06438,
       "ogg_bytes": 10319,
       "m4a_bytes": 10288
     },
@@ -73,6 +77,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 2.85,
       "final_lufs": null,
+      "final_rms_db": -13.024924,
       "ogg_bytes": 11792,
       "m4a_bytes": 12709
     },
@@ -88,6 +93,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.64,
       "final_lufs": null,
+      "final_rms_db": -13.82394,
       "ogg_bytes": 12637,
       "m4a_bytes": 13814
     },
@@ -103,6 +109,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 6.17,
       "final_lufs": null,
+      "final_rms_db": -15.98216,
       "ogg_bytes": 10114,
       "m4a_bytes": 11142
     },
@@ -118,6 +125,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.32,
       "final_lufs": null,
+      "final_rms_db": -12.895662,
       "ogg_bytes": 8958,
       "m4a_bytes": 8583
     },
@@ -133,6 +141,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.14,
       "final_lufs": null,
+      "final_rms_db": -13.245076,
       "ogg_bytes": 12402,
       "m4a_bytes": 14783
     },
@@ -148,6 +157,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.02,
       "final_lufs": null,
+      "final_rms_db": -13.772474,
       "ogg_bytes": 9808,
       "m4a_bytes": 10914
     },
@@ -163,6 +173,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 4.45,
       "final_lufs": null,
+      "final_rms_db": -13.797054,
       "ogg_bytes": 13913,
       "m4a_bytes": 15034
     },
@@ -178,6 +189,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 4.35,
       "final_lufs": null,
+      "final_rms_db": -14.052597,
       "ogg_bytes": 11032,
       "m4a_bytes": 11575
     },
@@ -193,6 +205,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.72,
       "final_lufs": null,
+      "final_rms_db": -12.708834,
       "ogg_bytes": 13988,
       "m4a_bytes": 16156
     },
@@ -208,6 +221,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.19,
       "final_lufs": null,
+      "final_rms_db": -12.804275,
       "ogg_bytes": 13338,
       "m4a_bytes": 14514
     },
@@ -223,6 +237,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 5.36,
       "final_lufs": null,
+      "final_rms_db": -14.047749,
       "ogg_bytes": 12418,
       "m4a_bytes": 14038
     },
@@ -238,6 +253,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.91,
       "final_lufs": null,
+      "final_rms_db": -13.837833,
       "ogg_bytes": 26046,
       "m4a_bytes": 31945
     },
@@ -253,6 +269,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.32,
       "final_lufs": null,
+      "final_rms_db": -13.539272,
       "ogg_bytes": 12945,
       "m4a_bytes": 14642
     },
@@ -268,6 +285,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.18,
       "final_lufs": null,
+      "final_rms_db": -13.124931,
       "ogg_bytes": 14170,
       "m4a_bytes": 16142
     },
@@ -283,6 +301,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 5.03,
       "final_lufs": null,
+      "final_rms_db": -16.655826,
       "ogg_bytes": 7822,
       "m4a_bytes": 8213
     },
@@ -298,6 +317,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.23,
       "final_lufs": null,
+      "final_rms_db": -15.515781,
       "ogg_bytes": 7326,
       "m4a_bytes": 6325
     },
@@ -313,6 +333,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.37,
       "final_lufs": null,
+      "final_rms_db": -15.548075,
       "ogg_bytes": 9062,
       "m4a_bytes": 9157
     },
@@ -328,6 +349,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 5.0,
       "final_lufs": null,
+      "final_rms_db": -14.740909,
       "ogg_bytes": 9341,
       "m4a_bytes": 9428
     },
@@ -343,6 +365,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.91,
       "final_lufs": null,
+      "final_rms_db": -15.428536,
       "ogg_bytes": 9567,
       "m4a_bytes": 9407
     },
@@ -358,6 +381,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.54,
       "final_lufs": null,
+      "final_rms_db": -15.371932,
       "ogg_bytes": 8334,
       "m4a_bytes": 9067
     },
@@ -373,6 +397,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 2.92,
       "final_lufs": null,
+      "final_rms_db": -15.973052,
       "ogg_bytes": 6317,
       "m4a_bytes": 5469
     },
@@ -388,6 +413,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.97,
       "final_lufs": null,
+      "final_rms_db": -14.718099,
       "ogg_bytes": 11089,
       "m4a_bytes": 11959
     },
@@ -403,6 +429,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 6.87,
       "final_lufs": null,
+      "final_rms_db": -15.698914,
       "ogg_bytes": 16320,
       "m4a_bytes": 18903
     },
@@ -418,6 +445,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 4.23,
       "final_lufs": null,
+      "final_rms_db": -15.273648,
       "ogg_bytes": 14735,
       "m4a_bytes": 18062
     },
@@ -433,6 +461,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.87,
       "final_lufs": null,
+      "final_rms_db": -17.94047,
       "ogg_bytes": 6270,
       "m4a_bytes": 5337
     },
@@ -448,6 +477,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 4.16,
       "final_lufs": null,
+      "final_rms_db": -15.550377,
       "ogg_bytes": 9806,
       "m4a_bytes": 11758
     },
@@ -463,6 +493,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.82,
       "final_lufs": null,
+      "final_rms_db": -16.677013,
       "ogg_bytes": 8238,
       "m4a_bytes": 10775
     },
@@ -478,6 +509,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 2.5,
       "final_lufs": null,
+      "final_rms_db": -15.13097,
       "ogg_bytes": 8471,
       "m4a_bytes": 8539
     },
@@ -493,6 +525,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": -0.04,
       "final_lufs": null,
+      "final_rms_db": -14.551466,
       "ogg_bytes": 9304,
       "m4a_bytes": 9160
     },
@@ -508,6 +541,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 0.77,
       "final_lufs": null,
+      "final_rms_db": -14.609862,
       "ogg_bytes": 8242,
       "m4a_bytes": 8094
     },
@@ -523,6 +557,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 1.91,
       "final_lufs": null,
+      "final_rms_db": -14.729971,
       "ogg_bytes": 7741,
       "m4a_bytes": 7216
     },
@@ -538,6 +573,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 4.4,
       "final_lufs": null,
+      "final_rms_db": -16.328649,
       "ogg_bytes": 8535,
       "m4a_bytes": 8238
     },
@@ -553,6 +589,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.78,
       "final_lufs": null,
+      "final_rms_db": -14.936269,
       "ogg_bytes": 9248,
       "m4a_bytes": 8864
     },
@@ -568,6 +605,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.95,
       "final_lufs": null,
+      "final_rms_db": -15.113296,
       "ogg_bytes": 10940,
       "m4a_bytes": 11135
     },
@@ -583,6 +621,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 2.92,
       "final_lufs": null,
+      "final_rms_db": -14.576225,
       "ogg_bytes": 9203,
       "m4a_bytes": 8711
     },
@@ -598,6 +637,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 3.74,
       "final_lufs": null,
+      "final_rms_db": -15.027782,
       "ogg_bytes": 9332,
       "m4a_bytes": 9318
     },
@@ -613,6 +653,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 2.36,
       "final_lufs": null,
+      "final_rms_db": -14.39622,
       "ogg_bytes": 11148,
       "m4a_bytes": 12011
     },
@@ -628,6 +669,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 1.39,
       "final_lufs": null,
+      "final_rms_db": -14.393666,
       "ogg_bytes": 11081,
       "m4a_bytes": 12057
     },
@@ -643,6 +685,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 0.01,
       "final_lufs": null,
+      "final_rms_db": -14.289567,
       "ogg_bytes": 13954,
       "m4a_bytes": 16048
     },
@@ -658,6 +701,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 0.87,
       "final_lufs": null,
+      "final_rms_db": -14.25267,
       "ogg_bytes": 15757,
       "m4a_bytes": 18736
     },
@@ -673,6 +717,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 1.15,
       "final_lufs": null,
+      "final_rms_db": -14.473896,
       "ogg_bytes": 10187,
       "m4a_bytes": 11960
     },
@@ -688,6 +733,7 @@
       "measure_basis": "astats_rms_fallback",
       "gain_applied_db": 2.19,
       "final_lufs": null,
+      "final_rms_db": -14.279954,
       "ogg_bytes": 14384,
       "m4a_bytes": 16954
     }

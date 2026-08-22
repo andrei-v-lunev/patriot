@@ -10,15 +10,14 @@
     {
       "id": "s1",
       "mode": "plat",
-      "width": 960,
+      "width": 480,
       "dLock": 24,
       "floorZ": 0,
       "solids": [
-        { "x": 0, "z": 0, "w": 400, "h": 16, "type": "solid" },
-        { "x": 440, "z": 0, "w": 520, "h": 16, "type": "solid" },
+        { "x": 0, "z": 0, "w": 480, "h": 16, "type": "solid" },
         { "x": 280, "z": 48, "w": 96, "h": 10, "type": "oneway" }
       ],
-      "hazards": [{ "type": "pit", "x": 400, "w": 40, "damage": 18, "respawn": "checkpoint" }],
+      "hazards": [],
       "checkpoints": [{ "x": 80, "d": 24 }],
       "spawns": [{ "archetype": "DUMMY", "x": 260, "d": 24, "delayFrames": 0 }],
       "exit": { "type": "next" }

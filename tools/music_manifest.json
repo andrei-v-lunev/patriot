@@ -1,0 +1,140 @@
+{
+  "_comment": "Music manifest for «ПАТРИОТ». Source of truth: tasks/AUDIO_GENERATION_TASK.md §2. 'style' is the brief's Suno prompt verbatim. Suno returns 2 variants per task = 2 takes; the brief asks for >=4, so a second pass per track is expected. Loudness -16 LUFS integrated, -1.0 dBTP, with the §1 permanent -3 dB cut @200-450 Hz. STEMS AND LOOP POINTS ARE NOT PRODUCED HERE - Suno returns a finished stereo mix; see tasks/AUDIO_GENERATION_TASK.response.md fix #5.",
+  "bus": {
+    "lufs": -16.0,
+    "shelf_hz": 320,
+    "shelf_width_hz": 250,
+    "shelf_gain_db": -3.0
+  },
+  "tracks": [
+    {
+      "id": "mus_title",
+      "bpm": 132,
+      "key": "D minor",
+      "target_len": "1:50",
+      "instrumental": false,
+      "style": "1993 SNES arcade beat-em-up main theme, funky breakbeat, slap bass, heroic brass stabs, lezginka accordion riff, zurna lead, hand-clap percussion, gated snare, 132 BPM, D minor, triumphant and nostalgic, anthemic",
+      "lyrics": "СТОЙ — КАК ГОРА!\nДЕРЖИ — КАК ЗИМА!\nБРОСАЙ — И ТЕБЯ ЗАПОМНЯТ!\nПА — ТРИ — ОТ!"
+    },
+    {
+      "id": "mus_select",
+      "bpm": 138,
+      "key": "D dorian",
+      "target_len": "0:45",
+      "instrumental": true,
+      "style": "short 16-bit arcade character select theme, punchy funk breakbeat, slap bass riff, accordion stab, hand claps, confident and looping, 138 BPM, D dorian, instrumental"
+    },
+    {
+      "id": "mus_map",
+      "bpm": 96,
+      "key": "F major",
+      "target_len": "1:10",
+      "instrumental": true,
+      "style": "relaxed 16-bit adventure map theme, warm accordion melody, soft finger-snap and shaker percussion, mellow electric piano, gentle funk bass, mountain folk flavor, 96 BPM, F major, hopeful and calm, instrumental"
+    },
+    {
+      "id": "mus_w1_village",
+      "bpm": 124,
+      "key": "A minor to A dorian",
+      "target_len": "1:40",
+      "instrumental": true,
+      "style": "16-bit arcade beat-em-up stage theme, sunrise mood, solo garmon accordion opening into funky breakbeat, doli drum lezginka pattern, slap bass, warm brass pads, zurna melody, 124 BPM, A minor to A dorian, proud and awakening, instrumental"
+    },
+    {
+      "id": "mus_w2_bazaar",
+      "bpm": 142,
+      "key": "E phrygian dominant",
+      "target_len": "1:35",
+      "instrumental": true,
+      "style": "fast 16-bit arcade stage theme, busy marketplace energy, hand claps and tambourine, darbuka and doli, rapid accordion riff, funk slap bass, wah guitar, Phrygian dominant scale, 142 BPM, E, mischievous and frantic, instrumental"
+    },
+    {
+      "id": "mus_w3_train_int",
+      "bpm": 130,
+      "key": "C minor",
+      "target_len": "1:30",
+      "instrumental": true,
+      "style": "16-bit arcade stage theme, mechanical train rhythm, tight muted funk guitar, dark slap bass, industrial percussion mixed with doli hand drums, minor accordion motif, 130 BPM, C minor, tense and claustrophobic, instrumental"
+    },
+    {
+      "id": "mus_w3_train_roof",
+      "bpm": 150,
+      "key": "C minor",
+      "target_len": "1:15",
+      "instrumental": true,
+      "style": "high speed 16-bit chase theme, driving breakbeat, urgent zurna lead, wind and open air, aggressive slap bass, orchestra hit stabs, 150 BPM, C minor, breathless and dangerous, instrumental"
+    },
+    {
+      "id": "mus_w4_port",
+      "bpm": 118,
+      "key": "G minor",
+      "target_len": "1:45",
+      "instrumental": true,
+      "style": "heavy 16-bit arcade stage theme, rain and steel atmosphere, slow grinding funk groove, deep sub bass, minor-key accordion drone, metallic percussion hits, distant brass, 118 BPM, G minor, grim and determined, instrumental"
+    },
+    {
+      "id": "mus_w5_casino",
+      "bpm": 126,
+      "key": "B-flat minor",
+      "target_len": "1:20",
+      "instrumental": true,
+      "style": "sleazy 90s arcade casino theme, funk clavinet, tacky synth brass, disco hi-hats, chromatic descending bass, neon glitz, faint accordion ghost motif, 126 BPM, B-flat minor, decadent and menacing, instrumental"
+    },
+    {
+      "id": "mus_w5_arena",
+      "bpm": 146,
+      "key": "D minor",
+      "target_len": "1:50",
+      "instrumental": true,
+      "style": "epic 16-bit arcade final stage theme, full lezginka breakbeat fusion, zurna and accordion in unison lead, huge brass stabs, slap bass, hand claps, crowd energy, heroic and overwhelming, 146 BPM, D minor, instrumental"
+    },
+    {
+      "id": "mus_boss_mid",
+      "bpm": 158,
+      "key": "F-sharp minor",
+      "target_len": "1:10",
+      "instrumental": true,
+      "style": "90s action movie synth metal boss battle, palm-muted distorted guitar, aggressive synth brass, orchestra hits, double kick drums, dark arpeggiated synth, 158 BPM, F-sharp minor, threatening and relentless, instrumental"
+    },
+    {
+      "id": "mus_boss_final",
+      "bpm": 152,
+      "key": "F-sharp minor into D minor",
+      "target_len": "2:20",
+      "instrumental": true,
+      "style": "two part final boss theme, part one 90s synth metal with distorted guitar orchestra hits and double kick, part two same tempo but lezginka accordion and zurna take over the melody in triumphant minor, 152 BPM, F-sharp minor into D minor, epic and defiant, instrumental"
+    },
+    {
+      "id": "mus_victory",
+      "bpm": 132,
+      "key": "D major",
+      "target_len": "0:09",
+      "instrumental": true,
+      "style": "short triumphant 16-bit arcade victory fanfare, brass stabs and accordion flourish, hand claps, 132 BPM, D major, 8 seconds, instrumental"
+    },
+    {
+      "id": "mus_gameover",
+      "bpm": 84,
+      "key": "D minor",
+      "target_len": "0:40",
+      "instrumental": true,
+      "style": "slow melancholy 16-bit game over theme, lone accordion, sparse bass, soft timpani, 84 BPM, D minor, defeated but dignified, instrumental"
+    },
+    {
+      "id": "mus_results",
+      "bpm": 120,
+      "key": "F major",
+      "target_len": "0:35",
+      "instrumental": true,
+      "style": "upbeat short 16-bit results screen theme, bouncy funk bass, finger snaps, cheerful accordion, 120 BPM, F major, light and satisfying, instrumental"
+    },
+    {
+      "id": "mus_credits",
+      "bpm": 108,
+      "key": "D major",
+      "target_len": "2:30",
+      "instrumental": true,
+      "style": "end credits theme, unhurried 16-bit arrangement, full accordion and zurna melody with warm brass, gentle funk groove, hand claps, nostalgic and proud, 108 BPM, D major, instrumental"
+    }
+  ]
+}

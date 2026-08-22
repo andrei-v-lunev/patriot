@@ -1,0 +1,20 @@
+{
+  "name": "ПАТРИОТ",
+  "short_name": "ПАТРИОТ",
+  "description": "Дзюдо-аркада клуба «Патриот»",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "ui/club-crest.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

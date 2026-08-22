@@ -1,0 +1,12 @@
+*
+!server.js
+!index.html
+!package.json
+!css/
+!css/**
+!js/
+!js/**
+!data/
+!data/**
+!assets/
+!assets/**

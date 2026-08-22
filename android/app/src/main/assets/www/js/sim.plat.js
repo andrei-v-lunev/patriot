@@ -37,7 +37,7 @@
     return -1;
   }
 
-  function accelX(e, intent, t) {
+  function accelX(state, e, intent, t) {
     var st = e.stats || {};
     var mx = intent.moveX || 0;
     var cap = e.grounded ? (st.runMax || 150) : (st.airMax || st.runMax || 150);
@@ -49,7 +49,7 @@
         if (e.vx && (mx > 0) !== (e.vx > 0)) a *= st.turnMul || 2;
         e.vx += a * mx * t;
       } else {
-        f = (st.groundFric || 1800) * t;
+        f = (st.groundFric || 1800) * (state.slippery ? 0.35 : 1) * t;
         if (e.vx > f) e.vx -= f;
         else if (e.vx < -f) e.vx += f;
         else e.vx = 0;
@@ -69,6 +69,7 @@
     if (e.vx < -cap) e.vx = -cap;
     if (mx > 0) e.facing = 1;
     else if (mx < 0) e.facing = -1;
+    if (state.wind && e.kind === "hero") e.vx += state.wind * t;
   }
 
   function applyJump(state, e, intent) {
@@ -124,6 +125,10 @@
     var solids = state.solids || [];
     var hw = e.w * 0.5;
     var nx = e.x + e.vx * t;
+    /* Belt arenas use depth/hazard collision and their broad z=0 solid only
+       as a floor. Treating it as a side wall embeds knockdown landings and
+       permanently cancels horizontal movement. */
+    if (e.mode === "belt") { e.x = nx; return; }
     var el = nx - hw, er = nx + hw, eb = e.z, et = e.z + e.h;
     var i, s, hit;
     for (i = 0; i < solids.length; i++) {
@@ -163,6 +168,11 @@
       }
     }
     e.z = nz;
+    if (e.mode === "belt" && e.z <= 0 && e.vz <= 0) {
+      e.z = 0;
+      e.vz = 0;
+      e.grounded = true;
+    }
     if (!e.grounded && e.vz <= 0) {
       sup = supported(state, e);
       if (sup >= 0) {
@@ -176,6 +186,36 @@
     }
   }
 
+  function clampBounds(state, e) {
+    var hw, lo, hi;
+    if (e.kind !== "hero" || e.mode !== "plat") return;
+    hw = e.w * 0.5;
+    lo = state.xMin != null ? state.xMin : 0;
+    hi = state.xMax != null ? state.xMax : lo;
+    if (hi < lo) return;
+    if (e.x - hw < lo) {
+      e.x = lo + hw;
+      if (e.vx < 0) e.vx = 0;
+    }
+    if (e.x + hw > hi) {
+      e.x = hi - hw;
+      if (e.vx > 0) e.vx = 0;
+    }
+  }
+
+  function updateCheckpoint(state, e) {
+    var cps, i, cp;
+    if (e.kind !== "hero" || e.benched || !state.segment) return;
+    cps = state.segment.checkpoints || [];
+    for (i = 0; i < cps.length; i++) {
+      cp = cps[i];
+      if (e.x >= cp.x && i >= (state.checkpointIndex || 0)) {
+        state.checkpointIndex = i;
+        state.currentCheckpoint = { x: cp.x, d: cp.d };
+      }
+    }
+  }
+
   function integrate(state, e, intent) {
     var t = dt();
     if (!intent) intent = { moveX: 0, moveD: 0, jump: false, jumpPressed: false };
@@ -184,8 +224,17 @@
       e.vd = 0;
     }
     applyJump(state, e, intent);
-    accelX(e, intent, t);
+    accelX(state, e, intent, t);
     resolveX(state, e, t);
+    /* BUGFIX: nothing previously clamped the hero's x to the level/segment
+       bounds in plat mode (belt mode already has sim.belt.js's clampGates
+       doing the equivalent) — walking past the right edge just kept
+       increasing e.x forever with the camera pinned at its max, i.e. the
+       hero visibly disappears off-screen. sim.belt.js's platExit() fires
+       the segment/level transition at x > width-24, comfortably inside this
+       bound, so the exit trigger still fires before this clamp engages. */
+    clampBounds(state, e);
+    updateCheckpoint(state, e);
     if (e.grounded && supported(state, e) < 0) e.grounded = false;
     gravity(e, intent, t);
     resolveZ(state, e, t);

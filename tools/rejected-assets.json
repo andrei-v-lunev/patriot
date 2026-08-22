@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "canon": "PRD.md",
+  "policy": "Rejected generations stay quarantined. Runtime uses only the accepted alias or code-native implementation named here.",
+  "decisions": [
+    { "id": "fx-impact-large", "kind": "code-native", "consumer": "js/fx.js", "reason": "Generated candidates contained opaque panels; the deterministic starburst is readable and palette-safe." },
+    { "id": "fx-shockwave", "kind": "code-native", "consumer": "js/fx.js", "reason": "Generated candidates were boxed or spherical; the deterministic ground ring matches the gameplay hit shape." },
+    { "id": "b1-idle", "kind": "alias", "target": "b1-model", "reason": "Idle candidates cropped props or read as walk cycles; the canonical model preserves identity." },
+    { "id": "b1-pound", "kind": "alias", "target": "b1-charge", "reason": "Pound candidates lost clipboard continuity or scale; charge provides a complete animated heavy action." },
+    { "id": "b2-grab", "kind": "alias", "target": "b2-lash", "reason": "Grab candidates fragmented the glider; lash preserves Cleo and supplies a readable committed attack." },
+    { "id": "b3-walk", "kind": "alias", "target": "b3-idle", "reason": "Walk candidates cropped or broke the shovel; runtime movement bob keeps the accepted idle visibly moving." },
+    { "id": "b3-duel", "kind": "alias", "target": "b3-tunnel", "reason": "Duel candidates broke the shovel; tunnel is the accepted full-shovel attack sequence." },
+    { "id": "b3-stance", "kind": "alias", "target": "b3-telegraph", "reason": "Stance candidates lost the shovel; telegraph retains canonical silhouette and anticipation." },
+    { "id": "b5-direct", "kind": "alias", "target": "b5-telegraph", "reason": "Direct candidates repeatedly lost the full cane; telegraph supplies stable theatrical gestures." },
+    { "id": "b5-combo", "kind": "alias", "target": "b5-counter", "reason": "Combo candidates were boxed or lost the cane; counter is the accepted cane-action sequence." },
+    { "id": "b5-enrage", "kind": "alias", "target": "b5-telegraph", "reason": "Enrage candidates failed scale and cane continuity; telegraph plus runtime red desperation treatment remains readable." }
+  ]
+}

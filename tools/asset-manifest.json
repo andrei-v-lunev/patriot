@@ -3,110 +3,651 @@
   "characters": {
     "idris": "a 40-year-old heavyset judo coach from Dagestan, white judo gi with black belt, short dark receding hair, clean-shaven dignified serious masculine face (NO mustache, NO beard), barefoot",
     "otajon": "a 25-year-old lean Uzbek judo assistant, blue judo gi with brown belt, yellow headband with trailing knot, dark hair, short dark beard, warm likable face, barefoot",
-    "e1": "a rubbery 90s American action-movie henchman gatekeeper in a cheap gray suit with yellow hi-vis vest, slicked black hair, angry sneer, waving a wooden clipboard, black dress shoes",
-    "e2": "a huge rubbery 90s American action-movie ex-linebacker heavy, bald with stubble, tight black tank top, purple striped pants, big black boots, gold wristbands"
+    "e1": "Clipboard, a rubbery 1990s American syndicate henchman in a cheap gray off-the-rack suit with sleeves slightly too short, skinny black tie, laminated badge on a lanyard, brown office clipboard tucked under one arm and used as the weapon, boxy shoulders, narrow trouser legs, black dress shoes, slicked black hair, angry sneer, small gold pinky ring and a 6-pixel gold snake-S lapel patch",
+    "e2": "Barrel, a huge rubbery 1990s American syndicate heavy and ex-linebacker gone to seed, neckless trapezoid build, dark letterman jacket straining over a gut, thick ham forearms, dark trousers, big black boots, small gold pinky ring and a 6-pixel gold snake-S shoulder patch",
+    "e3": "Melonhand, a lean 1990s American syndicate market enforcer, faded green vendor apron over a rolled-sleeve rust shirt, dark trousers and work boots, wooden produce crate strapped high on one shoulder, one striped green melon held ready, wide planted stance, dark cropped hair, wary angular face, small gold snake-S apron patch",
+    "e4": "Sneaker, a skinny adult 1990s syndicate rushdown goon in a red hooded windbreaker, narrow black trousers and oversized white-and-red high-top sneakers, the longest legs and narrowest mass in the roster, hunched sprinter stance, small gold snake-S shoulder patch and pinky-ring glint",
+    "e5": "Tracksuit, a broad adult 1990s syndicate grappler in a shiny navy tracksuit with bright gold side stripes and popped collar, chunky gold chain, low wide wrestling stance, slick hair, small gold snake-S chest patch",
+    "e6": "Turnstile, an adult riot-shield security enforcer with gray-blue plated legs, earpiece wire, half-face cyan visor, full-height rectangular shield held forward occupying 60 percent of the silhouette, small gold snake-S patch, no real police or military insignia",
+    "e7": "Kite Boy, a slim adult aerial harasser with goggles, wrapped hands, fitted teal flight suit beneath a patchwork glider cape of mismatched showgirl fabrics, closed cape narrow, small gold snake-S patch, no angel or bird wings",
+    "e8": "Gold Jacket, an elite adult bouncer in a sequined gold blazer over black shirt, sunglasses at night, immaculate dark hair, gold rings, arms-crossed confidence, small black-and-gold snake-S lapel patch",
+    "b1": "Dale Padlock Pruitt, a huge adult ex-linebacker in an inspector suit two sizes too small with strained buttons and high cuffs, laminated copy-shop badge on lanyard, normal clipboard held like a warrant, giant padlocks on belt, gold ring, smug jowly face, no real insignia",
+    "b2": "Cleo The Kite Vance, a lean athletic adult woman with goggles and wrapped hands, patchwork glider wing-rig made of mismatched showgirl fabrics, feathered pauldrons and weighted kite-line, practical nonsexualized fighter design, no bird or angel wings",
+    "b3": "Boxcar Bruno Marchetti, an enormous adult biker in cutoff denim over black leather, soot-black shirt and forearms, comically tiny conductor cap, coal shovel with a glowing ember blade, no real club or rail insignia",
+    "b4": "Denny The Crane Hollis, a massive adult port bruiser in a yellow rain slicker open over a loud bowling shirt, work gloves, steel boots, forearm crane remote, hard hat with gold snake decal and fictional stickers, cigarette, bell-shaped wet coat hem",
+    "b5": "Rex The Snake Sterling, a tall broad adult PPV fight promoter in a white suit with hot-gold lapels and cuffs over black open-collar shirt, huge snake ring, slicked silver-blond hair, theatrical grin and gold cane, no real likeness or branding"
   },
   "entries": [
     {
-      "id": "idris-idle", "mode": "single-repeat", "src": "art/src/raw/idris-base.png",
-      "outPath": "assets/heroes/idris-idle.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 6 }, "fps": 5
+      "id": "idris-idle",
+      "mode": "single-repeat",
+      "src": "art/src/raw/idris-base.png",
+      "outPath": "assets/heroes/idris-idle.sheet.png",
+      "cells": {
+        "fw": 96,
+        "fh": 96,
+        "frames": 6
+      },
+      "fps": 5
     },
     {
-      "id": "idris-walk", "mode": "grok-sheet", "ref": "art/src/raw/idris-base.png",
+      "id": "idris-walk",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/idris-base.png",
       "prompt": "ONE wide image: a horizontal row of exactly 6 separate poses of THE SAME character — {idris}, identical to the input reference image — as a walk cycle, side view facing right, feet on a common ground line, each pose clearly separated by wide gaps of pure magenta background, poses never touch or overlap. pose 1: right leg forward, heel striking the ground, arms mid-swing; pose 2: weight settling onto right leg, left heel lifting; pose 3: left leg passing under the body; pose 4: left leg forward, heel striking; pose 5: weight settling onto left leg, right heel lifting; pose 6: right leg passing under the body. FULL BODY visible in every pose, entire character head-to-feet, same size in every pose, wide shot, no close-ups, no comic panels. NO mustache, NO beard, clean-shaven exactly as the reference",
-      "outPath": "assets/heroes/idris-walk.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 6 }, "fps": 7,
+      "outPath": "assets/heroes/idris-walk.sheet.png",
+      "cells": {
+        "fw": 96,
+        "fh": 96,
+        "frames": 6
+      },
+      "fps": 7,
       "fallbackSrc": "art/src/raw/idris-base.png"
     },
     {
-      "id": "idris-throw", "mode": "grok-sheet", "ref": "art/src/raw/idris-base.png",
+      "id": "idris-throw",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/idris-base.png",
       "prompt": "ONE wide image: a horizontal row of exactly 5 separate poses of THE SAME character — {idris}, identical to the reference image — performing a seoi-nage judo shoulder throw, side view, feet on a common ground line, each pose clearly separated by wide gaps of pure magenta background, poses never touch or overlap. pose 1: fighting stance reaching forward to grab; pose 2: gripping and pulling an invisible opponent, body coiled; pose 3: back turned to viewer, knees bent, pulling arms over his shoulder; pose 4: bent forward deeply, arms swinging down past knees in a slamming motion; pose 5: upright recovery stance. No opponent character, no extra people, no floating hands or objects, no mustache, no accessories that are not in the reference",
-      "outPath": "assets/heroes/idris-throw.sheet.png", "cells": { "fw": 160, "fh": 128, "frames": 5 }, "fps": 15,
+      "outPath": "assets/heroes/idris-throw.sheet.png",
+      "cells": {
+        "fw": 160,
+        "fh": 128,
+        "frames": 5
+      },
+      "fps": 15,
       "fallbackSrc": "art/src/raw/idris-base.png"
     },
     {
-      "id": "otajon-idle", "mode": "single-repeat", "src": "art/src/raw/otajon-base.png",
-      "outPath": "assets/heroes/otajon-idle.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 6 }, "fps": 5
+      "id": "otajon-idle",
+      "mode": "single-repeat",
+      "src": "art/src/raw/otajon-base.png",
+      "outPath": "assets/heroes/otajon-idle.sheet.png",
+      "cells": {
+        "fw": 96,
+        "fh": 96,
+        "frames": 6
+      },
+      "fps": 5
     },
     {
-      "id": "otajon-walk", "mode": "grok-sheet", "ref": "art/src/raw/otajon-base.png",
+      "id": "otajon-walk",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/otajon-base.png",
       "prompt": "ONE wide image: a horizontal row of exactly 6 separate poses of THE SAME character — {otajon}, identical to the input reference image — as a walk cycle, side view facing right, feet on a common ground line, each pose clearly separated by wide gaps of pure magenta background, poses never touch or overlap. pose 1: right leg forward, heel striking the ground, arms mid-swing; pose 2: weight settling onto right leg, left heel lifting; pose 3: left leg passing under the body; pose 4: left leg forward, heel striking; pose 5: weight settling onto left leg, right heel lifting; pose 6: right leg passing under the body. FULL BODY visible in every pose, entire character head-to-feet, same size in every pose, wide shot, no close-ups, no comic panels. Keep the yellow headband, brown belt and small sandwich satchel exactly as in the reference, no other accessories",
-      "outPath": "assets/heroes/otajon-walk.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 6 }, "fps": 7,
+      "outPath": "assets/heroes/otajon-walk.sheet.png",
+      "cells": {
+        "fw": 96,
+        "fh": 96,
+        "frames": 6
+      },
+      "fps": 7,
       "fallbackSrc": "art/src/raw/otajon-base.png"
     },
     {
-      "id": "otajon-throw", "mode": "grok-sheet", "ref": "art/src/raw/otajon-base.png",
+      "id": "otajon-throw",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/otajon-base.png",
       "prompt": "ONE wide image: a horizontal row of exactly 5 separate poses of THE SAME character — {otajon}, identical to the reference image — performing a seoi-nage judo shoulder throw, side view, feet on a common ground line, each pose clearly separated by wide gaps of pure magenta background, poses never touch or overlap. pose 1: fighting stance reaching forward to grab; pose 2: gripping and pulling an invisible opponent, body coiled; pose 3: back turned to viewer, knees bent, pulling arms over his shoulder; pose 4: bent forward deeply, arms swinging down past knees in a slamming motion; pose 5: upright recovery stance. No opponent character, no extra people, no floating hands or objects, exactly one yellow headband as in the reference, no other accessories",
-      "outPath": "assets/heroes/otajon-throw.sheet.png", "cells": { "fw": 160, "fh": 128, "frames": 5 }, "fps": 15,
+      "outPath": "assets/heroes/otajon-throw.sheet.png",
+      "cells": {
+        "fw": 160,
+        "fh": 128,
+        "frames": 5
+      },
+      "fps": 15,
       "fallbackSrc": "art/src/raw/otajon-base.png"
     },
     {
-      "id": "e1-idle", "mode": "single-repeat", "src": "art/src/raw/e1-base.png",
-      "outPath": "assets/enemies/e1-idle.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 4 }, "fps": 8
+      "id": "e1-model",
+      "mode": "grok-sheet",
+      "prompt": "ONE image with exactly 1 full-body model pose of {e1}, side view facing right in a readable fighting stance, entire head-to-feet figure visible with generous pure-magenta space around it. This is the canonical model plate for every later E1 animation. The clipboard must remain a normal brown office clipboard with metal clip, never a bat or club. Adult proportions, 56 pixels tall after downsampling",
+      "outPath": "assets/enemies/e1-model.png",
+      "cells": { "fw": 80, "fh": 80, "frames": 1 },
+      "fps": 0,
+      "maxColors": 16
     },
     {
-      "id": "e1-walk", "mode": "grok-sheet",
-      "prompt": "16-bit SNES pixel art sprite sheet, horizontal strip of exactly 6 evenly-spaced frames of {e1}, walk cycle side view facing right, full body, consistent character across all frames, same size in every frame",
-      "outPath": "assets/enemies/e1-walk.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 6 }, "fps": 10,
-      "fallbackSrc": "art/src/raw/e1-base.png"
+      "id": "e1-idle",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/e1-model.png",
+      "prompt": "ONE wide image: a horizontal row of exactly 4 separate full-body poses of {e1}, identical to the input model, a cocky idle breathing cycle facing right. Pose 1 shoulders high; pose 2 settles weight; pose 3 rolls one shoulder and adjusts the clipboard under his arm; pose 4 returns toward pose 1. Wide pure-magenta gaps, poses never touch, same scale and common foot line, clipboard/lanyard/ring/patch present and unchanged in every pose",
+      "outPath": "assets/enemies/e1-idle.sheet.png",
+      "cells": { "fw": 80, "fh": 80, "frames": 4 },
+      "fps": 8,
+      "maxColors": 16
     },
     {
-      "id": "e1-attack", "mode": "grok-sheet",
-      "prompt": "16-bit SNES pixel art sprite sheet, horizontal strip of exactly 5 evenly-spaced frames of {e1} swinging his clipboard as a weapon in a wide overhead arc, attack animation facing right, full body, consistent character across all frames",
-      "outPath": "assets/enemies/e1-attack.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 5 }, "fps": 12,
-      "fallbackSrc": "art/src/raw/e1-base.png"
+      "id": "e1-walk",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/e1-model.png",
+      "prompt": "ONE wide image: a horizontal row of exactly 6 separate full-body poses of {e1}, identical to the input model, a side-view walk cycle facing right: contact, down, passing, opposite contact, opposite down, opposite passing. Wide pure-magenta gaps, poses never touch, same scale and common foot line. Clipboard stays tucked under one arm and remains a clipboard; lanyard, ring and snake-S patch stay present",
+      "outPath": "assets/enemies/e1-walk.sheet.png",
+      "cells": {
+        "fw": 80,
+        "fh": 80,
+        "frames": 6
+      },
+      "fps": 10,
+      "maxColors": 16
     },
     {
-      "id": "e2-idle", "mode": "single-repeat", "src": "art/src/raw/e2-base.png",
-      "outPath": "assets/enemies/e2-idle.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 4 }, "fps": 8
+      "id": "e1-telegraph",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/e1-model.png",
+      "prompt": "ONE wide image: a horizontal row of exactly 4 separate full-body poses of {e1}, identical to the input model, a mandatory high-contrast attack wind-up facing right: notices target, pulls normal office clipboard back, coils torso, reaches maximum anticipation. Wide pure-magenta gaps, same scale/common foot line, no impact pose, clipboard never becomes a bat or club",
+      "outPath": "assets/enemies/e1-telegraph.sheet.png",
+      "cells": { "fw": 80, "fh": 80, "frames": 4 },
+      "fps": 10,
+      "maxColors": 16
     },
     {
-      "id": "e2-walk", "mode": "grok-sheet",
-      "prompt": "16-bit SNES pixel art sprite sheet, horizontal strip of exactly 6 evenly-spaced frames of {e2}, lumbering walk cycle side view facing right, full body, consistent character across all frames, same size in every frame",
-      "outPath": "assets/enemies/e2-walk.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 6 }, "fps": 10,
-      "fallbackSrc": "art/src/raw/e2-base.png"
+      "id": "e1-attack",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/e1-model.png",
+      "prompt": "ONE 1536x1024 landscape image: a horizontal row of exactly 5 separate full-body poses of {e1}, identical to the input model, swinging his normal brown office clipboard in a fast horizontal arc facing right: final antic, one clean smear pose, first impact, follow-through impact, recovery. Every pose is one intact connected figure from head through torso to legs with no horizontal gap, slice, missing waist, floating torso, or detached body part. Wide pure-magenta gutters only between poses, same scale/common foot line, clipboard remains rectangular with its metal clip in every frame and never turns into a bat or club",
+      "outPath": "assets/enemies/e1-attack.sheet.png",
+      "cells": {
+        "fw": 80,
+        "fh": 80,
+        "frames": 5
+      },
+      "fps": 15,
+      "maxColors": 16
     },
     {
-      "id": "e2-attack", "mode": "grok-sheet",
-      "prompt": "16-bit SNES pixel art sprite sheet, horizontal strip of exactly 5 evenly-spaced frames of {e2} throwing a heavy haymaker punch, attack animation facing right, full body, consistent character across all frames",
-      "outPath": "assets/enemies/e2-attack.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 5 }, "fps": 12,
-      "fallbackSrc": "art/src/raw/e2-base.png"
+      "id": "e2-model",
+      "mode": "grok-sheet",
+      "prompt": "ONE image with exactly 1 full-body model pose of {e2}, side view facing right in a heavy fighting stance, entire head-to-feet figure visible with generous pure-magenta space around it. This is the canonical model plate for every later E2 animation. Letterman jacket, gut, ham forearms, gold ring and snake-S patch are mandatory. Adult proportions, 60 pixels tall after downsampling",
+      "outPath": "assets/enemies/e2-model.png",
+      "cells": { "fw": 80, "fh": 80, "frames": 1 },
+      "fps": 0,
+      "maxColors": 16
     },
     {
-      "id": "fx-hit-spark", "mode": "grok-sheet",
+      "id": "e2-idle",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/e2-model.png",
+      "prompt": "ONE wide image: a horizontal row of exactly 4 separate full-body poses of {e2}, identical to the input model, a heavy cocky idle cycle facing right: chest inhale, shoulder roll, fist flex, settle. Wide pure-magenta gaps, poses never touch, same scale/common foot line, letterman jacket/gut/ring/patch unchanged",
+      "outPath": "assets/enemies/e2-idle.sheet.png",
+      "cells": { "fw": 80, "fh": 80, "frames": 4 },
+      "fps": 8,
+      "maxColors": 16
+    },
+    {
+      "id": "e2-walk",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/e2-model.png",
+      "prompt": "ONE wide image: a horizontal row of exactly 6 separate full-body poses of {e2}, identical to the input model, a lumbering side-view walk cycle facing right: contact, down, passing, opposite contact, opposite down, opposite passing. Wide pure-magenta gaps, same scale/common foot line; massive torso leads while letterman jacket/gut/ring/patch remain stable",
+      "outPath": "assets/enemies/e2-walk.sheet.png",
+      "cells": {
+        "fw": 80,
+        "fh": 80,
+        "frames": 6
+      },
+      "fps": 10,
+      "maxColors": 16
+    },
+    {
+      "id": "e2-telegraph",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/e2-model.png",
+      "prompt": "ONE wide image: a horizontal row of exactly 4 separate full-body poses of {e2}, identical to the input model, a highly readable heavy-punch wind-up facing right: plants feet, draws fist back, twists shoulder, maximum coiled anticipation. Wide pure-magenta gaps, same scale/common foot line, no impact pose; letterman jacket/gut/ring/patch unchanged",
+      "outPath": "assets/enemies/e2-telegraph.sheet.png",
+      "cells": { "fw": 80, "fh": 80, "frames": 4 },
+      "fps": 10,
+      "maxColors": 16
+    },
+    {
+      "id": "e2-attack",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/e2-model.png",
+      "prompt": "ONE wide image: a horizontal row of exactly 5 separate full-body poses of {e2}, identical to the input model, a heavy haymaker facing right: final antic, one broad arm-smear pose, first impact, deep follow-through, recovery. Wide pure-magenta gaps, same scale/common foot line; letterman jacket/gut/ring/patch unchanged and exactly one figure per pose",
+      "outPath": "assets/enemies/e2-attack.sheet.png",
+      "cells": {
+        "fw": 80,
+        "fh": 80,
+        "frames": 5
+      },
+      "fps": 15,
+      "maxColors": 16
+    },
+    {
+      "id": "fx-hit-spark",
+      "mode": "grok-sheet",
       "prompt": "16-bit SNES pixel art sprite sheet, horizontal strip of exactly 5 evenly-spaced frames of a small white-and-yellow impact hit spark burst effect expanding then fading, classic beat-em-up style, centered in each frame",
-      "outPath": "assets/fx/hit-spark.sheet.png", "cells": { "fw": 32, "fh": 32, "frames": 5 }, "fps": 20,
-      "anchor": "center"
+      "outPath": "assets/fx/hit-spark.sheet.png",
+      "cells": {
+        "fw": 32,
+        "fh": 32,
+        "frames": 5
+      },
+      "fps": 20,
+      "anchor": "center",
+      "maxColors": 8
     },
     {
-      "id": "w1-ground", "mode": "grok-crop", "noSuffix": true,
+      "id": "fx-dust", "mode": "grok-sheet", "prompt": "ONE wide image with exactly 6 separate centered frames of a small tan-gray pixel dust puff kicked from the ground: tiny specks, rising puff, wider cloud, broken cloud, fading wisps, gone; no character, wide pure-magenta gaps", "outPath": "assets/fx/dust.sheet.png", "cells": { "fw": 32, "fh": 32, "frames": 6 }, "fps": 15, "anchor": "center", "maxColors": 8
+    },
+    {
+      "id": "fx-throw-arc", "mode": "grok-sheet", "prompt": "ONE wide image with exactly 6 separate centered frames of a cyan-white curved motion arc tracing a judo throw from high rear to low front, abstract speed-line effect only, no people, wide pure-magenta gaps", "outPath": "assets/fx/throw-arc.sheet.png", "cells": { "fw": 64, "fh": 64, "frames": 6 }, "fps": 20, "anchor": "center", "maxColors": 8
+    },
+    {
+      "id": "fx-ko-stars", "mode": "grok-sheet", "prompt": "ONE wide image with exactly 6 separate centered frames of three small gold-white cartoon knockout stars orbiting in a loop, pixel-art effect only, no head or character, wide pure-magenta gaps", "outPath": "assets/fx/ko-stars.sheet.png", "cells": { "fw": 48, "fh": 32, "frames": 6 }, "fps": 12, "anchor": "center", "maxColors": 8
+    },
+    {
+      "id": "e3-model",
+      "mode": "grok-sheet",
+      "prompt": "ONE image with exactly 1 full-body model pose of {e3}, side view facing right in a readable ranged-fighter stance, entire head-to-feet figure and shoulder crate visible with generous pure-magenta space. Canonical model plate for all E3 animation. Exactly one melon, crate remains a normal wooden produce crate, adult proportions",
+      "outPath": "assets/enemies/e3-model.png",
+      "cells": { "fw": 80, "fh": 80, "frames": 1 },
+      "fps": 0,
+      "maxColors": 16
+    },
+    {
+      "id": "e3-idle",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/e3-model.png",
+      "prompt": "ONE wide image with exactly 4 separate full-body poses of {e3}, identical to the input model, a watchful idle cycle facing right: balances shoulder crate, shifts weight, tests melon grip, returns toward pose 1. Wide pure-magenta gaps, common foot line, same scale, exactly one melon and one crate unchanged in every pose",
+      "outPath": "assets/enemies/e3-idle.sheet.png",
+      "cells": { "fw": 80, "fh": 80, "frames": 4 },
+      "fps": 8,
+      "maxColors": 16
+    },
+    {
+      "id": "e3-walk",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/e3-model.png",
+      "prompt": "ONE wide image with exactly 6 separate full-body poses of {e3}, identical to the input model, a cautious side-view walk cycle facing right: contact, down, passing, opposite contact, opposite down, opposite passing. Wide pure-magenta gaps, common foot line, same scale; shoulder crate stays strapped and exactly one melon remains in hand",
+      "outPath": "assets/enemies/e3-walk.sheet.png",
+      "cells": { "fw": 80, "fh": 80, "frames": 6 },
+      "fps": 10,
+      "maxColors": 16
+    },
+    {
+      "id": "e3-telegraph",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/e3-model.png",
+      "prompt": "ONE wide image with exactly 4 separate full-body poses of {e3}, identical to the input model, a clear melon-lob wind-up facing right: spots target, draws melon behind shoulder, twists torso, maximum high throwing anticipation. Wide pure-magenta gaps, common foot line, no release or impact, shoulder crate stable",
+      "outPath": "assets/enemies/e3-telegraph.sheet.png",
+      "cells": { "fw": 80, "fh": 80, "frames": 4 },
+      "fps": 10,
+      "maxColors": 16
+    },
+    {
+      "id": "e3-attack",
+      "mode": "grok-sheet",
+      "ref": "art/src/raw/e3-model.png",
+      "prompt": "ONE wide image with exactly 5 separate full-body poses of {e3}, identical to the input model, throwing one melon in an overhand arc facing right: final antic with melon, arm acceleration, clean release with melon just leaving hand, full follow-through, recovery drawing the next melon from crate. Wide pure-magenta gaps, common foot line, never more than one visible melon per pose",
+      "outPath": "assets/enemies/e3-attack.sheet.png",
+      "cells": { "fw": 80, "fh": 80, "frames": 5 },
+      "fps": 15,
+      "maxColors": 16
+    },
+    {
+      "id": "e4-model", "mode": "grok-sheet",
+      "prompt": "ONE image with exactly 1 full-body model pose of {e4}, side view facing right in a readable hunched sprint-fighter stance, entire head-to-feet figure visible with generous pure-magenta space. Canonical model plate for all E4 animation; adult proportions and extremely long narrow legs",
+      "outPath": "assets/enemies/e4-model.png", "cells": { "fw": 80, "fh": 80, "frames": 1 }, "fps": 0, "maxColors": 16
+    },
+    {
+      "id": "e4-idle", "mode": "grok-sheet", "ref": "art/src/raw/e4-model.png",
+      "prompt": "ONE wide image with exactly 4 separate full-body poses of {e4}, identical to the input model, side view facing right; wide pure-magenta gaps, poses never touch or overlap, same scale, common foot line, outfit/patch/accessories unchanged; a 4-pose cocky breathing and weight-shift cycle",
+      "outPath": "assets/enemies/e4-idle.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 4 }, "fps": 8, "maxColors": 16
+    },
+    {
+      "id": "e4-walk", "mode": "grok-sheet", "ref": "art/src/raw/e4-model.png",
+      "prompt": "ONE wide image with exactly 6 separate full-body poses of {e4}, identical to the input model, side view facing right; wide pure-magenta gaps, poses never touch or overlap, same scale, common foot line, outfit/patch/accessories unchanged; contact, down, passing, opposite contact, opposite down, opposite passing walk cycle",
+      "outPath": "assets/enemies/e4-walk.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 6 }, "fps": 10, "maxColors": 16
+    },
+    {
+      "id": "e4-telegraph", "mode": "grok-sheet", "ref": "art/src/raw/e4-model.png",
+      "prompt": "ONE wide image with exactly 4 separate full-body poses of {e4}, identical to the input model, side view facing right; wide pure-magenta gaps, poses never touch or overlap, same scale, common foot line, outfit/patch/accessories unchanged; dash-tackle wind-up: spots target, drops shoulders, plants rear foot, maximum coiled sprint start; no impact",
+      "outPath": "assets/enemies/e4-telegraph.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 4 }, "fps": 10, "maxColors": 16
+    },
+    {
+      "id": "e4-attack", "mode": "grok-sheet", "ref": "art/src/raw/e4-model.png",
+      "prompt": "ONE wide image with exactly 5 separate full-body poses of {e4}, identical to the input model, side view facing right; wide pure-magenta gaps, poses never touch or overlap, same scale, common foot line, outfit/patch/accessories unchanged; dash tackle: final antic, launch smear, shoulder-first impact, long-stride follow-through, skidding recovery",
+      "outPath": "assets/enemies/e4-attack.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 5 }, "fps": 15, "maxColors": 16
+    },
+    {
+      "id": "e5-model", "mode": "grok-sheet",
+      "prompt": "ONE image with exactly 1 full-body model pose of {e5}, side view facing right in a readable low wide wrestling stance, entire head-to-feet figure visible with generous pure-magenta space. Canonical model plate for all E5 animation; broad adult proportions",
+      "outPath": "assets/enemies/e5-model.png", "cells": { "fw": 80, "fh": 80, "frames": 1 }, "fps": 0, "maxColors": 16
+    },
+    {
+      "id": "e5-idle", "mode": "grok-sheet", "ref": "art/src/raw/e5-model.png",
+      "prompt": "ONE wide image with exactly 4 separate full-body poses of {e5}, identical to the input model, side view facing right; wide pure-magenta gaps, poses never touch or overlap, same scale, common foot line, outfit/patch/accessories unchanged; a 4-pose cocky breathing and weight-shift cycle",
+      "outPath": "assets/enemies/e5-idle.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 4 }, "fps": 8, "maxColors": 16
+    },
+    {
+      "id": "e5-walk", "mode": "grok-sheet", "ref": "art/src/raw/e5-model.png",
+      "prompt": "ONE wide image with exactly 6 separate full-body poses of {e5}, identical to the input model, side view facing right; wide pure-magenta gaps, poses never touch or overlap, same scale, common foot line, outfit/patch/accessories unchanged; contact, down, passing, opposite contact, opposite down, opposite passing walk cycle",
+      "outPath": "assets/enemies/e5-walk.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 6 }, "fps": 10, "maxColors": 16
+    },
+    {
+      "id": "e5-telegraph", "mode": "grok-sheet", "ref": "art/src/raw/e5-model.png",
+      "prompt": "ONE wide image with exactly 4 separate full-body poses of {e5}, identical to the input model, side view facing right; wide pure-magenta gaps, poses never touch or overlap, same scale, common foot line, outfit/patch/accessories unchanged; bear-grab wind-up: stalks low, opens arms, steps in, maximum reaching anticipation; no contact",
+      "outPath": "assets/enemies/e5-telegraph.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 4 }, "fps": 10, "maxColors": 16
+    },
+    {
+      "id": "e5-attack", "mode": "grok-sheet", "ref": "art/src/raw/e5-model.png",
+      "prompt": "ONE 1536x1024 landscape image with exactly 5 separate full-body poses of {e5}, identical to the input model, side view facing right; every pose is one intact connected figure from head through torso to legs with no horizontal gap, slice, missing waist, floating torso, or detached body part; wide pure-magenta gutters only between poses, poses never touch or overlap, same scale, common foot line, outfit/patch/accessories unchanged; bear grab: final antic, two-hand lunge, clamp pose, crushing hold, release and recovery",
+      "outPath": "assets/enemies/e5-attack.sheet.png", "cells": { "fw": 80, "fh": 80, "frames": 5 }, "fps": 15, "maxColors": 16
+    },
+    {
+      "id": "e6-model", "mode": "grok-sheet", "prompt": "ONE image with exactly 1 full-body model pose of {e6}, side view facing right in a braced shield stance, entire head-to-feet figure and complete shield visible with generous pure-magenta space; canonical model plate for all E6 animation", "outPath": "assets/enemies/e6-model.png", "cells": { "fw": 96, "fh": 96, "frames": 1 }, "fps": 0, "maxColors": 18
+    },
+    {
+      "id": "e6-idle", "mode": "grok-sheet", "ref": "art/src/raw/e6-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {e6}, identical to the input model, side view facing right; wide pure-magenta gaps, poses never touch, same scale/common foot line, shield/visor/patch unchanged; guarded breathing and weight-shift cycle", "outPath": "assets/enemies/e6-idle.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 4 }, "fps": 8, "maxColors": 18
+    },
+    {
+      "id": "e6-walk", "mode": "grok-sheet", "ref": "art/src/raw/e6-model.png", "prompt": "ONE wide image with exactly 6 separate full-body poses of {e6}, identical to the input model, side view facing right; wide pure-magenta gaps, poses never touch, same scale/common foot line, shield/visor/patch unchanged; contact, down, passing, opposite contact, opposite down, opposite passing guarded walk", "outPath": "assets/enemies/e6-walk.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 6 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "e6-telegraph", "mode": "grok-sheet", "ref": "art/src/raw/e6-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {e6}, identical to the input model, side view facing right; wide pure-magenta gaps, same scale/common foot line; shield-bash wind-up: braces, raises shield, plants rear foot, maximum coiled shield anticipation; no impact", "outPath": "assets/enemies/e6-telegraph.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 4 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "e6-attack", "mode": "grok-sheet", "ref": "art/src/raw/e6-model.png", "prompt": "ONE wide image with exactly 5 separate full-body poses of {e6}, identical to the input model, side view facing right; wide pure-magenta gaps, same scale/common foot line; shield bash: final antic, shield-thrust smear, shield-first impact, shove-through, recovery", "outPath": "assets/enemies/e6-attack.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 5 }, "fps": 15, "maxColors": 18
+    },
+    {
+      "id": "e7-model", "mode": "grok-sheet", "prompt": "ONE image with exactly 1 full-body model pose of {e7}, side view facing right in a narrow closed-cape stance, entire head-to-feet figure visible with generous pure-magenta space; canonical model plate, cape is a mechanical glider and never wings", "outPath": "assets/enemies/e7-model.png", "cells": { "fw": 96, "fh": 96, "frames": 1 }, "fps": 0, "maxColors": 18
+    },
+    {
+      "id": "e7-idle", "mode": "grok-sheet", "ref": "art/src/raw/e7-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {e7}, identical to the input model, side view facing right; wide pure-magenta gaps, same scale/common foot line, goggles/wraps/closed glider cape/patch unchanged; alert breathing and cape-settle cycle", "outPath": "assets/enemies/e7-idle.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 4 }, "fps": 8, "maxColors": 18
+    },
+    {
+      "id": "e7-walk", "mode": "grok-sheet", "ref": "art/src/raw/e7-model.png", "prompt": "ONE wide image with exactly 6 separate full-body poses of {e7}, identical to the input model, side view facing right; wide pure-magenta gaps, same scale/common foot line; contact, down, passing, opposite contact, opposite down, opposite passing walk, closed glider cape stable", "outPath": "assets/enemies/e7-walk.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 6 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "e7-telegraph", "mode": "grok-sheet", "ref": "art/src/raw/e7-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {e7}, identical to the input model, side view facing right; wide pure-magenta gaps, same scale/common foot line; jump-kick wind-up: cape parts, crouches, coils, maximum launch anticipation; no impact and never bird wings", "outPath": "assets/enemies/e7-telegraph.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 4 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "e7-attack", "mode": "grok-sheet", "ref": "art/src/raw/e7-model.png", "prompt": "ONE wide image with exactly 5 separate full-body poses of {e7}, identical to the input model, side view facing right; wide pure-magenta gaps, stable body scale; jump kick: crouch, launch, airborne kick, extended impact, crumple-land; patchwork glider cape never becomes wings", "outPath": "assets/enemies/e7-attack.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 5 }, "fps": 15, "maxColors": 18
+    },
+    {
+      "id": "e7-glide", "mode": "grok-sheet", "ref": "art/src/raw/e7-model.png", "prompt": "ONE wide image with exactly 4 separate airborne full-body poses of {e7}, identical to the input model, cape fully open at double body width, stable glide loop with subtle fabric ripple, feet off the common reference line, same body scale, wide pure-magenta gaps, never bird or angel wings", "outPath": "assets/enemies/e7-glide.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 4 }, "fps": 12, "maxColors": 18
+    },
+    {
+      "id": "e8-model", "mode": "grok-sheet", "prompt": "ONE image with exactly 1 full-body model pose of {e8}, side view facing right with arms-crossed confidence, entire head-to-feet figure visible with generous pure-magenta space; canonical model plate for all E8 animation", "outPath": "assets/enemies/e8-model.png", "cells": { "fw": 96, "fh": 96, "frames": 1 }, "fps": 0, "maxColors": 18
+    },
+    {
+      "id": "e8-idle", "mode": "grok-sheet", "ref": "art/src/raw/e8-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {e8}, identical to the input model, side view facing right; wide pure-magenta gaps, same scale/common foot line, blazer/sunglasses/rings/patch unchanged; arrogant arms-crossed breathing and weight-shift cycle", "outPath": "assets/enemies/e8-idle.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 4 }, "fps": 8, "maxColors": 18
+    },
+    {
+      "id": "e8-walk", "mode": "grok-sheet", "ref": "art/src/raw/e8-model.png", "prompt": "ONE wide image with exactly 6 separate full-body poses of {e8}, identical to the input model, side view facing right; wide pure-magenta gaps, same scale/common foot line; contact, down, passing, opposite contact, opposite down, opposite passing confident walk", "outPath": "assets/enemies/e8-walk.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 6 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "e8-telegraph", "mode": "grok-sheet", "ref": "art/src/raw/e8-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {e8}, identical to the input model, side view facing right; wide pure-magenta gaps, same scale/common foot line; two-hit wind-up: uncrosses arms, shoulder roll, steps in, maximum striking anticipation; no impact", "outPath": "assets/enemies/e8-telegraph.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 4 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "e8-attack", "mode": "grok-sheet", "ref": "art/src/raw/e8-model.png", "prompt": "ONE wide image with exactly 5 separate full-body poses of {e8}, identical to the input model, side view facing right; wide pure-magenta gaps, same scale/common foot line; two-hit combo: antic, first swing smear, first impact, second swing impact, guarded recovery", "outPath": "assets/enemies/e8-attack.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 5 }, "fps": 15, "maxColors": 18
+    },
+    {
+      "id": "e8-counter", "mode": "grok-sheet", "ref": "art/src/raw/e8-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {e8}, identical to the input model, stationary counter stance: notices grip, blue-cyan guard flash pose, redirects attacker with open palm, resets guard; no second character, no attack impact, wide pure-magenta gaps", "outPath": "assets/enemies/e8-counter.sheet.png", "cells": { "fw": 96, "fh": 96, "frames": 4 }, "fps": 12, "maxColors": 18
+    },
+    {
+      "id": "b1-model", "mode": "grok-sheet", "prompt": "ONE image with exactly 1 full-body model pose of {b1}, side view facing right in a massive gatekeeper stance, entire head-to-feet figure visible with generous pure-magenta space; canonical boss model, adult proportions, clipboard remains a normal office clipboard", "outPath": "assets/bosses/b1-model.png", "cells": { "fw": 128, "fh": 128, "frames": 1 }, "fps": 0, "maxColors": 18
+    },
+    {
+      "id": "b1-walk", "mode": "grok-sheet", "ref": "art/src/raw/b1-model.png", "prompt": "ONE 1536x1024 landscape image with exactly 6 separate full-body poses of {b1}, identical to the input model, side view facing right; wide pure-magenta gutters, same scale/common foot line; clipboard held and fully visible in EVERY pose, laminated badge/lanyard, belt padlocks, and gold ring all unchanged and fully visible in EVERY pose; massive lumbering contact, down, passing, opposite contact, opposite down, opposite passing walk", "outPath": "assets/bosses/b1-walk.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 6 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "b1-telegraph", "mode": "grok-sheet", "ref": "art/src/raw/b1-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {b1}, identical to the input model, side view facing right; wide pure-magenta gaps, same scale/common foot line; readable boss wind-up: notices target, lowers shoulders, plants rear foot, maximum coiled anticipation; no impact", "outPath": "assets/bosses/b1-telegraph.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 4 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "b1-charge", "mode": "grok-sheet", "ref": "art/src/raw/b1-model.png", "prompt": "ONE 1536x1024 landscape image with exactly 6 separate full-body poses of {b1}, identical to the input model, side view facing right; wide pure-magenta gutters, stable scale; clipboard held and fully visible in EVERY pose, laminated badge/lanyard, belt padlocks, and gold ring all unchanged and fully visible in EVERY pose; charge attack: coil, launch smear contained inside its cell, shoulder rush, shoulder-first impact, drive through, recover", "outPath": "assets/bosses/b1-charge.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 6 }, "fps": 15, "maxColors": 18
+    },
+    {
+      "id": "b2-model", "mode": "grok-sheet", "prompt": "ONE image with exactly 1 full-body model pose of {b2}, side view facing right in an airborne-zoner stance, entire head-to-feet figure and complete folded glider rig visible with generous pure-magenta space; canonical boss model", "outPath": "assets/bosses/b2-model.png", "cells": { "fw": 128, "fh": 128, "frames": 1 }, "fps": 0, "maxColors": 18
+    },
+    {
+      "id": "b2-telegraph", "mode": "grok-sheet", "ref": "art/src/raw/b2-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {b2}, identical to the input model, side view facing right; wide pure-magenta gaps, stable scale, complete glider rig and weighted kite-line unchanged; readable attack wind-up: spots target, gathers line, opens glider, maximum airborne anticipation; no impact", "outPath": "assets/bosses/b2-telegraph.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 4 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "b2-lash", "mode": "grok-sheet", "ref": "art/src/raw/b2-model.png", "prompt": "ONE wide image with exactly 8 separate full-body poses of {b2}, identical to the input model, side view facing right; wide pure-magenta gaps, stable body scale; weighted kite-line lash: wind-up, release, readable line arc, snap impact, follow-through, recoil, gather line, recover; one character only", "outPath": "assets/bosses/b2-lash.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 8 }, "fps": 15, "maxColors": 18
+    },
+    {
+      "id": "b2-spin", "mode": "grok-sheet", "ref": "art/src/raw/b2-model.png", "prompt": "ONE wide image with exactly 8 separate full-body poses of {b2}, identical to the input model, side view facing right; wide pure-magenta gaps, stable body scale; radial patchwork-cape and weighted-line spin attack from coil through full rotation to recovery; never bird wings", "outPath": "assets/bosses/b2-spin.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 8 }, "fps": 15, "maxColors": 18
+    },
+    {
+      "id": "b3-model", "mode": "grok-sheet", "prompt": "ONE image with exactly 1 full-body model pose of {b3}, side view facing right in a huge rival-grappler stance, entire head-to-feet figure, tiny cap and complete coal shovel visible with generous pure-magenta space; canonical boss model", "outPath": "assets/bosses/b3-model.png", "cells": { "fw": 128, "fh": 128, "frames": 1 }, "fps": 0, "maxColors": 18
+    },
+    {
+      "id": "b3-idle", "mode": "grok-sheet", "ref": "art/src/raw/b3-model.png", "prompt": "ONE wide image with a SINGLE horizontal row of exactly 6 separate full-body poses of {b3}, identical to the input model, side view facing right; wide pure-magenta gaps, poses never touch or overlap, same body scale and common foot line; restrained heavy idle loop: chest breath, weight settles, one shoulder rolls, ember shovel shifts slightly, weight returns, guarded reset. Preserve the same face, enormous build, comically tiny conductor cap, cutoff denim over black leather, soot-black shirt and forearms, and complete coal shovel with glowing ember blade in every pose; exactly one character and one shovel per pose, no new or missing accessories", "outPath": "assets/bosses/b3-idle.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 6 }, "fps": 8, "maxColors": 18
+    },
+    {
+      "id": "b3-telegraph", "mode": "grok-sheet", "ref": "art/src/raw/b3-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {b3}, identical to the input model, side view facing right; wide pure-magenta gaps, stable scale/common foot line, tiny cap and coal shovel unchanged; readable shovel attack wind-up: notices target, grips shovel, draws ember blade back, maximum coiled anticipation; no impact", "outPath": "assets/bosses/b3-telegraph.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 4 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "b3-tunnel", "mode": "grok-sheet", "ref": "art/src/raw/b3-model.png", "prompt": "ONE 1536x1024 landscape image with exactly 8 separate full-body poses of {b3}, identical to the input model, side view facing right; wide pure-magenta gutters, stable scale; the complete coal shovel with connected handle and glowing blade is held and fully visible in EVERY pose; sparks stay inside their pose cell; low tunnel charge: crouch, brace, launch, rush, shoulder impact, shovel scrape, skid, recover", "outPath": "assets/bosses/b3-tunnel.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 8 }, "fps": 15, "maxColors": 18
+    },
+    {
+      "id": "b4-model", "mode": "grok-sheet", "prompt": "ONE image with exactly 1 full-body model pose of {b4}, side view facing right in a massive port-bruiser stance, entire head-to-feet figure, hard hat and crane remote visible with generous pure-magenta space; canonical boss model", "outPath": "assets/bosses/b4-model.png", "cells": { "fw": 128, "fh": 128, "frames": 1 }, "fps": 0, "maxColors": 18
+    },
+    {
+      "id": "b4-idle", "mode": "grok-sheet", "ref": "art/src/raw/b4-model.png", "prompt": "ONE wide image with a SINGLE horizontal row of exactly 6 separate full-body poses of {b4}, identical to the input model, side view facing right; wide pure-magenta gaps, poses never touch or overlap, same body scale and common foot line; restrained massive idle loop: chest breath, wet coat settles, weight shifts, remote hand checks position, weight returns, guarded reset. Preserve the same face and build, exactly one cigarette, forearm crane remote, decorated hard hat, yellow rain slicker open over the same loud bowling shirt, work gloves, steel boots, and bell-shaped wet coat hem in every pose; exactly one character per pose, no new or missing accessories", "outPath": "assets/bosses/b4-idle.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 6 }, "fps": 8, "maxColors": 18
+    },
+    {
+      "id": "b4-walk", "mode": "grok-sheet", "ref": "art/src/raw/b4-model.png", "prompt": "ONE wide image with a SINGLE horizontal row of exactly 6 separate full-body poses of {b4}, identical to the input model, side view facing right; wide pure-magenta gaps, poses never touch or overlap, same body scale and common foot line; ponderous walk cycle in this order: right-boot contact, down, passing, left-boot contact, down, passing. Preserve the same face and build, exactly one cigarette, forearm crane remote, decorated hard hat, yellow rain slicker open over the same loud bowling shirt, work gloves, steel boots, and bell-shaped wet coat hem in every pose; remote stays attached to the same forearm, exactly one character per pose, no new or missing accessories", "outPath": "assets/bosses/b4-walk.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 6 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "b4-telegraph", "mode": "grok-sheet", "ref": "art/src/raw/b4-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {b4}, identical to the input model, side view facing right; wide pure-magenta gaps, stable scale/common foot line, hard hat/rain slicker/crane remote unchanged; readable hammer wind-up: notices target, raises remote arm, plants steel boots, maximum overhead anticipation; no impact", "outPath": "assets/bosses/b4-telegraph.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 4 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "b4-cab", "mode": "grok-sheet", "ref": "art/src/raw/b4-model.png", "prompt": "ONE image with exactly 1 waist-up control pose of {b4}, identical to the input model, seated inside a compact fictional crane cab with both hands at controls, hard hat and remote visible, not a ground fighter, generous pure-magenta space", "outPath": "assets/bosses/b4-cab.png", "cells": { "fw": 128, "fh": 128, "frames": 1 }, "fps": 0, "maxColors": 18
+    },
+    {
+      "id": "b4-signal", "mode": "grok-sheet", "ref": "art/src/raw/b4-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {b4}, identical to the input model, side view facing right; wide pure-magenta gaps, stable scale/common foot line; container-call signal: checks remote, raises remote arm, points overhead, holds maximum call pose; no impact", "outPath": "assets/bosses/b4-signal.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 4 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "b4-hammer", "mode": "grok-sheet", "ref": "art/src/raw/b4-model.png", "prompt": "ONE wide image with exactly 6 separate full-body poses of {b4}, identical to the input model, side view facing right; wide pure-magenta gaps, stable scale/common foot line; heavy rain-stomp hammer blow: coil, raise fists, downward smash, impact, wet-coat follow-through, recover", "outPath": "assets/bosses/b4-hammer.sheet.png", "cells": { "fw": 128, "fh": 128, "frames": 6 }, "fps": 15, "maxColors": 18
+    },
+    {
+      "id": "b5-model", "mode": "grok-sheet", "prompt": "ONE image with exactly 1 full-body model pose of {b5}, side view facing right in a theatrical promoter stance, entire head-to-feet figure, snake ring and gold cane visible with generous pure-magenta space; canonical final-boss model, only Rex uses hot yellow gold", "outPath": "assets/bosses/b5-model.png", "cells": { "fw": 160, "fh": 160, "frames": 1 }, "fps": 0, "maxColors": 18
+    },
+    {
+      "id": "b5-telegraph", "mode": "grok-sheet", "ref": "art/src/raw/b5-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {b5}, identical to the input model, side view facing right; wide pure-magenta gaps, stable scale/common foot line, white suit/hot-gold trim/snake ring/cane unchanged; readable dirty-combo wind-up: points at target, lowers cane, rolls shoulder, maximum striking anticipation; no impact", "outPath": "assets/bosses/b5-telegraph.sheet.png", "cells": { "fw": 160, "fh": 160, "frames": 4 }, "fps": 10, "maxColors": 18
+    },
+    {
+      "id": "b5-counter", "mode": "grok-sheet", "ref": "art/src/raw/b5-model.png", "prompt": "ONE wide image with exactly 4 separate full-body poses of {b5}, identical to the input model, stationary counter stance: notices grip, cyan guard flash, redirects attacker with cane hand, resets guard; no second character, wide pure-magenta gaps", "outPath": "assets/bosses/b5-counter.sheet.png", "cells": { "fw": 160, "fh": 160, "frames": 4 }, "fps": 12, "maxColors": 18
+    },
+    {
+      "id": "pickup-core",
+      "mode": "grok-sheet",
+      "prompt": "ONE wide image with exactly 4 separate centered item sprites in this exact order: a red enamel tea thermos with silver cap; a blue-and-white ceramic bowl of golden plov rice; a small gold judo belt-knot meter charm with red cord; a round gold score medal with plain red ribbon. Each is a single compact object, no people, no hands, no labels, same visual scale, wide pure-magenta gaps, no shadows connecting items",
+      "outPath": "assets/pickups/core.sheet.png",
+      "cells": { "fw": 32, "fh": 32, "frames": 4 },
+      "fps": 0,
+      "anchor": "center",
+      "maxColors": 12
+    },
+    {
+      "id": "proj-melon",
+      "mode": "grok-sheet",
+      "prompt": "ONE wide image with exactly 4 separate centered frames of the same small whole striped green melon spinning through the air: quarter-turn, half-turn, three-quarter-turn, full turn. One melon per frame, stable size and silhouette, no person, no hands, wide pure-magenta gaps, no motion trail connecting frames",
+      "outPath": "assets/projectiles/melon.sheet.png",
+      "cells": { "fw": 24, "fh": 24, "frames": 4 },
+      "fps": 15,
+      "anchor": "center",
+      "maxColors": 10
+    },
+    {
+      "id": "w1-ground",
+      "mode": "grok-crop",
+      "noSuffix": true,
       "prompt": "16-bit SNES pixel art background texture, a wide horizontal strip completely filled edge-to-edge with the ground of a mountain village street at dawn: packed dirt road in warm ochre and brown tones with scattered flat grey-brown stones and pebbles, wheel ruts, patches and tufts of muted dusty green grass along the upper part, seen from a slightly top-down beat-em-up angle, painterly irregular clusters of flat color, 3-4 shade steps per hue, chunky pixels, no dithering, no anti-aliasing, no gradients, absolutely no visible grid or repeating tile pattern, CRITICAL: the texture must be SEAMLESSLY TILEABLE horizontally — the extreme left edge column and extreme right edge column of the image must match each other pixel-for-pixel in color and pattern so copies placed side by side show no seam, keep grass patches and stones away from the left and right edges, plain dirt at both edges, no sky, no horizon, no buildings, no characters, no objects, no text, no watermarks",
-      "rect": "0,0,1408,470", "size": "960,96", "wrap": "48",
-      "outPath": "assets/bg/w1-ground.png", "cells": { "fw": 960, "fh": 96, "frames": 1 }, "fps": 0
+      "rect": "0,0,1408,470",
+      "size": "960,96",
+      "wrap": "48",
+      "outPath": "assets/bg/w1-ground.png",
+      "cells": {
+        "fw": 960,
+        "fh": 96,
+        "frames": 1
+      },
+      "fps": 0
     },
     {
-      "id": "w1-sky", "mode": "crop", "src": "assets/bg/w1-dawn.png",
-      "rect": "0,0,1280,55", "size": "480,270",
-      "outPath": "assets/bg/w1-sky.png", "cells": { "fw": 480, "fh": 270, "frames": 1 }, "fps": 0
+      "id": "w1-sky",
+      "mode": "crop",
+      "src": "assets/bg/w1-dawn.png",
+      "rect": "0,0,1280,55",
+      "size": "480,270",
+      "outPath": "assets/bg/w1-sky.png",
+      "cells": {
+        "fw": 480,
+        "fh": 270,
+        "frames": 1
+      },
+      "fps": 0
     },
     {
-      "id": "w1-far", "mode": "crop", "src": "assets/bg/w1-dawn.png",
-      "rect": "0,60,1280,240", "size": "960,180",
-      "outPath": "assets/bg/w1-far.png", "cells": { "fw": 960, "fh": 180, "frames": 1 }, "fps": 0
+      "id": "w1-far",
+      "mode": "crop",
+      "src": "assets/bg/w1-dawn.png",
+      "rect": "0,60,1280,240",
+      "size": "960,180",
+      "outPath": "assets/bg/w1-far.png",
+      "cells": {
+        "fw": 960,
+        "fh": 180,
+        "frames": 1
+      },
+      "fps": 0
     },
     {
-      "id": "w1-mid", "mode": "crop", "src": "assets/bg/w1-dawn.png",
-      "rect": "0,400,1280,293", "size": "960,220",
-      "outPath": "assets/bg/w1-mid.png", "cells": { "fw": 960, "fh": 220, "frames": 1 }, "fps": 0
+      "id": "w1-mid",
+      "mode": "crop",
+      "src": "assets/bg/w1-dawn.png",
+      "rect": "0,400,1280,293",
+      "size": "960,220",
+      "outPath": "assets/bg/w1-mid.png",
+      "cells": {
+        "fw": 960,
+        "fh": 220,
+        "frames": 1
+      },
+      "fps": 0
     },
     {
-      "id": "hud-idris", "mode": "crop", "src": "assets/portraits/idris-192.png",
-      "rect": "450,50,400,400", "size": "64,64",
-      "outPath": "assets/ui/hud-idris-64.png", "cells": { "fw": 64, "fh": 64, "frames": 1 }, "fps": 0
+      "id": "w2-sky", "mode": "crop", "src": "art/src/raw/w2-master.png",
+      "rect": "0,0,1672,280", "size": "480,270", "outPath": "assets/bg/w2-sky.png",
+      "cells": { "fw": 480, "fh": 270, "frames": 1 }, "fps": 0
     },
     {
-      "id": "hud-otajon", "mode": "crop", "src": "assets/portraits/otajon-192.png",
-      "rect": "450,50,400,400", "size": "64,64",
-      "outPath": "assets/ui/hud-otajon-64.png", "cells": { "fw": 64, "fh": 64, "frames": 1 }, "fps": 0
+      "id": "w2-far", "mode": "crop", "src": "art/src/raw/w2-master.png",
+      "rect": "0,180,1672,320", "size": "960,180", "outPath": "assets/bg/w2-far.png",
+      "cells": { "fw": 960, "fh": 180, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w2-mid", "mode": "crop", "src": "art/src/raw/w2-master.png",
+      "rect": "0,380,1672,480", "size": "960,220", "outPath": "assets/bg/w2-mid.png",
+      "cells": { "fw": 960, "fh": 220, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w2-ground", "mode": "world-ground", "world": 2,
+      "outPath": "assets/bg/w2-ground.png",
+      "cells": { "fw": 960, "fh": 96, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w3-sky", "mode": "crop", "src": "art/src/raw/w3-master.png",
+      "rect": "0,0,1672,280", "size": "480,270", "outPath": "assets/bg/w3-sky.png",
+      "cells": { "fw": 480, "fh": 270, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w3-far", "mode": "crop", "src": "art/src/raw/w3-master.png",
+      "rect": "0,180,1672,320", "size": "960,180", "outPath": "assets/bg/w3-far.png",
+      "cells": { "fw": 960, "fh": 180, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w3-mid", "mode": "crop", "src": "art/src/raw/w3-master.png",
+      "rect": "0,380,1672,480", "size": "960,220", "outPath": "assets/bg/w3-mid.png",
+      "cells": { "fw": 960, "fh": 220, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w3-ground", "mode": "world-ground", "world": 3,
+      "outPath": "assets/bg/w3-ground.png",
+      "cells": { "fw": 960, "fh": 96, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w4-sky", "mode": "crop", "src": "art/src/raw/w4-master.png",
+      "rect": "0,0,1672,280", "size": "480,270", "outPath": "assets/bg/w4-sky.png",
+      "cells": { "fw": 480, "fh": 270, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w4-far", "mode": "crop", "src": "art/src/raw/w4-master.png",
+      "rect": "0,180,1672,320", "size": "960,180", "outPath": "assets/bg/w4-far.png",
+      "cells": { "fw": 960, "fh": 180, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w4-mid", "mode": "crop", "src": "art/src/raw/w4-master.png",
+      "rect": "0,380,1672,480", "size": "960,220", "outPath": "assets/bg/w4-mid.png",
+      "cells": { "fw": 960, "fh": 220, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w4-ground", "mode": "world-ground", "world": 4,
+      "outPath": "assets/bg/w4-ground.png",
+      "cells": { "fw": 960, "fh": 96, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w5-sky", "mode": "crop", "src": "art/src/raw/w5-master.png",
+      "rect": "0,0,1672,280", "size": "480,270", "outPath": "assets/bg/w5-sky.png",
+      "cells": { "fw": 480, "fh": 270, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w5-far", "mode": "crop", "src": "art/src/raw/w5-master.png",
+      "rect": "0,180,1672,320", "size": "960,180", "outPath": "assets/bg/w5-far.png",
+      "cells": { "fw": 960, "fh": 180, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w5-mid", "mode": "crop", "src": "art/src/raw/w5-master.png",
+      "rect": "0,380,1672,480", "size": "960,220", "outPath": "assets/bg/w5-mid.png",
+      "cells": { "fw": 960, "fh": 220, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "w5-ground", "mode": "world-ground", "world": 5,
+      "outPath": "assets/bg/w5-ground.png",
+      "cells": { "fw": 960, "fh": 96, "frames": 1 }, "fps": 0
+    },
+    {
+      "id": "hud-idris",
+      "mode": "crop",
+      "src": "assets/portraits/idris-192.png",
+      "rect": "450,50,400,400",
+      "size": "64,64",
+      "outPath": "assets/ui/hud-idris-64.png",
+      "cells": {
+        "fw": 64,
+        "fh": 64,
+        "frames": 1
+      },
+      "fps": 0
+    },
+    {
+      "id": "hud-otajon",
+      "mode": "crop",
+      "src": "assets/portraits/otajon-192.png",
+      "rect": "450,50,400,400",
+      "size": "64,64",
+      "outPath": "assets/ui/hud-otajon-64.png",
+      "cells": {
+        "fw": 64,
+        "fh": 64,
+        "frames": 1
+      },
+      "fps": 0
+    },
+    {
+      "id": "dummy-idle",
+      "mode": "single-repeat",
+      "outPath": "assets/enemies/dummy-idle.sheet.png",
+      "cells": {
+        "fw": 80,
+        "fh": 80,
+        "frames": 4
+      },
+      "fps": 4,
+      "src": "art/src/raw/dummy-idle.png"
     }
   ]
 }

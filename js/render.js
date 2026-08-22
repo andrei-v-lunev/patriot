@@ -46,7 +46,8 @@
   function collect(state) {
     var n = 0;
     function add(ent, kind) {
-      if (!ent || ent.alive === false) return;
+      /* Solo tag partners remain alive for bench regen but must not be drawn. */
+      if (!ent || ent.alive === false || (kind === "hero" && ent.benched)) return;
       if (n >= 64) return;
       var slot = sortBuf[n];
       slot.d = ent.d || 0;
@@ -82,6 +83,48 @@
     if (beltMode(state)) insertSort(n);
     for (i = 0; i < n; i++) {
       if (window.PSprites) PSprites.drawEntity(ctx, sortBuf[i].ent, cam, alpha);
+    }
+  }
+
+  function drawBossHazards(ctx, state, cam, reducedMotion) {
+    var c = state && state.cage, x, y, edge, i, fy;
+    if (!c) return;
+    if (c.walls) {
+      ctx.fillStyle = reducedMotion ? "#9DEBFF" : (((state.tick >> 2) & 1) ? "#49D7FF" : "#D8FBFF");
+      for (i = 0; i < 4; i++) {
+        if (!c.walls[i]) continue;
+        if (i === 0) ctx.fillRect(0, 186, 4, 60);
+        else if (i === 1) ctx.fillRect(W - 4, 186, 4, 60);
+        else {
+          fy = window.PLayers ? PLayers.floorY(i === 2 ? 0 : 52) : (i === 2 ? 246 : 194);
+          ctx.fillRect(0, fy - 8, W, 4);
+        }
+      }
+    }
+    if (c.shoveTel > 0) {
+      edge = c.edge | 0;
+      ctx.fillStyle = "rgba(224,59,59,0.72)";
+      /* Match tickB5 exactly: side edges threaten every depth; near/far
+         edges cover d<14 and d>46 respectively (floorY = 246-d). */
+      if (edge === 0) ctx.fillRect(0, 186, 12, 60);
+      else if (edge === 1) ctx.fillRect(W - 12, 186, 12, 60);
+      else if (edge === 2) ctx.fillRect(0, 232, W, 14);
+      else ctx.fillRect(0, 186, W, 14);
+    }
+    if (c.weightTel > 0 || c.weightImpactT > 0) {
+      x = ((c.weightX || 240) - ((cam && cam.x) || 0)) | 0;
+      y = window.PLayers ? PLayers.floorY(c.weightD || 24) : 222;
+      if (c.weightTel > 0) {
+        ctx.fillStyle = "rgba(224,59,59,0.66)";
+        /* Weight damage is x±28 and d±14; show that entire footprint. */
+        ctx.fillRect(x - 28, y - 14, 56, 28);
+        ctx.fillStyle = "rgba(242,193,78,0.82)";
+        ctx.fillRect(x - 20, y - 2, 40, 4);
+      } else {
+        ctx.fillStyle = "#2A2530"; ctx.fillRect(x - 18, y - 28, 36, 28);
+        ctx.fillStyle = "#6C7385"; ctx.fillRect(x - 14, y - 24, 28, 18);
+        ctx.fillStyle = "#F2C14E"; ctx.fillRect(x - 2, y - 22, 4, 14);
+      }
     }
   }
 
@@ -155,16 +198,33 @@
     ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = "#2A3B63";
     ctx.fillRect(0, 0, W, H);
-    var cam = camOf(state);
-    if (window.PFx && PFx.shake) PFx.shake(cam, state);
+    var sourceCam = camOf(state);
+    var cam = { x: sourceCam.x || 0, z: sourceCam.z || 0, bgX: sourceCam.bgX,
+      shakeX: sourceCam.shakeX || 0, shakeZ: sourceCam.shakeZ || 0 };
+    var prefs = window.PSettings && PSettings.get ? PSettings.get() : null;
+    if (prefs && prefs.reducedMotion) { cam.shakeX = 0; cam.shakeZ = 0; }
+    else if (window.PFx && PFx.shake) {
+      PFx.shake(cam, state);
+      var shakeScale = prefs && prefs.video ? prefs.video.screenShake : 1;
+      cam.shakeX *= shakeScale == null ? 1 : shakeScale;
+      cam.shakeZ *= shakeScale == null ? 1 : shakeScale;
+    }
     var world = worldOf(state);
-    if (window.PLayers) PLayers.draw(ctx, cam, world);
+    var seg = state && (state.segment || state.seg);
+    var backdrop = seg && seg.arena && seg.arena.backdrop;
+    if (window.PLayers) PLayers.draw(ctx, cam, world, backdrop, {
+      tick: (state && state.tick) || 0,
+      reducedMotion: !!(prefs && prefs.reducedMotion),
+      levelId: (state && state.levelId) || (state && state.level && state.level.id) || ""
+    });
     else {
       ctx.fillStyle = "#4C5F8C";
       ctx.fillRect(0, 0, W, 160);
       ctx.fillStyle = "#C8A46A";
       ctx.fillRect(0, 160, W, H - 160);
     }
+    if (window.PTutorialUI) PTutorialUI.drawWorld(ctx, state, cam);
+    drawBossHazards(ctx, state, cam, !!(prefs && (prefs.reducedMotion || prefs.video && prefs.video.flashReduction)));
     drawEntities(ctx, state, alpha);
     if (window.PFx) {
       PFx.ingest(state);
@@ -172,13 +232,14 @@
       PFx.draw(ctx, cam);
     }
     stamp(ctx, state);
+    if (window.PTutorialUI) PTutorialUI.drawOverlay(ctx, state);
     if (!(window.PBoot && PBoot.uictx)) overlays(ctx, state);
     blit(state);
   }
 
   function init() {}
 
-  var api = { draw: draw, init: init, W: W, H: H };
+  var api = { draw: draw, init: init, W: W, H: H, _collect: collect };
   if (typeof window !== "undefined") window.PRender = api;
   if (typeof global !== "undefined") global.PRender = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;

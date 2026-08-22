@@ -73,16 +73,112 @@
     return st;
   }
 
+  /* Campaign level order, flattened from data/campaign.json (via PData). */
+  function campaignLevels() {
+    var r = window.PData && PData.ready ? PData.ready() : null;
+    var c = r && r.campaign;
+    var out = [], i, j, w;
+    if (c && c.worlds) {
+      for (i = 0; i < c.worlds.length; i++) {
+        w = c.worlds[i];
+        for (j = 0; j < (w.levels || []).length; j++) out.push(w.levels[j].id);
+      }
+    }
+    return out.length ? out : ["w1l1"];
+  }
+
+  /* Last UI selection, kept so nextLevel() can rebuild sim opts. */
+  var lastUI = { mode: "ARCADE", hero: "idris", hero2: "otajon", difficulty: "normal" };
+
+  /* Translate UI screen opts ({mode:"ARCADE"|"COOP"|"DOJO", hero}) into the
+     PSim.createGame opts contract ({levelId, players, hero, hero2, difficulty}).
+     The UI mode id is NOT a sim mode ("belt"/"plat") — never forward it. */
   function createPlay(opts) {
     opts = opts || {};
+    if (opts.mode) lastUI.mode = opts.mode;
+    if (opts.hero) lastUI.hero = opts.hero;
+    if (opts.hero2) lastUI.hero2 = opts.hero2;
+    if (opts.difficulty) lastUI.difficulty = opts.difficulty;
+    var hero = opts.hero || lastUI.hero || "idris";
+    var hints = window.PScreens && PScreens.hintConfig ? PScreens.hintConfig() : { mode: "once", seen: [] };
+    var simOpts = {
+      levelId: opts.levelId || campaignLevels()[0],
+      players: lastUI.mode === "COOP" ? 2 : 1,
+      hero: hero,
+      hero2: opts.hero2 || lastUI.hero2 || (hero === "idris" ? "otajon" : "idris"),
+      difficulty: opts.difficulty || lastUI.difficulty || "normal",
+      training: lastUI.mode === "DOJO",
+      hintMode: hints.mode,
+      hintsSeen: hints.seen
+    };
     if (window.PSim && PSim.createGame) {
       try {
-        return PSim.createGame(1337, opts);
+        return PSim.createGame(1337, simOpts);
       } catch (e) {
-        try { return PSim.createGame(1337); } catch (e2) {}
+        console.error("PSim.createGame failed:", e);
       }
     }
     return dummyState(opts);
+  }
+
+  function currentLevelId() {
+    if (!state) return "";
+    return state.levelId || (state.level && state.level.id) || "";
+  }
+
+  function musicForLevel(id) {
+    if (/^w1/.test(id)) return "w1";
+    if (/^w2/.test(id)) return "w2";
+    if (/^w3l2/.test(id)) return "w3roof";
+    if (/^w3/.test(id)) return "w3";
+    if (/^w4/.test(id)) return "w4";
+    if (/^w5l3/.test(id)) return "arena";
+    if (/^w5/.test(id)) return "w5";
+    return "w1";
+  }
+
+  function hasNextLevel() {
+    var levels = campaignLevels();
+    var idx = levels.indexOf(currentLevelId());
+    return idx >= 0 && idx + 1 < levels.length;
+  }
+
+  function carryStocks(st, lives, lives2) {
+    var i, h, stock;
+    if (!st) return st;
+    if (lives != null && st.lives != null) st.lives = lives;
+    if (lives2 != null) st.lives2 = lives2;
+    if ((st.players | 0) !== 2) return st;
+    for (i = 0; i < (st.heroes || []).length; i++) {
+      h = st.heroes[i];
+      stock = (h.playerIndex | 0) === 1 ? st.lives2 : st.lives;
+      if (stock > 0) continue;
+      h.alive = false; h.hp = 0; h._outOfLives = true;
+      h.combatState = "DOWN"; h.vx = 0; h.vz = 0; h.vd = 0;
+    }
+    return st;
+  }
+
+  /* Advance to the next campaign level, carrying score/lives/hero across.
+     Returns true if a next level was started, false on the last level. */
+  function nextLevel() {
+    if (!state || state.training) return false;
+    var levels = campaignLevels();
+    var idx = levels.indexOf(currentLevelId());
+    if (idx < 0 || idx + 1 >= levels.length) return false;
+    var score = (state.score || 0) + ((state.ippon && state.ippon.score) || 0);
+    var lives = state.lives;
+    var lives2 = state.lives2;
+    var continues = state.continues;
+    var st = createPlay({ levelId: levels[idx + 1] });
+    if (!st) return false;
+    st.score = score;
+    carryStocks(st, lives, lives2);
+    if (continues != null) st.continues = continues;
+    state = st;
+    if (window.PAudio && PAudio.playStem) PAudio.playStem(musicForLevel(levels[idx + 1]));
+    if (window.PAudio && PAudio.playAmbience) PAudio.playAmbience(levels[idx + 1]);
+    return true;
   }
 
   function paintTitleFallback() {
@@ -132,7 +228,10 @@
     if (window.PInput && PInput.setTick && state) PInput.setTick(state.tick || 0);
     if (window.PInput && PInput.poll) PInput.poll();
 
-    var playing = window.PScreens ? PScreens.isPlay() : true;
+    var scr = window.PScreens && PScreens.get ? PScreens.get() : "PLAY";
+    /* CONTINUE also steps the sim: the countdown (state.continueT) is
+       sim-owned, so the clock must keep ticking while the screen is up. */
+    var playing = window.PScreens ? (PScreens.isPlay() || scr === "CONTINUE") : true;
     var paused = window.PScreens ? PScreens.isPause() : false;
     var intents = (window.PInput && PInput.intents) ? PInput.intents() : [{}, {}];
 
@@ -149,13 +248,19 @@
     }
 
     if (window.PScreens) PScreens.update(intents, state);
-
-    if (window.PAudio && state) PAudio.consume(state.events);
+    if (window.PScreens && PScreens.syncHints) PScreens.syncHints(state);
 
     if (window.PRender && PRender.draw) {
       PRender.draw(state, playing && !paused ? acc / SIM_DT : 0);
     } else {
       paintTitleFallback();
+    }
+    /* Render-side FX ingests sim events during draw; audio clears the compact
+       queue only afterwards so both consumers see the same frame. */
+    if (window.PAudioEvents && state) PAudioEvents.update(state);
+    if (window.PAudio && state) PAudio.consume(state.events);
+    if (window.PAudio && PAudio.setMusicIntensity && state) {
+      PAudio.setMusicIntensity(Math.min(1, ((state.ippon && state.ippon.chain) || 0) / 5));
     }
   }
 
@@ -173,7 +278,8 @@
         state = createPlay(opts);
         PScreens.set("PLAY");
         if (window.PAudio && PAudio.unlock) PAudio.unlock();
-        if (window.PAudio && PAudio.playStem) PAudio.playStem("w1");
+        if (window.PAudio && PAudio.playStem) PAudio.playStem(musicForLevel(opts && opts.levelId || "w1l1"));
+        if (window.PAudio && PAudio.playAmbience) PAudio.playAmbience(opts && opts.levelId || "w1l1");
       });
     }
     requestAnimationFrame(frame);
@@ -197,6 +303,9 @@
   var api = {
     start: start,
     pause: pause,
+    nextLevel: nextLevel,
+    hasNextLevel: hasNextLevel,
+    _carryStocks: carryStocks,
     get state() { return state; },
     SIM_HZ: SIM_HZ,
     SIM_DT: SIM_DT

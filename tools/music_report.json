@@ -1,0 +1,721 @@
+{
+  "tracks": 16,
+  "process": [
+    {
+      "id": "mus_title",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "a",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 62.904
+        },
+        {
+          "take": "b",
+          "duration_s": 39.48
+        },
+        {
+          "take": "c",
+          "duration_s": 59.472
+        },
+        {
+          "take": "d",
+          "duration_s": 60.984
+        }
+      ],
+      "bpm": 132.0,
+      "key": "D minor",
+      "target_len": "1:50",
+      "duration_s": 61.818,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 14.545438,
+        "end": 61.818167,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_title_base",
+        "drums": "assets/audio/music/mus_title_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 263.0,
+      "m4a_kb": 158.7,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_select",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "c",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 115.032
+        },
+        {
+          "take": "b",
+          "duration_s": 153.792
+        },
+        {
+          "take": "c",
+          "duration_s": 72.12
+        },
+        {
+          "take": "d",
+          "duration_s": 160.032
+        }
+      ],
+      "bpm": 138.0,
+      "key": "D dorian",
+      "target_len": "0:45",
+      "duration_s": 43.478,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 6.956521,
+        "end": 43.47825,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_select_base",
+        "drums": "assets/audio/music/mus_select_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 192.3,
+      "m4a_kb": 112.8,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_map",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "a",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 189.792
+        },
+        {
+          "take": "b",
+          "duration_s": 207.264
+        },
+        {
+          "take": "c",
+          "duration_s": 235.032
+        },
+        {
+          "take": "d",
+          "duration_s": 198.96
+        }
+      ],
+      "bpm": 96.0,
+      "key": "F major",
+      "target_len": "1:10",
+      "duration_s": 70.0,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 10.0,
+        "end": 70.0,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_map_base",
+        "drums": "assets/audio/music/mus_map_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 269.0,
+      "m4a_kb": 186.6,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_w1_village",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "b",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 204.792
+        },
+        {
+          "take": "b",
+          "duration_s": 174.984
+        },
+        {
+          "take": "c",
+          "duration_s": 211.872
+        },
+        {
+          "take": "d",
+          "duration_s": 221.184
+        }
+      ],
+      "bpm": 124.0,
+      "key": "A minor to A dorian",
+      "target_len": "1:40",
+      "duration_s": 98.71,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 15.483854,
+        "end": 98.709667,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_w1_village_base",
+        "drums": "assets/audio/music/mus_w1_village_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 416.1,
+      "m4a_kb": 254.7,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_w2_bazaar",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "d",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 180.0
+        },
+        {
+          "take": "b",
+          "duration_s": 168.552
+        },
+        {
+          "take": "c",
+          "duration_s": 238.224
+        },
+        {
+          "take": "d",
+          "duration_s": 123.744
+        }
+      ],
+      "bpm": 142.0,
+      "key": "E phrygian dominant",
+      "target_len": "1:35",
+      "duration_s": 94.623,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 0.0,
+        "end": 94.622875,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_w2_bazaar_base",
+        "drums": "assets/audio/music/mus_w2_bazaar_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 408.3,
+      "m4a_kb": 242.8,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_w3_train_int",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "b",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 182.592
+        },
+        {
+          "take": "b",
+          "duration_s": 165.0
+        },
+        {
+          "take": "c",
+          "duration_s": 230.784
+        },
+        {
+          "take": "d",
+          "duration_s": 195.504
+        }
+      ],
+      "bpm": 130.0,
+      "key": "C minor",
+      "target_len": "1:30",
+      "duration_s": 88.615,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 14.769229,
+        "end": 88.615375,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_w3_train_int_base",
+        "drums": "assets/audio/music/mus_w3_train_int_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 379.2,
+      "m4a_kb": 229.0,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_w3_train_roof",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "a",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 206.592
+        },
+        {
+          "take": "b",
+          "duration_s": 222.432
+        },
+        {
+          "take": "c",
+          "duration_s": 256.152
+        },
+        {
+          "take": "d",
+          "duration_s": 224.832
+        }
+      ],
+      "bpm": 150.0,
+      "key": "C minor",
+      "target_len": "1:15",
+      "duration_s": 73.575,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 0.0,
+        "end": 73.575,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_w3_train_roof_base",
+        "drums": "assets/audio/music/mus_w3_train_roof_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 327.6,
+      "m4a_kb": 193.1,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_w4_port",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "b",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 245.712
+        },
+        {
+          "take": "b",
+          "duration_s": 157.272
+        },
+        {
+          "take": "c",
+          "duration_s": 220.032
+        },
+        {
+          "take": "d",
+          "duration_s": 220.032
+        }
+      ],
+      "bpm": 118.0,
+      "key": "G minor",
+      "target_len": "1:45",
+      "duration_s": 103.729,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 16.271167,
+        "end": 103.728813,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_w4_port_base",
+        "drums": "assets/audio/music/mus_w4_port_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 450.0,
+      "m4a_kb": 272.1,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_w5_casino",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "d",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 218.4
+        },
+        {
+          "take": "b",
+          "duration_s": 207.0
+        },
+        {
+          "take": "c",
+          "duration_s": 184.992
+        },
+        {
+          "take": "d",
+          "duration_s": 159.792
+        }
+      ],
+      "bpm": 126.0,
+      "key": "B-flat minor",
+      "target_len": "1:20",
+      "duration_s": 80.0,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 7.619042,
+        "end": 80.0,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_w5_casino_base",
+        "drums": "assets/audio/music/mus_w5_casino_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 342.4,
+      "m4a_kb": 204.5,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_w5_arena",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "a",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 119.832
+        },
+        {
+          "take": "b",
+          "duration_s": 194.232
+        },
+        {
+          "take": "c",
+          "duration_s": 217.632
+        },
+        {
+          "take": "d",
+          "duration_s": 168.624
+        }
+      ],
+      "bpm": 146.0,
+      "key": "D minor",
+      "target_len": "1:50",
+      "duration_s": 108.493,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 13.150667,
+        "end": 108.493146,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_w5_arena_base",
+        "drums": "assets/audio/music/mus_w5_arena_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 456.5,
+      "m4a_kb": 275.1,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_boss_mid",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "b",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 269.664
+        },
+        {
+          "take": "b",
+          "duration_s": 197.952
+        },
+        {
+          "take": "c",
+          "duration_s": 227.16
+        },
+        {
+          "take": "d",
+          "duration_s": 249.984
+        }
+      ],
+      "bpm": 158.0,
+      "key": "F-sharp minor",
+      "target_len": "1:10",
+      "duration_s": 69.873,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 6.075938,
+        "end": 69.873417,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_boss_mid_base",
+        "drums": "assets/audio/music/mus_boss_mid_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 298.2,
+      "m4a_kb": 185.9,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_boss_final",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "a",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 229.824
+        },
+        {
+          "take": "b",
+          "duration_s": 277.584
+        },
+        {
+          "take": "c",
+          "duration_s": 314.544
+        },
+        {
+          "take": "d",
+          "duration_s": 299.04
+        }
+      ],
+      "bpm": 152.0,
+      "key": "F-sharp minor into D minor",
+      "target_len": "2:20",
+      "duration_s": 140.0,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 6.315789,
+        "end": 56.842105,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_boss_final_base",
+        "drums": "assets/audio/music/mus_boss_final_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 597.2,
+      "m4a_kb": 370.5,
+      "loop_regions": {
+        "a": [
+          6.315789,
+          56.842105
+        ],
+        "b": [
+          56.842105,
+          107.368421
+        ]
+      },
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_victory",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "b",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 142.752
+        },
+        {
+          "take": "b",
+          "duration_s": 114.384
+        },
+        {
+          "take": "c",
+          "duration_s": 146.04
+        },
+        {
+          "take": "d",
+          "duration_s": 118.992
+        }
+      ],
+      "bpm": 132.0,
+      "key": "D major",
+      "target_len": "0:09",
+      "duration_s": 9.0,
+      "final_lufs": -16.0,
+      "loop_points": null,
+      "stems": null,
+      "ogg_kb": 39.0,
+      "m4a_kb": 24.4,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_gameover",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "b",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 227.424
+        },
+        {
+          "take": "b",
+          "duration_s": 164.4
+        },
+        {
+          "take": "c",
+          "duration_s": 198.792
+        },
+        {
+          "take": "d",
+          "duration_s": 247.56
+        }
+      ],
+      "bpm": 84.0,
+      "key": "D minor",
+      "target_len": "0:40",
+      "duration_s": 40.0,
+      "final_lufs": -15.9,
+      "loop_points": {
+        "start": 5.714271,
+        "end": 40.0,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": null,
+      "ogg_kb": 127.6,
+      "m4a_kb": 107.0,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_results",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "b",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 144.12
+        },
+        {
+          "take": "b",
+          "duration_s": 64.08
+        },
+        {
+          "take": "c",
+          "duration_s": 88.032
+        },
+        {
+          "take": "d",
+          "duration_s": 170.664
+        }
+      ],
+      "bpm": 120.0,
+      "key": "F major",
+      "target_len": "0:35",
+      "duration_s": 34.0,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 4.0,
+        "end": 34.0,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_results_base",
+        "drums": "assets/audio/music/mus_results_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 146.5,
+      "m4a_kb": 89.4,
+      "over_size_budget": false
+    },
+    {
+      "id": "mus_credits",
+      "status": "ok",
+      "take": "selected",
+      "selected_take": "b",
+      "selection": "mechanical duration/format gate; creative approval pending",
+      "candidates": 4,
+      "candidate_evidence": [
+        {
+          "take": "a",
+          "duration_s": 138.48
+        },
+        {
+          "take": "b",
+          "duration_s": 163.464
+        },
+        {
+          "take": "c",
+          "duration_s": 129.864
+        },
+        {
+          "take": "d",
+          "duration_s": 205.512
+        }
+      ],
+      "bpm": 108.0,
+      "key": "D major",
+      "target_len": "2:30",
+      "duration_s": 148.889,
+      "final_lufs": -16.0,
+      "loop_points": {
+        "start": 17.777771,
+        "end": 148.888875,
+        "basis": "4/4 bar grid at authored BPM"
+      },
+      "stems": {
+        "base": "assets/audio/music/mus_credits_base",
+        "drums": "assets/audio/music/mus_credits_drums",
+        "method": "phase-coherent 2200 Hz crossover",
+        "sample_aligned": true
+      },
+      "ogg_kb": 620.0,
+      "m4a_kb": 388.4,
+      "over_size_budget": false
+    }
+  ]
+}

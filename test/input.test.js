@@ -106,6 +106,16 @@ var ACTIONS = ["throw", "jump", "grip", "special", "tag", "ukemi"];
   });
 })();
 
+(function gripReleaseEdge() {
+  var win = makeWindow();
+  var PInput = freshInput(win);
+  fireKey(win, "keydown", "KeyL");
+  PInput.poll();
+  fireKey(win, "keyup", "KeyL");
+  PInput.poll();
+  ok(PInput.intents()[0].gripReleased === true, "KeyL release emits the contextual throw edge");
+})();
+
 /* ---- No P1 key among the PRD action set is bound to two actions ---- */
 
 (function p1NoDoubleBinding() {
@@ -155,7 +165,7 @@ var ACTIONS = ["throw", "jump", "grip", "special", "tag", "ukemi"];
   // implied global lookup) alongside window.PScreens — in a real browser
   // `window` IS the global object so the two are the same thing; our
   // window shim is a separate object, so both must be set here.
-  var screens = { modeId: function () { return "COOP"; } };
+  var screens = { modeId: function () { return "COOP"; }, get: function () { return "PLAY"; } };
   win.PScreens = screens;
   global.PScreens = screens;
 
@@ -168,6 +178,28 @@ var ACTIONS = ["throw", "jump", "grip", "special", "tag", "ukemi"];
   ok(snap2[0].moveX > 0, "COOP: KeyD (WASD) still drives P1.moveX");
 
   delete global.PScreens;
+
+  screens = { modeId: function () { return "COOP"; }, get: function () { return "MODE"; } };
+  win.PScreens = screens;
+  global.PScreens = screens;
+  var menuSnap = pressAndRead(win, PInput, ["ArrowUp"]);
+  ok(menuSnap[0].moveD > 0, "COOP selection menu: arrows remain on P1 for navigation");
+  delete global.PScreens;
+})();
+
+(function configuredBindingsReachRuntime() {
+  var win = makeWindow();
+  var settings = require(path.join(ROOT, "js", "settings.js"));
+  var cfg = settings.defaults();
+  var changed = settings.remap(cfg, "p1", "keyboard", "strike", "KeyQ");
+  ok(changed.ok, "conflict-safe remap accepts a new P1 strike key");
+  settings.use(changed.settings);
+  win.PSettings = settings;
+  var PInput = freshInput(win);
+  var snap = pressAndRead(win, PInput, ["KeyQ"]);
+  ok(snap[0].throw === true, "configured P1 strike key reaches the live input intent");
+  var old = pressAndRead(win, PInput, ["KeyJ"]);
+  ok(old[0].throw === false, "replaced P1 strike key is no longer active");
 })();
 
 console.log(oks + " ok, " + fails + " fail");

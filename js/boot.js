@@ -1,4 +1,4 @@
-/* Offscreen 480×270 world + 960×540 UI buffer, DPR-aware integer letterbox, preload. */
+/* Offscreen 480×270 world + 960×540 UI buffer, DPR-aware letterbox, preload. */
 (function () {
   var W = 480;
   var H = 270;
@@ -24,19 +24,33 @@
     if (c.msImageSmoothingEnabled !== undefined) c.msImageSmoothingEnabled = false;
   }
 
+  function layout(vw, vh, dpr, fitMode) {
+    var fitScale = Math.min(vw / UW, vh / UH);
+    var fractional = fitMode || fitScale < 1;
+    var k = Math.floor(fitScale * dpr);
+    var cssScale = fractional ? fitScale : k / dpr;
+    var backingScale = Math.max(1, fractional ? Math.ceil(fitScale * dpr) : k);
+    return { cssScale: cssScale, backingScale: backingScale,
+      cssW: UW * cssScale, cssH: UH * cssScale };
+  }
+
   function fit() {
     if (!vis) return;
     var vv = window.visualViewport;
     var vw = (vv && vv.width) || window.innerWidth || W;
     var vh = (vv && vv.height) || window.innerHeight || H;
     var dpr = window.devicePixelRatio || 1;
-    var k = Math.max(1, Math.floor(Math.min((vw * dpr) / UW, (vh * dpr) / UH)));
-    uiScale = k;
-    scale = k * 2;
-    vis.width = UW * k;
-    vis.height = UH * k;
-    var cssW = (UW * k) / dpr;
-    var cssH = (UH * k) / dpr;
+    var prefs = window.PSettings && window.PSettings.get ? window.PSettings.get() : null;
+    var fitMode = prefs && prefs.video && prefs.video.scaleMode === "fit";
+    var box = layout(vw, vh, dpr, fitMode);
+    var cssScale = box.cssScale;
+    var backingScale = box.backingScale;
+    uiScale = backingScale;
+    scale = backingScale * 2;
+    vis.width = UW * backingScale;
+    vis.height = UH * backingScale;
+    var cssW = box.cssW;
+    var cssH = box.cssH;
     vis.style.width = cssW + "px";
     vis.style.height = cssH + "px";
     vis.style.position = "absolute";
@@ -130,6 +144,7 @@
 
   function run(done) {
     initCanvas();
+    if (window.PPlatform && PPlatform.init) PPlatform.init();
     paintBoot("ЗАГРУЗКА", 0);
     if (window.PScreens) PScreens.set("PRELOAD");
     if (window.PData && PData.ready) {
@@ -137,6 +152,13 @@
     }
     if (window.PAudio && PAudio.init) {
       PAudio.init(window.PDataRaw && PDataRaw.audio);
+    }
+    if (window.PSave && window.PSettings) {
+      var saved = PSave.load();
+      if (saved && PSettings.validate(saved.settings || {}).length === 0) {
+        PSettings.use(saved.settings);
+        if (window.PAudio && PAudio.setVolumes) PAudio.setVolumes(saved.settings.audio);
+      }
     }
     if (window.PInput && PInput.init) PInput.init();
     if (window.PInputTouch && PInputTouch.init) PInputTouch.init(vis);
@@ -147,6 +169,7 @@
         ready = true;
         prog = 1;
         if (window.PScreens) PScreens.set("TITLE");
+        if (window.PPlatform && PPlatform.ready) PPlatform.ready();
         if (done) done();
       }
       if (wait > 0) setTimeout(go, wait);
@@ -188,7 +211,8 @@
     ui: null,
     uictx: null,
     scale: 2,
-    uiScale: 1
+    uiScale: 1,
+    _layout: layout
   };
   if (typeof window !== "undefined") window.PBoot = api;
   if (typeof global !== "undefined") global.PBoot = api;

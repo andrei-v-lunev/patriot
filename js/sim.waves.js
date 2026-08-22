@@ -8,6 +8,14 @@
   function ps() {
     return (typeof window !== "undefined" && window.PSim) || (typeof global !== "undefined" && global.PSim) || null;
   }
+  function pickups() {
+    return (typeof window !== "undefined" && window.PPickups) || (typeof global !== "undefined" && global.PPickups) || null;
+  }
+  function G(n) {
+    if (typeof window !== "undefined" && window[n]) return window[n];
+    if (typeof global !== "undefined" && global[n]) return global[n];
+    return null;
+  }
   function emit(state, name, a, b) {
     var ev;
     if (state.pools && state.pools.events) {
@@ -67,6 +75,7 @@
       for (c = 0; c < n; c++) {
         w.pending.push({
           waveId: def.id,
+          boss: !!def.boss,
           spec: sp,
           atTick: state.tick + toTicks(sp.delayFrames || 0)
         });
@@ -77,7 +86,7 @@
   function flushPending(state) {
     var w = state.wave;
     var keep = [];
-    var i, item, spec, e, arena, S;
+    var i, item, spec, e, arena, S, liveN;
     arena = state.segment && state.segment.arena;
     S = ps();
     for (i = 0; i < w.pending.length; i++) {
@@ -86,14 +95,18 @@
         keep.push(item);
         continue;
       }
+      liveN = 0;
+      state.enemies.forEach(function (foe) { if (foe && foe.alive) liveN++; });
+      if (liveN >= (state.maxAlive || 6)) { keep.push(item); continue; }
       spec = {
         archetype: item.spec.archetype,
         x: item.spec.x,
         d: item.spec.d,
         facing: item.spec.facing,
+        tutorialGuard: item.spec.tutorialGuard,
         waveId: item.waveId
       };
-      if (arena && spec.x >= arena.xMin && spec.x <= arena.xMax) spec.z = 120;
+      if (!item.boss && arena && spec.x >= arena.xMin && spec.x <= arena.xMax) spec.z = 120;
       e = S && S.spawnEnemy ? S.spawnEnemy(state, spec) : null;
       if (!e) {
         keep.push(item);
@@ -158,6 +171,23 @@
         w.cleared[id] = true;
         w.clearedAt[id] = state.tick;
         emit(state, "wave_cleared", id, 0);
+        /* PRD §4.12: the last enemy of a wave drops one tea when the active
+           hero is below 40% HP (maximum one drop per wave). */
+        (function () {
+          var hs = state.heroes || [], hi, hero = null, death = state.lastEnemyDeath, P = pickups();
+          if (!P || !P.spawn || w.pickupDropped && w.pickupDropped[id]) return;
+          for (hi = 0; hi < hs.length; hi++) {
+            if (hs[hi].alive && !hs[hi].benched && hs[hi].hp > 0) { hero = hs[hi]; break; }
+          }
+          if (!hero || hero.hp >= hero.maxHp * 0.4) return;
+          if (!w.pickupDropped) w.pickupDropped = {};
+          if (P.spawn(state, {
+            kind: "tea",
+            x: death && death.waveId === id ? death.x : hero.x,
+            d: death && death.waveId === id ? death.d : hero.d,
+            z: 0
+          })) w.pickupDropped[id] = true;
+        })();
         if (state.ippon && !state.ippon.paused) {
           state.ippon.chain = 0;
           state.ippon.timer = 0;
@@ -173,37 +203,123 @@
 
   function tickHazards(state) {
     var hz = state.hazards || [];
-    var i, h, j, e, lists, li, arr, hit;
+    var i, h, j, e, lists, li, arr, hit, cp, it, liveWall, hasTunnel = false, tunnelWarn = 0, tunnelDark = 0;
+    function hurt(ent, hazard, amount) {
+      var P, H;
+      if ((ent.hazardIF | 0) > 0) return;
+      ent.hazardIF = 90;
+      P = G("PCombat"); H = G("PCombatHit");
+      if (P && P.applyDamage) P.applyDamage(state, ent, amount, hazard, {});
+      else ent.hp = Math.max(0, ent.hp - amount);
+      if (H && H.enterKnockdown) H.enterKnockdown(ent);
+    }
+    function beginPitFall(ent, hazard, amount) {
+      if ((ent.hazardIF | 0) > 0) return false;
+      ent.hazardIF = 90;
+      ent.hp -= amount || 18;
+      if (ent.hp <= 0) { ent.hp = 0; return true; }
+      cp = state.currentCheckpoint || (state.segment && state.segment.checkpoints && state.segment.checkpoints[0]);
+      ent.pitRespawnX = cp ? cp.x : Math.max((state.xMin || 0) + ent.w * 0.5, (hazard && hazard.x || ent.x) - ent.w * 0.5 - 2);
+      ent.pitRespawnD = cp ? cp.d : ent.d;
+      ent.pitRespawnT = toTicks(45);
+      ent.alive = false;
+      ent.combatState = "PIT_FALL";
+      ent.grounded = false;
+      ent.vx = ent.vz = ent.vd = 0;
+      return true;
+    }
+    /* P1-6: per-hero hazard i-frames tick down every step */
+    for (j = 0; j < state.heroes.length; j++) {
+      e = state.heroes[j];
+      if ((e.pitRespawnT | 0) > 0) {
+        e.pitRespawnT--;
+        if (e.pitRespawnT === 0) {
+          e.x = e.pitRespawnX;
+          e.d = e.pitRespawnD;
+          e.z = 16;
+          e.vx = e.vz = e.vd = 0;
+          e.grounded = true;
+          e.alive = true;
+          e.combatState = "FREE";
+          e.hazardIF = 90;
+        }
+      }
+      if ((e.hazardIF | 0) > 0) e.hazardIF--;
+    }
     for (i = 0; i < hz.length; i++) {
       h = hz[i];
+      if (h.type === "tunnel") {
+        hasTunnel = true;
+        if (h.triggerT == null && heroPast(state, h.x - 450)) h.triggerT = toTicks(h.telegraphFrames || 180);
+        if (h.triggerT > 0) { h.triggerT--; tunnelWarn = Math.max(tunnelWarn, h.triggerT); }
+        else if (h.triggerT === 0 && h.activeT == null) h.activeT = toTicks(60);
+        if (h.activeT > 0) {
+          h.activeT--; tunnelDark = Math.max(tunnelDark, h.activeT);
+          for (j = 0; j < state.heroes.length; j++) {
+            e = state.heroes[j]; it = state.intents && state.intents[e.playerIndex || 0];
+            if (e.alive && !e.benched && e.x > h.x && e.x < h.x + h.w && !(it && it.moveD < -0.5)) hurt(e, h, 18);
+          }
+        }
+        continue;
+      }
+      if (h.type === "container") {
+        if (h.triggerT == null && heroPast(state, h.x - 200)) h.triggerT = toTicks(h.telegraphFrames || 18);
+        if (h.triggerT > 0) h.triggerT--;
+        else if (h.triggerT === 0 && !h.dropped) {
+          h.dropped = true;
+          for (j = 0; j < state.heroes.length; j++) {
+            e = state.heroes[j];
+            if (e.alive && !e.benched && Math.abs(e.x - h.x) < (h.w || 48) * 0.75) hurt(e, h, 24);
+          }
+        }
+        continue;
+      }
+      if (h.type === "cage_wall") {
+        liveWall = !state.cage || !state.cage.walls || state.cage.walls[h.wallIndex == null ? (h.x < 100 ? 0 : 1) : h.wallIndex];
+        if (liveWall) for (j = 0; j < state.heroes.length; j++) {
+          e = state.heroes[j];
+          hit = h.d != null ?
+            e.d + (e.depth || 10) * 0.5 > h.d && e.d - (e.depth || 10) * 0.5 < h.d + (h.depth || 8) :
+            e.x + e.w * 0.5 > h.x && e.x - e.w * 0.5 < h.x + h.w;
+          if (e.alive && !e.benched && hit) hurt(e, h, h.damage || 12);
+        }
+        continue;
+      }
       if (h.type !== "off_train" && h.type !== "pit") continue;
       lists = h.type === "off_train" ? [state.heroes, state.enemies] : [state.heroes];
       for (li = 0; li < lists.length; li++) {
         arr = lists[li];
         for (j = 0; j < arr.length; j++) {
           e = arr[j];
-          if (!e.alive) continue;
-          hit = e.x + e.w * 0.5 > h.x && e.x - e.w * 0.5 < h.x + h.w && e.z <= 16;
-          if (!hit) continue;
+          if (!e.alive || e.benched) continue;
           if (h.type === "off_train") {
-            e.hp = 0;
-            e.alive = false;
+            hit = e.x + e.w * 0.5 > h.x && e.x - e.w * 0.5 < h.x + h.w && e.z <= 16;
+            if (!hit) continue;
             emit(state, h.announce || "С ПОЕЗДА!", e.id, 0);
+            if (li === 0 && G("PTag") && G("PTag").fallLife) G("PTag").fallLife(state, e);
+            else { e.hp = 0; e.alive = false; }
           } else {
-            e.hp -= h.damage || 18;
-            if (e.hp <= 0) {
-              e.hp = 0;
-              e.alive = false;
-            } else if (state.segment && state.segment.checkpoints && state.segment.checkpoints[0]) {
-              e.x = state.segment.checkpoints[0].x;
-              e.d = state.segment.checkpoints[0].d;
-              e.z = 16;
-              e.vx = e.vz = e.vd = 0;
-            }
+            /* P1-6: genuine fall-in only — hero CENTER inside the pit span
+               and actually fallen below the floor plane (airborne, z < 0),
+               not mere edge-overlap while walking past. hazardIF (~90 ticks)
+               prevents repeat damage+teleport every tick afterwards. */
+            hit = e.x > h.x && e.x < h.x + h.w && !e.grounded && e.z < 0;
+            if (!hit) continue;
+            beginPitFall(e, h, h.damage || 18);
           }
         }
       }
     }
+    /* Last-resort geometry invariant: authored gaps should catch at z<0, but
+       malformed edges or future map edits must never leave a playable hero
+       falling below the world forever. Recover only after a generous void
+       threshold so normal jumps and authored pit timing remain unchanged. */
+    for (j = 0; j < state.heroes.length; j++) {
+      e = state.heroes[j];
+      if (e && e.alive && !e.benched && e.mode === "plat" && !e.grounded && e.z < -160)
+        beginPitFall(e, { x: e.x }, 18);
+    }
+    if (hasTunnel) { state.tunnelWarnT = tunnelWarn; state.tunnelDarkT = tunnelDark; }
   }
 
   function step(state) {
@@ -220,7 +336,36 @@
     checkCleared(state);
   }
 
-  var api = { init: init, step: step, emit: emit };
+  function restartCurrent(state) {
+    var w = state.wave, id = null, i, def, e, n = 0;
+    if (!w) return false;
+    for (i = w.defs.length - 1; i >= 0; i--) {
+      def = w.defs[i];
+      if (w.started[def.id] && !w.cleared[def.id]) { id = def.id; break; }
+    }
+    if (!id) return false;
+    for (i = 0; i < state.enemies.length; i++) {
+      e = state.enemies[i];
+      if (e.waveId === id) {
+        e.alive = false;
+        if (state.pools && state.pools.enemies) state.pools.enemies.release(e);
+      } else state.enemies[n++] = e;
+    }
+    state.enemies.length = n;
+    w.pending = w.pending.filter(function (p) { return p.waveId !== id; });
+    delete w.started[id]; delete w.cleared[id]; delete w.clearedAt[id];
+    if (w.pickupDropped) delete w.pickupDropped[id];
+    w.goFired = false; w.allCleared = false;
+    state.go.active = false; state.go.opened = false; state.go.openT = 0;
+    state.props = [];
+    for (i = 0; i < ((state.segment && state.segment.props) || []).length; i++) {
+      def = state.segment.props[i];
+      state.props.push({ type: def.type, x: def.x, d: def.d, z: def.z, w: def.w, hp: def.hp, alive: def.alive, throwable: def.throwable });
+    }
+    return true;
+  }
+
+  var api = { init: init, step: step, emit: emit, restartCurrent: restartCurrent };
   if (typeof window !== "undefined") window.PSimWaves = api;
   if (typeof global !== "undefined") global.PSimWaves = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;

@@ -114,9 +114,17 @@
 
   function hud(ctx, state) {
     if (!ctx || !playing()) return;
-    var hs = list(state && state.heroes);
+    var all = list(state && state.heroes);
+    /* Panels track ACTIVE heroes: the solo tag bench (e.benched, §4.9.1)
+       stays hidden, and after a swap the P1 panel follows the fighter. */
+    var hs = [];
+    for (var hi = 0; hi < all.length; hi++) if (all[hi] && !all[hi].benched) hs.push(all[hi]);
+    if (!hs.length) hs = all;
     var h0 = hs[0];
-    var lives = (h0 && (h0.lives != null ? h0.lives : 3)) || 3;
+    /* Lives are sim-owned (state.lives), shared across heroes; per-hero
+       h0.lives only survives as a fallback for the legacy dummy state. */
+    var lives = state && state.lives != null ? state.lives
+      : (h0 && h0.lives != null ? h0.lives : 3);
     var hp = h0 ? h0.hp : 0;
     var maxHp = (h0 && h0.maxHp) || 120;
     var meter = (h0 && (h0.meter != null ? h0.meter : h0.special)) || 0;
@@ -136,7 +144,9 @@
     for (i = 0; i < 3; i++) heart(ctx, 44 + nw + 6 + i * 10, 22, i < lives);
     bar(ctx, 44, 32, 116, 4, (meter > 1 ? meter / 100 : meter), "#F2C14E", "#241E33");
 
-    var score = (state && (state.score != null ? state.score : 0)) | 0;
+    /* Total score = base + IPPON/throw score (accumulated separately). */
+    var score = (((state && state.score) || 0) +
+      ((state && state.ippon && state.ippon.score) || 0)) | 0;
     var sc = S("SCORE") + " " + score;
     var sw = window.PFont ? PFont.measure(sc, 1) : sc.length * 6;
     text(ctx, sc, (480 - sw) >> 1, 6, 1, "#F2C14E");
@@ -148,11 +158,13 @@
       if (!world && state.level.id) world = S((state.level.id + "").toUpperCase());
     }
     if (!world) world = S("W1");
-    var p2 = hs[1] && hs[1].alive !== false;
+    /* P2 panel only for a real second player — the solo bench hero
+       (e.benched, parked off-screen for tag §4.9.1) must not show. */
+    var p2 = state && state.players === 2 && hs[1] && !hs[1].benched;
     var ww = window.PFont ? PFont.measure(world, 1) : world.length * 6;
-    text(ctx, world, (p2 ? 436 : 472) - ww, 6, 1, "#FFFFFF");
+    text(ctx, world, p2 ? ((480 - ww) >> 1) : 472 - ww, p2 ? 22 : 6, 1, "#FFFFFF");
 
-    if (hs[1] && hs[1].alive !== false) {
+    if (p2) {
       var h1 = hs[1];
       var id1 = window.PSprites ? PSprites.heroId(h1) : "otajon";
       portraitChip(ctx, 440, 8, id1);
@@ -160,7 +172,10 @@
       hpBar(ctx, 320, 10, 116, 8, t1, chaseT(1, t1, tick));
       var n2 = id1 === "idris" ? S("IDRIS") : S("OTAJON");
       var w2 = window.PFont ? PFont.measure(n2, 1) : 36;
-      text(ctx, n2, 436 - w2, 22, 1, "#FFE9A8");
+      text(ctx, n2, 436 - w2, 22, 1, h1.alive === false ? "#8A7FA6" : "#FFE9A8");
+      var livesB = state.lives2 == null ? 3 : state.lives2;
+      for (i = 0; i < 3; i++) heart(ctx, 320 + i * 10, 22, i < livesB);
+      if (h1.alive === false && h1._outOfLives) text(ctx, S("OUT"), 320, 32, 1, "#E03B3B");
     }
     chaseTick = tick;
   }

@@ -4,6 +4,7 @@ var h = require("./harness");
 var assert = h.assert;
 var PSim = h.requireFile("js/sim.js");
 var PCombat = h.requireFile("js/combat.js");
+var PCombatHit = h.requireFile("js/combat.hit.js");
 assert(typeof PSim.createGame === "function", "PSim.createGame");
 assert(typeof PSim.step === "function", "PSim.step");
 assert(!!PCombat, "PCombat loaded");
@@ -66,6 +67,20 @@ hero = h.getHero(g);
 assert(hero.combatState === "THROWING" || hero.combatState === "GRIPPED",
   "throwPressed throwDir 0 starts throw (state=" + hero.combatState + ")");
 
+var releaseGame = h.createEmpty("belt");
+var releaseHero = h.getHero(releaseGame);
+var releaseEnemy = h.spawnEnemy(releaseGame, "E1", 188, 24);
+placeGrip(releaseHero, releaseEnemy, 1);
+h.step(releaseGame, h.intents({ gripPressed: true, grip: true }));
+gripUntil(releaseGame, 40, "GRIPPED");
+releaseHero = h.getHero(releaseGame);
+h.step(releaseGame, h.intents({ gripReleased: true, throwDir: 2 }));
+assert(releaseHero.combatState === "THROWING" || releaseHero.combatState === "FREE",
+  "releasing the canonical grip key starts a throw (state=" + releaseHero.combatState + ")");
+for (i = 0; i < 180; i++) h.step(releaseGame, h.intents());
+assert(releaseGame.events.some(function (ev) { return ev && ev.name === "shockwave"; }),
+  "an isolated thrown-body landing publishes the shockwave FX event");
+
 var i, victim, ip;
 for (i = 0; i < 80; i++) {
   h.step(g, h.intents({ throwPressed: i === 0, throwDir: 0 }));
@@ -78,6 +93,9 @@ for (i = 0; i < 80; i++) {
   if (victim) break;
 }
 assert(!!victim, "victim THROWN_FLIGHT after forward throw");
+assert(victim.vd > 0, "throwDir depth component produces deterministic depth flight (vd=" + victim.vd + ")");
+assert(g.events.some(function (ev) { return ev && ev.name === "throw_arc"; }),
+  "throw release publishes the throw-arc FX event");
 ip = h.chainTimer(g);
 assert(ip === 300, "IPPON timer === 300 after extending event (completed throw) got " + ip);
 
@@ -182,6 +200,64 @@ var vz = e2.vz;
 assert(Math.abs(Math.abs(vz) - 420) > 80, "E2+I3 thrown vz not launch (~420) got " + vz);
 assert(Math.abs(Math.abs(vz) - 190) < 50 || Math.abs(vz) < 250,
   "E2+I3 thrown vz standard ~190 got " + vz);
+
+g = h.createEmpty("belt");
+var koTarget = h.spawnEnemy(g, "E1", 188, 24);
+h.applyDamage(g, koTarget, koTarget.hp + 1, h.getHero(g));
+assert(g.events.some(function (ev) { return ev && ev.name === "ko"; }),
+  "first lethal hit publishes the KO-stars FX event");
+
+g = h.createEmpty("belt");
+hero = h.getHero(g);
+hero.combatState = "HITSTUN";
+hero.stateT = 1;
+hero.meter = 100;
+var bufferedSpecial = h.intents();
+bufferedSpecial[0].pressedAtTick = { special: g.tick };
+bufferedSpecial[0].special = true;
+bufferedSpecial[0].specialPressed = true;
+h.step(g, bufferedSpecial);
+bufferedSpecial[0].special = false;
+bufferedSpecial[0].specialPressed = false;
+h.step(g, bufferedSpecial);
+assert(hero.sweepLen > 0 && hero.meter < 100 && hero._consumedSpecialAt === bufferedSpecial[0].pressedAtTick.special,
+  "special pressed during recovery executes and consumes within the six-tick action buffer");
+
+g = h.createEmpty("belt");
+hero = h.getHero(g);
+hero.combatState = "HITSTUN";
+hero.stateT = 1;
+var bufferedGrip = h.intents();
+bufferedGrip[0].pressedAtTick = { grip: g.tick };
+bufferedGrip[0].grip = true;
+bufferedGrip[0].gripPressed = true;
+h.step(g, bufferedGrip);
+bufferedGrip[0].grip = false;
+bufferedGrip[0].gripPressed = false;
+h.step(g, bufferedGrip);
+assert(hero.combatState === "APPROACH" && hero._consumedGripAt === bufferedGrip[0].pressedAtTick.grip,
+  "grip pressed during recovery executes and consumes within the six-tick action buffer");
+
+g = h.createEmpty("belt");
+hero = h.getHero(g);
+hero.combatState = "THROWN_FLIGHT";
+hero.z = 100;
+hero.vz = -1;
+var bufferedUkemi = h.intents();
+bufferedUkemi[0].pressedAtTick = { ukemi: g.tick };
+bufferedUkemi[0].ukemi = true;
+bufferedUkemi[0].ukemiPressed = true;
+hero.intent = bufferedUkemi[0];
+assert(PCombatHit.tryUkemi(g, hero) === false, "ukemi input buffers before its landing window");
+g.tick++;
+bufferedUkemi[0].ukemi = false;
+bufferedUkemi[0].ukemiPressed = false;
+hero.combatState = "THROWN_FLIGHT";
+hero.z = 70;
+hero.vz = -1;
+PCombatHit.tryUkemi(g, hero);
+assert(hero.combatState === "UKEMI" && hero._consumedUkemiAt === bufferedUkemi[0].pressedAtTick.ukemi,
+  "ukemi pressed just before landing executes from the six-tick action buffer");
 
 if (h.fails()) {
   console.error(h.oks() + " ok, " + h.fails() + " fail");

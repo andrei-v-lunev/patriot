@@ -8,6 +8,7 @@
   "parTime": 100,
   "vs": "B3",
   "train": true,
+  "autoScroll": 40,
   "segments": [
     {
       "id": "s1",

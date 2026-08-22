@@ -1,12 +1,17 @@
-/* Offscreen 480×270, integer letterbox, preload. */
+/* Offscreen 480×270 world + 960×540 UI buffer, DPR-aware letterbox, preload. */
 (function () {
   var W = 480;
   var H = 270;
+  var UW = 960;
+  var UH = 540;
   var vis = null;
   var vctx = null;
   var off = null;
   var octx = null;
-  var scale = 1;
+  var ui = null;
+  var uctx = null;
+  var scale = 2;
+  var uiScale = 1;
   var prog = 0;
   var ready = false;
   var fitRaf = 0;
@@ -24,15 +29,24 @@
     var vv = window.visualViewport;
     var vw = (vv && vv.width) || window.innerWidth || W;
     var vh = (vv && vv.height) || window.innerHeight || H;
-    var s = Math.max(1, Math.floor(Math.min(vw / W, vh / H)));
-    scale = s;
-    vis.width = W * s;
-    vis.height = H * s;
-    vis.style.width = W * s + "px";
-    vis.style.height = H * s + "px";
+    var dpr = window.devicePixelRatio || 1;
+    var fitScale = Math.min(vw / UW, vh / UH);
+    var prefs = window.PSettings && window.PSettings.get ? window.PSettings.get() : null;
+    var fitMode = prefs && prefs.video && prefs.video.scaleMode === "fit";
+    var k = Math.floor(fitScale * dpr);
+    var cssScale = fitMode || k <= 0 ? fitScale : k / dpr;
+    var backingScale = Math.max(1, fitMode ? Math.ceil(fitScale * dpr) : k);
+    uiScale = backingScale;
+    scale = backingScale * 2;
+    vis.width = UW * backingScale;
+    vis.height = UH * backingScale;
+    var cssW = UW * cssScale;
+    var cssH = UH * cssScale;
+    vis.style.width = cssW + "px";
+    vis.style.height = cssH + "px";
     vis.style.position = "absolute";
-    var left = ((vw - W * s) / 2) | 0;
-    var top = ((vh - H * s) / 2) | 0;
+    var left = Math.round(((vw - cssW) / 2) * dpr) / dpr;
+    var top = Math.round(((vh - cssH) / 2) * dpr) / dpr;
     if (vv) {
       left += (vv.offsetLeft || 0);
       top += (vv.offsetTop || 0);
@@ -41,6 +55,7 @@
     vis.style.top = top + "px";
     nosmooth(vctx);
     nosmooth(octx);
+    nosmooth(uctx);
     if (api) sync();
   }
 
@@ -64,8 +79,13 @@
     off.width = W;
     off.height = H;
     octx = off.getContext("2d");
+    ui = document.createElement("canvas");
+    ui.width = UW;
+    ui.height = UH;
+    uctx = ui.getContext("2d");
     nosmooth(vctx);
     nosmooth(octx);
+    nosmooth(uctx);
     fit();
     sync();
     window.addEventListener("resize", requestFit);
@@ -96,10 +116,19 @@
     octx.fillRect(160, 150, 160, 8);
     octx.fillStyle = "#F2C14E";
     octx.fillRect(160, 150, (160 * (p || 0)) | 0, 8);
-    if (vctx) {
-      nosmooth(vctx);
-      vctx.fillStyle = "#000";
-      vctx.fillRect(0, 0, vis.width, vis.height);
+    present();
+  }
+
+  function present() {
+    if (!vctx) return;
+    nosmooth(vctx);
+    vctx.fillStyle = "#000";
+    vctx.fillRect(0, 0, vis.width, vis.height);
+    if (uctx) {
+      nosmooth(uctx);
+      uctx.drawImage(off, 0, 0, W, H, 0, 0, UW, UH);
+      vctx.drawImage(ui, 0, 0, UW, UH, 0, 0, UW * uiScale, UH * uiScale);
+    } else {
       vctx.drawImage(off, 0, 0, W, H, 0, 0, W * scale, H * scale);
     }
   }
@@ -113,6 +142,13 @@
     }
     if (window.PAudio && PAudio.init) {
       PAudio.init(window.PDataRaw && PDataRaw.audio);
+    }
+    if (window.PSave && window.PSettings) {
+      var saved = PSave.load();
+      if (saved && PSettings.validate(saved.settings || {}).length === 0) {
+        PSettings.use(saved.settings);
+        if (window.PAudio && PAudio.setVolumes) PAudio.setVolumes(saved.settings.audio);
+      }
     }
     if (window.PInput && PInput.init) PInput.init();
     if (window.PInputTouch && PInputTouch.init) PInputTouch.init(vis);
@@ -145,7 +181,10 @@
     api.ctx = vctx;
     api.buffer = off;
     api.bctx = octx;
+    api.ui = ui;
+    api.uictx = uctx;
     api.scale = scale;
+    api.uiScale = uiScale;
   }
 
   var api = {
@@ -158,7 +197,10 @@
     ctx: null,
     buffer: null,
     bctx: null,
-    scale: 1
+    ui: null,
+    uictx: null,
+    scale: 2,
+    uiScale: 1
   };
   if (typeof window !== "undefined") window.PBoot = api;
   if (typeof global !== "undefined") global.PBoot = api;

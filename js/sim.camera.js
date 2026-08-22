@@ -10,7 +10,7 @@
     var i, e;
     for (i = 0; i < state.heroes.length; i++) {
       e = state.heroes[i];
-      if (e.alive && !e.downed) out.push(e);
+      if (e.alive && !e.downed && !e.benched) out.push(e);
     }
     return out;
   }
@@ -35,6 +35,13 @@
     var dead = PConst && PConst.CAM_DEAD != null ? PConst.CAM_DEAD : 64;
     var maxS = PConst && PConst.CAM_MAX != null ? PConst.CAM_MAX : 180;
     var i, hx, focus, target, dx, stepx;
+    if (state.autoScroll > 0) {
+      state.scrollX = (state.scrollX || 0) + state.autoScroll * t;
+      /* Belt arenas stay spatially locked while the moving-vehicle backdrop
+         scrolls continuously. render.layers consumes bgX instead of moving
+         fighters outside the authored 480 px arena. */
+      cam.bgX = state.scrollX;
+    } else cam.bgX = cam.x;
     if (cam.locked) return;
     if (living.length === 2) focus = (living[0].x + living[1].x) * 0.5;
     else {
@@ -60,6 +67,10 @@
     if (living.length === 2) focus = (living[0].x + living[1].x) * 0.5;
     else focus = living[0].x + living[0].facing * look;
     cam.targetX = focus - 240;
+    if (state.autoScroll > 0) {
+      state.scrollX = (state.scrollX || 0) + state.autoScroll * t;
+      if (cam.targetX < state.scrollX) cam.targetX = state.scrollX;
+    }
     cam.x += (cam.targetX - cam.x) * k;
     hz = living[0].z;
     if (living[0].grounded || hz > 90) cam.z += (hz - cam.z) * k * 0.5;
@@ -67,6 +78,11 @@
     if (maxX < 0) maxX = 0;
     if (cam.x < 0) cam.x = 0;
     if (cam.x > maxX) cam.x = maxX;
+    if (state.autoScroll > 0) {
+      for (var i = 0; i < living.length; i++) {
+        if (living[i].x < cam.x + 8) { living[i].x = cam.x + 8; if (living[i].vx < 0) living[i].vx = 0; }
+      }
+    }
   }
 
   function step(state) {
