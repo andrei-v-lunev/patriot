@@ -88,7 +88,7 @@
   }
 
   /* Last UI selection, kept so nextLevel() can rebuild sim opts. */
-  var lastUI = { mode: "ARCADE", hero: "idris", difficulty: "normal" };
+  var lastUI = { mode: "ARCADE", hero: "idris", hero2: "otajon", difficulty: "normal" };
 
   /* Translate UI screen opts ({mode:"ARCADE"|"COOP"|"DOJO", hero}) into the
      PSim.createGame opts contract ({levelId, players, hero, hero2, difficulty}).
@@ -97,6 +97,7 @@
     opts = opts || {};
     if (opts.mode) lastUI.mode = opts.mode;
     if (opts.hero) lastUI.hero = opts.hero;
+    if (opts.hero2) lastUI.hero2 = opts.hero2;
     if (opts.difficulty) lastUI.difficulty = opts.difficulty;
     var hero = opts.hero || lastUI.hero || "idris";
     var hints = window.PScreens && PScreens.hintConfig ? PScreens.hintConfig() : { mode: "once", seen: [] };
@@ -104,7 +105,7 @@
       levelId: opts.levelId || campaignLevels()[0],
       players: lastUI.mode === "COOP" ? 2 : 1,
       hero: hero,
-      hero2: opts.hero2 || (hero === "idris" ? "otajon" : "idris"),
+      hero2: opts.hero2 || lastUI.hero2 || (hero === "idris" ? "otajon" : "idris"),
       difficulty: opts.difficulty || lastUI.difficulty || "normal",
       training: lastUI.mode === "DOJO",
       hintMode: hints.mode,

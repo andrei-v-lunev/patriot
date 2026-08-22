@@ -135,6 +135,7 @@
 
   function run(done) {
     initCanvas();
+    if (window.PPlatform && PPlatform.init) PPlatform.init();
     paintBoot("ЗАГРУЗКА", 0);
     if (window.PScreens) PScreens.set("PRELOAD");
     if (window.PData && PData.ready) {
@@ -159,6 +160,7 @@
         ready = true;
         prog = 1;
         if (window.PScreens) PScreens.set("TITLE");
+        if (window.PPlatform && PPlatform.ready) PPlatform.ready();
         if (done) done();
       }
       if (wait > 0) setTimeout(go, wait);

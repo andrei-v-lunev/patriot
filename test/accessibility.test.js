@@ -24,6 +24,13 @@ assert(boot.indexOf("visualViewport") >= 0 && boot.indexOf("offsetTop") >= 0, "m
 var page = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
 assert(page.indexOf("user-scalable=no") < 0 && page.indexOf("maximum-scale=1") < 0, "mobile zoom must remain available");
 assert(page.indexOf('role="application"') >= 0 && page.indexOf("aria-label") >= 0, "canvas needs an accessible name");
+assert(page.indexOf('id="rotate"') >= 0 && page.indexOf("ПОВЕРНИТЕ ТЕЛЕФОН") >= 0,
+  "coarse portrait devices need an explicit landscape prompt");
+assert(page.indexOf('src="js/platform.js"') >= 0, "browser platform lifecycle bridge must load before boot/game");
+var css = fs.readFileSync(path.join(__dirname, "../css/style.css"), "utf8");
+assert(css.indexOf("@media (orientation: portrait)") >= 0, "portrait devices need a deterministic landscape prompt");
+assert(css.indexOf("safe-area-inset-top") >= 0 && css.indexOf("safe-area-inset-left") >= 0,
+  "phone overlays must respect display cutouts and home-indicator safe areas");
 var render = fs.readFileSync(path.join(__dirname, "../js/render.js"), "utf8");
 assert(render.indexOf("prefs.reducedMotion || prefs.video && prefs.video.flashReduction") >= 0, "flash reduction does not reach hazards");
 assert(render.indexOf("screenShake") >= 0, "screen-shake scaling is not consumed");

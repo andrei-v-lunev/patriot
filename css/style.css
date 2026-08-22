@@ -29,3 +29,37 @@ html, body {
   -webkit-user-select: none;
   outline: none;
 }
+
+#rotate {
+  display: none;
+}
+
+@media (orientation: portrait) {
+  #rotate {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    box-sizing: border-box;
+    padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right))
+      max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+    background: #0b0a10;
+    color: #ffe9a8;
+    text-align: center;
+    font: 700 18px/1.25 system-ui, sans-serif;
+  }
+  #rotate img {
+    width: 112px;
+    height: 112px;
+    image-rendering: pixelated;
+  }
+  #rotate span {
+    max-width: 320px;
+    color: #ffffff;
+    font-size: 13px;
+  }
+}

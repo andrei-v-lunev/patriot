@@ -68,6 +68,18 @@
     } catch (e) { unlocked = true; return Promise.resolve(false); }
   }
 
+  function suspend() {
+    if (!ctx || !ctx.suspend) return Promise.resolve(false);
+    try { return Promise.resolve(ctx.suspend()).then(function () { return true; }, function () { return false; }); }
+    catch (e) { return Promise.resolve(false); }
+  }
+
+  function resume() {
+    if (!unlocked || !ctx || !ctx.resume) return Promise.resolve(false);
+    try { return Promise.resolve(ctx.resume()).then(function () { return true; }, function () { return false; }); }
+    catch (e) { return Promise.resolve(false); }
+  }
+
   function decode(arrayBuffer) {
     var c = ensure();
     if (!c) return Promise.reject(new Error("WebAudio unavailable"));
@@ -279,7 +291,7 @@
     if (buses.music && buses.music.gain) buses.music.gain.value = volumes.music * (on ? 0.3 : 1);
   }
 
-  var api = { init: init, unlock: unlock, consume: consume, playEvent: playEvent,
+  var api = { init: init, unlock: unlock, suspend: suspend, resume: resume, consume: consume, playEvent: playEvent,
     playStem: playStem, stopStem: stopStem, preloadWorld: preloadWorld, duck: duck,
     playAmbience: playAmbience, stopAmbience: stopAmbience,
     setMusicIntensity: setMusicIntensity,

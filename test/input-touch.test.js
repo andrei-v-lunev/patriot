@@ -48,6 +48,6 @@ assert(it.pausePressed, "two-finger touch publishes pause");
 cfg.touch.layout = "mirrored"; cfg.touch.scale = 0.8;
 Touch.draw({ beginPath: function () {}, arc: function () {}, fill: function () {}, stroke: function () {},
   fillRect: function () {}, moveTo: function () {}, lineTo: function () {}, closePath: function () {} });
-assert.strictEqual(Touch.buttons[0].x, 48, "left-handed layout mirrors ACTION");
+assert.strictEqual(Touch.buttons[0].x, 50, "left-handed layout mirrors ACTION");
 assert(Touch.buttons[2].r * 2 + 12 >= 36, "smallest 80% touch target remains at least 72 UI pixels");
 console.log("ok contextual mirrored touch controls and gestures");

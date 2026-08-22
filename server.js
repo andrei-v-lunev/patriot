@@ -7,6 +7,7 @@ var path = require("path");
 var ROOT = path.resolve(__dirname);
 var DEFAULT_PORT = 8088;
 var DEFAULT_HOST = "127.0.0.1";
+var PUBLIC_DIRS = { assets: true, css: true, data: true, js: true };
 var TYPES = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
@@ -38,6 +39,8 @@ function urlPath(url) {
 
 function safeFile(url) {
   var rel = urlPath(url).replace(/^\/+/, "");
+  var first = rel.split(/[\\/]/)[0];
+  if (rel !== "index.html" && !PUBLIC_DIRS[first]) return null;
   var file = path.resolve(ROOT, rel);
   if (file !== ROOT && file.indexOf(ROOT + path.sep) !== 0) return null;
   return file;
@@ -50,6 +53,15 @@ function createServer() {
       res.end("Method Not Allowed");
       return;
     }
+    if (urlPath(req.url) === "/health") {
+      res.writeHead(200, {
+        "content-type": "text/plain; charset=utf-8",
+        "cache-control": "no-store",
+        "x-content-type-options": "nosniff"
+      });
+      res.end(req.method === "HEAD" ? undefined : "ok");
+      return;
+    }
     var file = safeFile(req.url);
     if (!file || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
       res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
@@ -57,7 +69,12 @@ function createServer() {
       return;
     }
     var type = TYPES[path.extname(file).toLowerCase()] || "application/octet-stream";
-    res.writeHead(200, { "content-type": type });
+    res.writeHead(200, {
+      "content-type": type,
+      "cache-control": file === path.join(ROOT, "index.html") ? "no-cache" : "public, max-age=3600",
+      "referrer-policy": "no-referrer",
+      "x-content-type-options": "nosniff"
+    });
     if (req.method === "HEAD") {
       res.end();
       return;

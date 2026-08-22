@@ -4,6 +4,8 @@
   var prev = "BOOT";
   var mode = "ARCADE";
   var hero = "idris";
+  var hero2 = "otajon";
+  var charPlayer = 0;
   var difficulty = "normal";
   var cursor = 0;
   var idleAt = 0;
@@ -46,6 +48,8 @@
     if (s === "TITLE") idleAt = now();
     if (s === "ATTRACT") attractT = now();
     if (s === "CONTINUE") { continueN = 10; continueLast = 10; }
+    if (s === "CHAR" && prev !== "CHAR") charPlayer = 0;
+    if (window.PPlatform && PPlatform.screen) PPlatform.screen(s);
   }
 
   function sound(name) {
@@ -110,7 +114,7 @@
   }
 
   function startPlay() {
-    if (onPlay) onPlay({ mode: MODE_IDS[modeIndex()], hero: hero, difficulty: difficulty });
+    if (onPlay) onPlay({ mode: MODE_IDS[modeIndex()], hero: hero, hero2: hero2, difficulty: difficulty });
     else set("PLAY");
   }
 
@@ -223,9 +227,23 @@
     }
     if (screen === "CHAR") {
       nav(it, 2);
-      hero = HERO_IDS[cursor];
-      if (confirm(it)) { accept("DIFFICULTY"); cursor = 1; return; }
-      if (it && it.pausePressed) { set("MODE"); return; }
+      if (charPlayer === 0) hero = HERO_IDS[cursor];
+      else hero2 = HERO_IDS[cursor];
+      if (confirm(it)) {
+        if (mode === "COOP" && charPlayer === 0) {
+          sound("menu_confirm"); charPlayer = 1;
+          cursor = hero === "idris" ? 1 : 0;
+          hero2 = HERO_IDS[cursor]; hold = 0;
+          return;
+        }
+        accept("DIFFICULTY"); cursor = 1; return;
+      }
+      if (it && it.pausePressed) {
+        if (mode === "COOP" && charPlayer === 1) {
+          charPlayer = 0; cursor = HERO_IDS.indexOf(hero); hold = 0;
+        } else set("MODE");
+        return;
+      }
       return;
     }
     if (screen === "DIFFICULTY") {
@@ -245,7 +263,7 @@
           sound("menu_confirm");
           if (saveState) saveState.campaign.currentLevel = node.id;
           store(); recordedLevel = "";
-          if (onPlay) onPlay({ mode: mode, hero: hero, difficulty: difficulty, levelId: node.id });
+          if (onPlay) onPlay({ mode: mode, hero: hero, hero2: hero2, difficulty: difficulty, levelId: node.id });
           set("LEVEL_INTRO");
         }
       }
@@ -404,7 +422,10 @@
   }
 
   function drawChar(ctx) {
-    if (window.PUITitle && PUITitle.drawChar) { PUITitle.drawChar(ctx, flash, null, cursor); return; }
+    if (window.PUITitle && PUITitle.drawChar) {
+      PUITitle.drawChar(ctx, flash, null, cursor, mode === "COOP" ? charPlayer + 1 : 0, hero, hero2);
+      return;
+    }
     dim(ctx, 0.35);
     center(ctx, S("CHOOSE_FIGHTER"), 28, 1, "#F2C14E");
     var i, id, img, x;
@@ -524,6 +545,8 @@
     isPause: isPause,
     modeId: function () { return mode; },
     heroId: function () { return hero; },
+    hero2Id: function () { return hero2; },
+    charPlayer: function () { return charPlayer; },
     difficultyId: function () { return difficulty; },
     hintConfig: hintConfig,
     syncHints: syncHints,

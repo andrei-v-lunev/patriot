@@ -9,6 +9,9 @@ expanded parts in `sections/part1..6`.
 ## Run / test
 
 - `node server.js` → http://127.0.0.1:8088/ (static server; kill old one first: `lsof -ti :8088 | xargs kill`)
+- Railway uses the root `Dockerfile`/`railway.toml`, binds `HOST=0.0.0.0` to the
+  injected `PORT`, and gates releases on `/health`. The server deliberately exposes
+  only `index.html`, `assets/`, `css/`, `data/`, and `js/`.
 - `npm test` — full Node headless suite: data/save/settings, sim, combat,
   campaign, 36k determinism, soak, animation, input/touch, audio and pixelpipe.
   It must stay green after every change.
@@ -27,8 +30,9 @@ expanded parts in `sections/part1..6`.
   route, layer, codec pair, music world, and ambience world exists.
 - Touch uses the PRD contextual ACTION cluster: proximity selects strike vs grip,
   flick release chooses a throw, right-half swipe performs ukemi, two fingers pause,
-  and SPECIAL appears only at full meter. Controls are icon-only, circular,
-  80–130% scalable, and mirror for left-handed play.
+  and SPECIAL appears only at full meter. High-contrast circular controls carry
+  Cyrillic action labels, scale 80–130%, mirror for left-handed play, and hide
+  actions that are unavailable in the current mode.
 - W1L1 is a deterministic seven-beat dojo tutorial: walk, grip-only dummy, three
   neutral throws, forward/back chalk circles, repeatable ukemi sandbag, tag, then
   a four-second skippable throw table. `PTutorialSim` owns progression and
@@ -72,6 +76,7 @@ Plain `<script>` files, global namespaces, no bundler. Load order = `index.html`
 | `PRender` | render.js | frame composite (see resolution model below) |
 | `PAnim`, `PSprites`, `PLayers`, `PFx` | render.anim/sprites/layers.js, fx.js | atlas animation, entity draw, parallax bg, particles |
 | `PFont`, `PUI`, `PUITitle`, `PScreens`, `PMap` | ui.font/ui/ui.title/ui.screens/ui.map.js | Cyrillic bitmap font, HUD, title/menus, settings and 15-node world-map state machine |
+| `PPlatform` | platform.js | optional Yandex SDK readiness/gameplay events plus browser visibility/audio pause lifecycle |
 | `PBoot`, `PGame` | boot.js, game.js | canvas/DPR setup, preload, fixed-step main loop |
 
 ### ⚠️ THE #1 BUG CLASS in this codebase: frozen module refs
@@ -97,6 +102,16 @@ fractional CSS fit so no edge is clipped. Never draw world entities on the UI la
 Sim is deterministic and Node-testable: no wall-clock, no Math.random in sim paths
 (seeded `PRng`), animation driven off `state.tick`. Render-side state (ghost HP bar,
 anim phase) must never write into sim state.
+
+### Web/mobile platform contract
+
+The browser build is already HTML5: static HTML, Canvas 2D, Web Audio and plain
+JavaScript. Do not introduce a framework or engine merely to publish on Yandex.
+`PPlatform` is an optional adapter: localhost and ordinary web hosts remain fully
+standalone, while a Yandex host loads `/sdk.js`, reports loading/gameplay state,
+and maps host pause/resume events to the existing pause screen and audio graph.
+The primary phone layout is landscape; portrait shows a safe-area-aware rotate
+screen. See `docs/WEB-PORT.md` for packaging and device QA.
 
 ### Sim/UI contracts
 

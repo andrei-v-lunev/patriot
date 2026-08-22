@@ -213,6 +213,21 @@
       else ent.hp = Math.max(0, ent.hp - amount);
       if (H && H.enterKnockdown) H.enterKnockdown(ent);
     }
+    function beginPitFall(ent, hazard, amount) {
+      if ((ent.hazardIF | 0) > 0) return false;
+      ent.hazardIF = 90;
+      ent.hp -= amount || 18;
+      if (ent.hp <= 0) { ent.hp = 0; return true; }
+      cp = state.currentCheckpoint || (state.segment && state.segment.checkpoints && state.segment.checkpoints[0]);
+      ent.pitRespawnX = cp ? cp.x : Math.max((state.xMin || 0) + ent.w * 0.5, (hazard && hazard.x || ent.x) - ent.w * 0.5 - 2);
+      ent.pitRespawnD = cp ? cp.d : ent.d;
+      ent.pitRespawnT = toTicks(45);
+      ent.alive = false;
+      ent.combatState = "PIT_FALL";
+      ent.grounded = false;
+      ent.vx = ent.vz = ent.vd = 0;
+      return true;
+    }
     /* P1-6: per-hero hazard i-frames tick down every step */
     for (j = 0; j < state.heroes.length; j++) {
       e = state.heroes[j];
@@ -288,26 +303,21 @@
                and actually fallen below the floor plane (airborne, z < 0),
                not mere edge-overlap while walking past. hazardIF (~90 ticks)
                prevents repeat damage+teleport every tick afterwards. */
-            if ((e.hazardIF | 0) > 0) continue;
             hit = e.x > h.x && e.x < h.x + h.w && !e.grounded && e.z < 0;
             if (!hit) continue;
-            e.hazardIF = 90;
-            e.hp -= h.damage || 18;
-            if (e.hp <= 0) {
-              e.hp = 0;
-            } else {
-              cp = state.currentCheckpoint || (state.segment && state.segment.checkpoints && state.segment.checkpoints[0]);
-              e.pitRespawnX = cp ? cp.x : h.x - e.w * 0.5 - 2;
-              e.pitRespawnD = cp ? cp.d : e.d;
-              e.pitRespawnT = toTicks(45);
-              e.alive = false;
-              e.combatState = "PIT_FALL";
-              e.grounded = false;
-              e.vx = e.vz = e.vd = 0;
-            }
+            beginPitFall(e, h, h.damage || 18);
           }
         }
       }
+    }
+    /* Last-resort geometry invariant: authored gaps should catch at z<0, but
+       malformed edges or future map edits must never leave a playable hero
+       falling below the world forever. Recover only after a generous void
+       threshold so normal jumps and authored pit timing remain unchanged. */
+    for (j = 0; j < state.heroes.length; j++) {
+      e = state.heroes[j];
+      if (e && e.alive && !e.benched && e.mode === "plat" && !e.grounded && e.z < -160)
+        beginPitFall(e, { x: e.x }, 18);
     }
     if (hasTunnel) { state.tunnelWarnT = tunnelWarn; state.tunnelDarkT = tunnelDark; }
   }

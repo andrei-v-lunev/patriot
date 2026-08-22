@@ -9,10 +9,10 @@
 
   /* PRD coordinates are on the 960×540 UI layer; these are half-scale world units. */
   var BASE = [
-    { id: "action", x: 432, y: 222, r: 28 },
-    { id: "jump", x: 380, y: 234, r: 22 },
-    { id: "tag", x: 444, y: 168, r: 19 },
-    { id: "special", x: 386, y: 177, r: 24 }
+    { id: "action", x: 430, y: 220, r: 30 },
+    { id: "jump", x: 368, y: 230, r: 24 },
+    { id: "tag", x: 432, y: 164, r: 21 },
+    { id: "special", x: 374, y: 172, r: 25 }
   ];
   var BTNS = BASE.map(function (b) { return { id: b.id, x: b.x, y: b.y, r: b.r }; });
 
@@ -29,6 +29,12 @@
     var s = state(), h = hero(), meter = h && h.meter;
     if (meter == null && s) meter = typeof s.meter === "number" ? s.meter : 0;
     return (meter || 0) >= 100;
+  }
+  function available(b) {
+    var s = state();
+    if (b.id === "special" && !specialReady()) return false;
+    if (b.id === "tag" && s && (s.players | 0) === 2) return false;
+    return true;
   }
   function layout() {
     var cfg = settings().touch || { layout: "right", scale: 1 }, scale = cfg.scale || 1, i, b;
@@ -47,7 +53,7 @@
   function hitBtn(x, y) {
     var i, b, dx, dy; layout();
     for (i = BTNS.length - 1; i >= 0; i--) {
-      b = BTNS[i]; if (b.id === "special" && !specialReady()) continue;
+      b = BTNS[i]; if (!available(b)) continue;
       dx = x - b.x; dy = y - b.y;
       if (dx * dx + dy * dy <= (b.r + 6) * (b.r + 6)) return b.id;
     }
@@ -130,22 +136,37 @@
   }
 
   function circle(ctx, b, on) {
+    var colors = { action: "#F2C14E", jump: "#8FD3FF", tag: "#8FE79A", special: "#FF7AA8" };
+    ctx.beginPath(); ctx.arc(b.x + 2, b.y + 3, b.r + 3, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0,0,0,.55)"; ctx.fill();
     ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-    ctx.fillStyle = on ? "rgba(242,193,78,.62)" : "rgba(36,30,51,.28)"; ctx.fill();
-    ctx.strokeStyle = "rgba(255,233,168,.8)"; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = on ? colors[b.id] : "rgba(20,18,28,.82)"; ctx.fill();
+    ctx.strokeStyle = colors[b.id]; ctx.lineWidth = on ? 3 : 2; ctx.stroke();
   }
-  function icon(ctx, b) {
-    var x = b.x, y = b.y; ctx.strokeStyle = "#FFE9A8"; ctx.fillStyle = "#FFE9A8"; ctx.lineWidth = 2;
-    if (b.id === "action") { ctx.fillRect(x - 8, y - 4, 15, 9); ctx.fillRect(x + 4, y - 8, 5, 13); }
-    else if (b.id === "jump") { ctx.beginPath(); ctx.arc(x, y + 5, 9, Math.PI, Math.PI * 2); ctx.stroke(); ctx.fillRect(x + 6, y - 5, 4, 5); }
-    else if (b.id === "tag") { ctx.fillRect(x - 9, y - 7, 7, 14); ctx.fillRect(x + 2, y - 7, 7, 14); }
-    else { ctx.beginPath(); for (var i = 0; i < 8; i++) { var r = i % 2 ? 5 : 11, a = -Math.PI / 2 + i * Math.PI / 4; if (!i) ctx.moveTo(x + Math.cos(a) * r, y + Math.sin(a) * r); else ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); } ctx.closePath(); ctx.fill(); }
+  function label(ctx, b, on) {
+    var h = hero(), gripping = h && (h.combatState === "GRIPPED" || h.combatState === "THROWING");
+    var names = { jump: "ПРЫГ", tag: "СМЕНА", special: "СУПЕР" };
+    var str = b.id === "action" ? (gripping ? "БРОСОК" : h && nearGrip(h) ? "ЗАХВАТ" : "ПРИЁМ") : names[b.id];
+    if (window.PFont && PFont.measure && PFont.draw) {
+      var w = PFont.measure(str, 1);
+      PFont.draw(ctx, str, (b.x - w * 0.5) | 0, b.y - 3, 1, on ? "#14121C" : "#FFFFFF");
+    } else {
+      ctx.fillStyle = on ? "#14121C" : "#FFFFFF";
+      ctx.fillRect(b.x - 7, b.y - 3, 14, 6);
+    }
   }
   function draw(ctx) {
     if (!visible || !ctx) return; layout();
     var fade = origin ? 1 : Math.max(0, 1 - (performance.now() - releasedAt - 500) / 200), i, b;
-    if (fade > 0 && origin) { ctx.globalAlpha = fade; ctx.beginPath(); ctx.arc(origin.x, origin.y, 20, 0, Math.PI * 2); ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = "rgba(255,255,255,.32)"; ctx.fillRect(knob.x - 4, knob.y - 4, 8, 8); ctx.globalAlpha = 1; }
-    for (i = 0; i < BTNS.length; i++) { b = BTNS[i]; if (b.id === "special" && !specialReady()) continue; circle(ctx, b, hold[b.id]); icon(ctx, b); }
+    if (fade > 0 && origin) {
+      ctx.globalAlpha = fade; ctx.beginPath(); ctx.arc(origin.x + 2, origin.y + 3, 35, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,0,0,.45)"; ctx.fill();
+      ctx.beginPath(); ctx.arc(origin.x, origin.y, 32, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(20,18,28,.7)"; ctx.fill(); ctx.strokeStyle = "#F2C14E"; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(knob.x, knob.y, 10, 0, Math.PI * 2); ctx.fillStyle = "#F2C14E"; ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    for (i = 0; i < BTNS.length; i++) { b = BTNS[i]; if (!available(b)) continue; circle(ctx, b, hold[b.id]); label(ctx, b, hold[b.id]); }
   }
   function init(el) {
     canvas = el || document.getElementById("game"); if (!canvas || canvas._ptouch) return; canvas._ptouch = true;

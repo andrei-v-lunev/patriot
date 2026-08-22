@@ -2,6 +2,18 @@
 
 ## 2026-08-22 — release closure audit
 
+- Hardened the existing HTML5 build for iPhone/Yandex play: safe-area-aware
+  landscape gating, optional Yandex loading/gameplay lifecycle events, audio pause
+  on host/background transitions, and real iPhone 14 viewport verification.
+- Replaced ambiguous mobile action glyphs with larger high-contrast Cyrillic
+  controls, added explicit two-step COOP character ownership (including duplicate
+  picks), and preserved both selections across level transitions.
+- Added campaign-wide below-world/pit recovery invariants, independent COOP picker
+  and platform lifecycle tests, and refreshed only the intentional TITLE/CHAR
+  browser goldens. Full Node, 15-level bot, and real-browser gates are green.
+- Added a runtime-only Railway Docker deployment with `/health`, bounded restart
+  policy, and a static-file allowlist so public hosting cannot expose tests,
+  tooling, documentation, package metadata, or source-art workspaces.
 - Added the club's shield-and-sword crest as a faithful pixel-art brand asset,
   with a transparent 128px runtime export, preserved generation source, branded
   title composition, text-only loading fallback, browser icon, and asset tests.
