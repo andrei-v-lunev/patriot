@@ -112,15 +112,18 @@ JavaScript. Do not introduce a framework or engine merely to publish on Yandex.
 `PPlatform` is an optional adapter: localhost and ordinary web hosts remain fully
 standalone, while a Yandex host loads `/sdk.js`, reports loading/gameplay state,
 and maps host pause/resume events to the existing pause screen and audio graph.
-The first real pointer/Enter/Space gesture requests host/native fullscreen; iPhone
-WebKit receives the bounded toolbar-collapse fallback. Self-hosted Yandex embeds
+The first real pointer/Enter/Space gesture requests host/native fullscreen and
+landscape orientation where supported; rejected requests remain retryable. iPhone
+WebKit receives a bounded toolbar-collapse attempt, but ordinary Safari tabs must
+remain usable within their available visual viewport. Self-hosted Yandex embeds
 are detected by referrer and load the absolute hosted SDK URL.
 The primary phone layout is landscape; portrait shows a safe-area-aware rotate
-screen. Touch uses a fixed pixel-art D-pad and a NES-inspired gray A/B action deck,
-with contextual Russian captions, rectangular TAG/SPECIAL auxiliaries, 80–130%
-scaling and mirrored handedness. This owner-directed hardware treatment supersedes
-the PRD's older floating-stick/circular-button visuals without changing its action,
-gesture, safe-area or minimum-target contracts. See `DESIGN.md` and
+screen. Touch controls render into a viewport-sized transparent overlay: on wide
+Safari/Yandex layouts they occupy the letterbox rails around the centered 16:9
+game, and on narrow layouts they fall back to the playfield edges. The fixed 8-way
+pad and semantic action/jump/tag/special glyphs use separated corner-anchored hit
+regions, 80–130% scaling, mirrored handedness, contextual availability, and appear
+only during PLAY. See `DESIGN.md` and
 `docs/WEB-PORT.md` for design, packaging and device QA.
 
 ### Sim/UI contracts

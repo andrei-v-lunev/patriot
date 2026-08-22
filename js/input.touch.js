@@ -1,6 +1,6 @@
-/* Contextual mobile controls: fixed 8-way pad + NES-inspired action deck. */
+/* Contextual mobile controls: viewport rails + semantic action controls. */
 (function () {
-  var origin = null, stickId = -1, canvas = null, visible = false, releasedAt = 0;
+  var origin = null, stickId = -1, canvas = null, overlay = null, overlayCtx = null, visible = false, releasedAt = 0;
   var knob = { x: 0, y: 0 }, hist = [], active = {}, down = {};
   var hold = { action: false, jump: false, tag: false, special: false };
   var was = { grip: false, throw: false, jump: false, tag: false, special: false };
@@ -10,13 +10,12 @@
   var actionRole = "";
   var pending = { gripRelease: false, throwDir: -1, ukemi: false, pause: false };
 
-  /* Fixed pad/deck supersede the PRD's floating-circle treatment by owner direction. */
-  var PAD = { x: 66, y: 210, arm: 15, reach: 43 };
+  var PAD = { x: 66, y: 204, arm: 16, reach: 42 };
   var BASE = [
-    { id: "action", x: 430, y: 218, r: 25 },
-    { id: "jump", x: 375, y: 228, r: 23 },
-    { id: "tag", x: 431, y: 170, r: 19 },
-    { id: "special", x: 378, y: 170, r: 19 }
+    { id: "action", x: 431, y: 198, r: 24, hit: 31 },
+    { id: "jump", x: 355, y: 224, r: 22, hit: 29 },
+    { id: "tag", x: 365, y: 165, r: 18, hit: 25 },
+    { id: "special", x: 410, y: 135, r: 18, hit: 25 }
   ];
   var BTNS = BASE.map(function (b) { return { id: b.id, x: b.x, y: b.y, r: b.r }; });
 
@@ -40,30 +39,48 @@
     if (b.id === "tag" && s && (s.players | 0) === 2) return false;
     return true;
   }
+  function viewport() {
+    var vv = typeof window !== "undefined" && window.visualViewport;
+    var r = canvas && canvas.getBoundingClientRect ? canvas.getBoundingClientRect() : { left: 0, top: 0, width: 480, height: 270 };
+    return { x: vv && vv.offsetLeft || 0, y: vv && vv.offsetTop || 0,
+      w: vv && vv.width || window.innerWidth || r.width || 480,
+      h: vv && vv.height || window.innerHeight || r.height || 270, game: r };
+  }
   function layout() {
-    var cfg = settings().touch || { layout: "right", scale: 1 }, scale = cfg.scale || 1, i, b;
+    var cfg = settings().touch || { layout: "right", scale: 1 }, scale = cfg.scale || 1, v = viewport(), i, b;
+    var rail = Math.max(0, (v.w - v.game.width) * 0.5), right = v.w - 24, bottom = v.h - 24;
+    var useRails = rail >= 54;
     for (i = 0; i < BTNS.length; i++) {
-      b = BTNS[i]; b.x = BASE[i].x; b.y = BASE[i].y; b.r = BASE[i].r * scale;
-      if (cfg.layout === "mirrored") b.x = 480 - b.x;
+      b = BTNS[i]; b.r = BASE[i].r * scale; b.hit = BASE[i].hit * scale;
+      if (useRails) {
+        b.x = i === 0 ? right - 50 * scale : i === 1 ? right - 116 * scale : i === 2 ? right - 108 * scale : right - 48 * scale;
+        b.y = i === 0 ? bottom - 50 * scale : i === 1 ? bottom - 24 * scale : i === 2 ? bottom - 105 * scale : bottom - 124 * scale;
+      } else {
+        b.x = v.game.left + v.game.width * (480 - (480 - BASE[i].x) * scale) / 480;
+        b.y = v.game.top + v.game.height * (270 - (270 - BASE[i].y) * scale) / 270;
+        b.r *= v.game.height / 270; b.hit *= v.game.height / 270;
+      }
+      if (cfg.layout === "mirrored") b.x = v.w - b.x;
     }
-    return cfg;
+    cfg._viewport = v; cfg._rails = useRails; return cfg;
   }
   function pad(cfg) {
-    return { x: cfg.layout === "mirrored" ? 480 - PAD.x : PAD.x, y: PAD.y,
-      arm: PAD.arm * (cfg.scale || 1), reach: PAD.reach * (cfg.scale || 1) };
+    var v = cfg._viewport || viewport(), scale = cfg.scale || 1, rail = Math.max(0, (v.w - v.game.width) * 0.5);
+    var k = cfg._rails ? 1 : v.game.height / 270;
+    var x = cfg._rails ? 24 + 50 * scale : v.game.left + v.game.width * (PAD.x * scale) / 480;
+    var y = cfg._rails ? v.h - 24 - 50 * scale : v.game.top + v.game.height * (270 - (270 - PAD.y) * scale) / 270;
+    return { x: cfg.layout === "mirrored" ? v.w - x : x, y: y,
+      arm: PAD.arm * scale * k, reach: PAD.reach * scale * k, rail: rail };
   }
   function logical(e) {
-    var el = canvas || (window.PBoot && window.PBoot.canvas) || document.getElementById("game");
-    if (!el) return { x: 0, y: 0 };
-    var r = el.getBoundingClientRect();
-    return { x: (e.clientX - r.left) * 480 / (r.width || 1), y: (e.clientY - r.top) * 270 / (r.height || 1) };
+    var v = viewport(); return { x: e.clientX - v.x, y: e.clientY - v.y };
   }
   function hitBtn(x, y) {
     var i, b, dx, dy; layout();
     for (i = BTNS.length - 1; i >= 0; i--) {
       b = BTNS[i]; if (!available(b)) continue;
       dx = x - b.x; dy = y - b.y;
-      if (dx * dx + dy * dy <= (b.r + 6) * (b.r + 6)) return b.id;
+      if (dx * dx + dy * dy <= b.hit * b.hit) return b.id;
     }
     return null;
   }
@@ -93,14 +110,14 @@
       if (a && b && !a.button && !b.button && !a.pad && !b.pad && a.y < 54 && b.y < 54) pending.pause = true;
     }
     if (window.PInput && window.PInput.setLastDevice) window.PInput.setLastDevice("touch");
-    if (which) {
+    if (which && btnIds[which] < 0) {
       hold[which] = true; btnIds[which] = id; buzz(8);
       if (which === "action") {
         var h = hero(), gripping = h && (h.combatState === "GRIPPED" || h.combatState === "THROWING");
         actionRole = gripping || h && nearGrip(h) ? "grip" : "throw";
         queued.actionPressed = actionRole;
       } else queued[which + "Pressed"] = true;
-    }
+    } else if (which) down[id].button = null;
     else if (onPad && stickId < 0) {
       stickId = id; origin = { x: dpad.x, y: dpad.y }; setKnob(p, dpad);
       hist = [{ x: p.x, y: p.y, t: now }];
@@ -174,26 +191,29 @@
     var dx = origin ? knob.x - origin.x : 0, dy = origin ? knob.y - origin.y : 0;
     if (origin) { intent.moveX = Math.round(Math.max(-1, Math.min(1, dx / 24)) * 8) / 8; intent.moveD = Math.round(Math.max(-1, Math.min(1, -dy / 24)) * 8) / 8; }
     var grip = hold.action && actionRole === "grip", strike = hold.action && actionRole === "throw";
+    var special = hold.special && specialReady();
     edge(intent, "grip", grip, was.grip, queued.actionPressed === "grip", queued.actionReleased === "grip");
     edge(intent, "throw", strike, was.throw, queued.actionPressed === "throw", queued.actionReleased === "throw");
     edge(intent, "jump", hold.jump, was.jump, queued.jumpPressed, queued.jumpReleased);
     edge(intent, "tag", hold.tag, was.tag, queued.tagPressed, queued.tagReleased);
-    edge(intent, "special", hold.special && specialReady(), was.special, queued.specialPressed && specialReady(), queued.specialReleased);
+    edge(intent, "special", special, was.special, queued.specialPressed && specialReady(), queued.specialReleased);
     if (pending.gripRelease) { intent.gripReleased = true; intent.throwDir = pending.throwDir; pending.gripRelease = false; }
     if (pending.ukemi) { intent.ukemi = true; intent.ukemiPressed = true; if (intent.pressedAtTick) intent.pressedAtTick.ukemi = tick | 0; pending.ukemi = false; }
     if (pending.pause) { intent.pause = true; intent.pausePressed = true; pending.pause = false; }
-    was.grip = grip; was.throw = strike; was.jump = hold.jump; was.tag = hold.tag; was.special = hold.special;
+    was.grip = grip; was.throw = strike; was.jump = hold.jump; was.tag = hold.tag; was.special = special;
     queued = { jumpPressed: false, jumpReleased: false, tagPressed: false, tagReleased: false,
       specialPressed: false, specialReleased: false, actionPressed: "", actionReleased: "" };
     if (hold.action || hold.jump || hold.tag || hold.special || origin) if (window.PInput && window.PInput.setLastDevice) window.PInput.setLastDevice("touch");
   }
 
-  function roundButton(ctx, b, on) {
-    ctx.beginPath(); ctx.arc(b.x + 2, b.y + 3, b.r + 3, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(12,10,16,.72)"; ctx.fill();
+  function roundButton(ctx, b, on, color) {
+    if (on) {
+      ctx.beginPath(); ctx.arc(b.x, b.y, b.r + 6, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(242,193,78,.3)"; ctx.fill();
+    }
     ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-    ctx.fillStyle = on ? "#C83B5C" : "#8D2442"; ctx.fill();
-    ctx.strokeStyle = on ? "#FFE8B0" : "#321323"; ctx.lineWidth = 3; ctx.stroke();
+    ctx.fillStyle = on ? color : "rgba(17,16,22,.62)"; ctx.fill();
+    ctx.strokeStyle = on ? "#FFE8B0" : "rgba(255,243,213,.72)"; ctx.lineWidth = 2; ctx.stroke();
   }
   function text(ctx, str, x, y, color, scale) {
     if (window.PFont && PFont.measure && PFont.draw) {
@@ -202,63 +222,106 @@
     } else { ctx.fillStyle = color; ctx.fillRect(x - 4, y, 8, 5); }
   }
   function actionCaption(b) {
+    if (hold.action && actionRole === "grip") return "ЗАХВАТ";
+    if (hold.action && actionRole === "throw") return "ПРИЁМ";
     var h = hero(), gripping = h && (h.combatState === "GRIPPED" || h.combatState === "THROWING");
     return gripping ? "БРОСОК" : h && nearGrip(h) ? "ЗАХВАТ" : "ПРИЁМ";
   }
+  function glyph(ctx, b) {
+    ctx.strokeStyle = "#FFF3D5"; ctx.fillStyle = "#FFF3D5"; ctx.lineWidth = 2;
+    if (b.id === "jump") {
+      ctx.beginPath(); ctx.moveTo(b.x - 8, b.y + 5); ctx.lineTo(b.x, b.y - 7); ctx.lineTo(b.x + 8, b.y + 5); ctx.stroke();
+      ctx.fillRect(b.x - 6, b.y + 8, 12, 2);
+    } else if (b.id === "action") {
+      ctx.fillRect(b.x - 9, b.y - 3, 13, 10); ctx.fillRect(b.x - 6, b.y - 10, 4, 8);
+      ctx.fillRect(b.x - 1, b.y - 11, 4, 9); ctx.fillRect(b.x + 4, b.y - 9, 4, 9);
+    } else if (b.id === "tag") {
+      ctx.beginPath(); ctx.moveTo(b.x - 9, b.y - 4); ctx.lineTo(b.x + 7, b.y - 4); ctx.lineTo(b.x + 3, b.y - 8);
+      ctx.moveTo(b.x + 9, b.y + 4); ctx.lineTo(b.x - 7, b.y + 4); ctx.lineTo(b.x - 3, b.y + 8); ctx.stroke();
+    } else {
+      ctx.beginPath();
+      for (var i = 0; i < 8; i++) {
+        var a = i * Math.PI / 4, r = i % 2 ? 5 : 10;
+        if (!i) ctx.moveTo(b.x + r, b.y); else ctx.lineTo(b.x + Math.cos(a) * r, b.y + Math.sin(a) * r);
+      }
+      ctx.closePath(); ctx.fill();
+    }
+  }
   function auxButton(ctx, b, on) {
-    var w = 39, h = 15;
-    ctx.fillStyle = "rgba(12,10,16,.72)"; ctx.fillRect(b.x - w / 2 + 2, b.y - h / 2 + 3, w, h);
-    ctx.fillStyle = "#B9B3AA"; ctx.fillRect(b.x - w / 2, b.y - h / 2, w, h);
-    ctx.fillStyle = on ? "#C83B5C" : "#302D34"; ctx.fillRect(b.x - 14, b.y - 3, 28, 7);
-    text(ctx, b.id === "tag" ? "СМЕНА" : "СУПЕР", b.x, b.y - 15, on ? "#FFE8B0" : "#EEE5D2", 1);
+    var w = 42, h = 22;
+    ctx.fillStyle = on ? "#C83B5C" : "rgba(17,16,22,.62)";
+    ctx.fillRect((b.x - w / 2) | 0, (b.y - h / 2) | 0, w, h);
+    ctx.strokeStyle = on ? "#FFE8B0" : "rgba(255,243,213,.72)"; ctx.lineWidth = 2;
+    ctx.strokeRect((b.x - w / 2) | 0, (b.y - h / 2) | 0, w, h);
+    glyph(ctx, b);
   }
   function drawPad(ctx, p) {
     var dx = origin ? knob.x - origin.x : 0, dy = origin ? knob.y - origin.y : 0;
-    ctx.fillStyle = "rgba(12,10,16,.72)";
-    ctx.fillRect(p.x - p.reach + 3, p.y - p.arm + 4, p.reach * 2, p.arm * 2);
-    ctx.fillRect(p.x - p.arm + 3, p.y - p.reach + 4, p.arm * 2, p.reach * 2);
-    ctx.fillStyle = "#24232A";
+    ctx.fillStyle = "rgba(17,16,22,.54)";
     ctx.fillRect(p.x - p.reach, p.y - p.arm, p.reach * 2, p.arm * 2);
     ctx.fillRect(p.x - p.arm, p.y - p.reach, p.arm * 2, p.reach * 2);
-    ctx.fillStyle = "#4A4850";
+    ctx.strokeStyle = "rgba(255,243,213,.64)"; ctx.lineWidth = 2;
+    ctx.strokeRect(p.x - p.reach, p.y - p.arm, p.reach * 2, p.arm * 2);
+    ctx.strokeRect(p.x - p.arm, p.y - p.reach, p.arm * 2, p.reach * 2);
+    ctx.fillStyle = "rgba(200,59,92,.82)";
     if (dx < -5) ctx.fillRect(p.x - p.reach + 3, p.y - p.arm + 3, p.reach - p.arm - 3, p.arm * 2 - 6);
     if (dx > 5) ctx.fillRect(p.x + p.arm, p.y - p.arm + 3, p.reach - p.arm - 3, p.arm * 2 - 6);
     if (dy < -5) ctx.fillRect(p.x - p.arm + 3, p.y - p.reach + 3, p.arm * 2 - 6, p.reach - p.arm - 3);
     if (dy > 5) ctx.fillRect(p.x - p.arm + 3, p.y + p.arm, p.arm * 2 - 6, p.reach - p.arm - 3);
-    ctx.fillStyle = "#111016"; ctx.fillRect(p.x - 9, p.y - 9, 18, 18);
-    ctx.fillStyle = "#38363F"; ctx.fillRect(p.x - 6, p.y - 6, 12, 12);
+    ctx.fillStyle = "rgba(17,16,22,.9)"; ctx.fillRect(p.x - 8, p.y - 8, 16, 16);
   }
   function draw(ctx) {
-    if (!visible || !ctx) return;
-    var cfg = layout(), dpad = pad(cfg), i, b, minX = Math.min(BTNS[0].x, BTNS[1].x) - 31;
+    var screen = window.PScreens && PScreens.get ? PScreens.get() : "PLAY";
+    if (overlayCtx) {
+      overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
+      ctx = overlayCtx;
+    }
+    if (!visible || !ctx || screen !== "PLAY") return;
+    var cfg = layout(), dpad = pad(cfg), i, b;
     drawPad(ctx, dpad);
-    ctx.fillStyle = "rgba(12,10,16,.7)"; ctx.fillRect(minX + 3, 187, 119, 69);
-    ctx.fillStyle = "rgba(185,179,170,.9)"; ctx.fillRect(minX, 184, 119, 69);
-    ctx.fillStyle = "#302D34"; ctx.fillRect(minX + 7, 190, 105, 4);
     for (i = 0; i < BTNS.length; i++) {
       b = BTNS[i]; if (!available(b)) continue;
-      if (b.id === "action" || b.id === "jump") roundButton(ctx, b, hold[b.id]);
+      if (b.id === "action" || b.id === "jump") {
+        roundButton(ctx, b, hold[b.id], b.id === "action" ? "#C83B5C" : "#3A78A8"); glyph(ctx, b);
+      }
       else auxButton(ctx, b, hold[b.id]);
     }
-    text(ctx, "B", BTNS[1].x, BTNS[1].y - 4, "#FFF3D5", 2);
-    text(ctx, "A", BTNS[0].x, BTNS[0].y - 4, "#FFF3D5", 2);
-    text(ctx, "ПРЫГ", BTNS[1].x, 248, "#302D34", 1);
-    text(ctx, actionCaption(BTNS[0]), BTNS[0].x, 248, "#302D34", 1);
+    if (!cfg._rails) {
+      text(ctx, "ПРЫГ", BTNS[1].x, BTNS[1].y + BTNS[1].r + 5, "#FFF3D5", 1);
+      text(ctx, actionCaption(BTNS[0]), BTNS[0].x, BTNS[0].y + BTNS[0].r + 5, "#FFF3D5", 1);
+    }
+  }
+  function fitOverlay() {
+    if (!overlay) return;
+    var v = viewport(), dpr = window.devicePixelRatio || 1;
+    overlay.width = Math.max(1, Math.round(v.w * dpr)); overlay.height = Math.max(1, Math.round(v.h * dpr));
+    overlay.style.left = v.x + "px"; overlay.style.top = v.y + "px";
+    overlay.style.width = v.w + "px"; overlay.style.height = v.h + "px";
+    overlayCtx = overlay.getContext("2d"); overlayCtx.setTransform(dpr, 0, 0, dpr, 0, 0); overlayCtx.imageSmoothingEnabled = false;
   }
   function init(el) {
     canvas = el || document.getElementById("game"); if (!canvas || canvas._ptouch) return; canvas._ptouch = true;
-    canvas.addEventListener("pointerdown", onDown, { passive: false });
+    if (document.createElement && document.body) {
+      overlay = document.createElement("canvas"); overlay.id = "touch-controls"; overlay.setAttribute("aria-hidden", "true");
+      document.body.appendChild(overlay); fitOverlay();
+      window.addEventListener("resize", fitOverlay); if (window.visualViewport) window.visualViewport.addEventListener("resize", fitOverlay);
+    }
+    window.addEventListener("pointerdown", onDown, { passive: false });
     window.addEventListener("pointermove", onMove, { passive: false }); window.addEventListener("pointerup", onUp, { passive: false }); window.addEventListener("pointercancel", onCancel, { passive: false });
   }
   function reset() {
     origin = null; stickId = -1; active = {}; down = {}; actionRole = "";
     Object.keys(hold).forEach(function (k) { hold[k] = false; }); Object.keys(was).forEach(function (k) { was[k] = false; });
+    Object.keys(btnIds).forEach(function (k) { btnIds[k] = -1; });
     queued = { jumpPressed: false, jumpReleased: false, tagPressed: false, tagReleased: false,
       specialPressed: false, specialReleased: false, actionPressed: "", actionReleased: "" };
     pending = { gripRelease: false, throwDir: -1, ukemi: false, pause: false };
   }
 
-  var api = { init: init, poll: poll, draw: draw, buttons: BTNS, reset: reset,
+  function geometry() { var cfg = layout(); return { rails: cfg._rails, pad: pad(cfg), buttons: BTNS.map(function (b) {
+    return { id: b.id, x: b.x, y: b.y, r: b.r, hit: b.hit };
+  }) }; }
+  var api = { init: init, poll: poll, draw: draw, buttons: BTNS, reset: reset, _geometry: geometry,
     _down: onDown, _move: onMove, _up: onUp, _cancel: onCancel };
   if (typeof window !== "undefined") window.PInputTouch = api;
   if (typeof global !== "undefined") global.PInputTouch = api;

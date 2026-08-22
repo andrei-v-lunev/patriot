@@ -3,7 +3,10 @@ html, body {
   padding: 0;
   width: 100%;
   height: 100%;
-  background: #000;
+  background-color: #08070c;
+  background-image:
+    linear-gradient(90deg, rgba(8,7,12,.98), rgba(39,27,39,.76) 24%, #000 41%, #000 59%, rgba(39,27,39,.76) 76%, rgba(8,7,12,.98)),
+    repeating-linear-gradient(135deg, transparent 0 16px, rgba(242,193,78,.045) 16px 18px);
   overflow: hidden;
   touch-action: none;
   user-select: none;
@@ -29,6 +32,7 @@ html.ios-web-game body {
   margin: 0;
   padding: 0;
   background: #000;
+  box-shadow: 0 0 0 1px rgba(242,193,78,.18), 0 0 42px rgba(0,0,0,.88);
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
@@ -37,6 +41,15 @@ html.ios-web-game body {
   user-select: none;
   -webkit-user-select: none;
   outline: none;
+}
+
+#touch-controls {
+  position: fixed;
+  z-index: 4;
+  display: block;
+  pointer-events: none;
+  touch-action: none;
+  image-rendering: pixelated;
 }
 
 #rotate {

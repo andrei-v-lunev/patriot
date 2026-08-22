@@ -50,8 +50,11 @@ For the Yandex draft:
 
 - Viewport uses `device-width`, `viewport-fit=cover`, and `visualViewport`.
 - Portrait is blocked by a branded rotate screen; gameplay is landscape-first.
-- All screen overlays use safe-area insets for the notch and home indicator.
-- Touch uses labeled contextual actions and Pointer Events with `touch-action:none`.
+- The portrait overlay uses safe-area insets; gameplay controls keep a 24 CSS px
+  viewport edge inset and use the natural letterbox rails whenever they fit.
+- Touch uses semantic contextual glyphs, separated 44 px primary targets, Pointer
+  Events, and `touch-action:none`; controller letters and opaque hardware slabs are
+  deliberately excluded.
 - Backgrounding, page hide and host pause suspend audio and enter PAUSE.
 - The canvas fractionally fills every sub-960×540 CSS viewport regardless of
   device-pixel ratio, while allocating a sharp DPR-aware backing buffer. Large
@@ -61,8 +64,9 @@ For the Yandex draft:
   game in landscape fullscreen mode without Safari's URL or tab bars.
 - On the first Enter/Space/pointer gesture, `PPlatform` requests Yandex
   `screen.fullscreen`, otherwise the standard browser Fullscreen API. iPhone
-  WebKit falls back to a bounded 1px toolbar-collapse scroll surface because it
-  does not expose element fullscreen on iPhone. A Railway page embedded from
+  WebKit makes a bounded toolbar-collapse attempt because it does not expose
+  element fullscreen on iPhone; the viewport control rails keep the ordinary-tab
+  layout intentional even when Safari retains its chrome. A Railway page embedded from
   Yandex loads the required absolute hosted SDK URL; uploaded archives use `/sdk.js`.
 - Runtime HTML/JavaScript/data/manifests use revalidation caching because their
   filenames are not content-hashed; heavy image/audio assets retain a short public
@@ -71,6 +75,8 @@ For the Yandex draft:
 Useful platform guidance:
 
 - [Apple: configuring the viewport](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/UsingtheViewport/UsingtheViewport.html)
+- [Apple HIG: game controls](https://developer.apple.com/design/human-interface-guidelines/game-controls)
+- [Apple WWDC26: Make your game great with touch](https://developer.apple.com/videos/play/wwdc2026/358/)
 - [MDN: `touch-action` and pointer cancellation](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/touch-action)
 - [WCAG 2.2 target size minimum](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html)
 - [Xbox accessibility guideline: input](https://learn.microsoft.com/en-us/xbox/accessibility/xbox-accessibility-guidelines/107)

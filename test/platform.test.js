@@ -75,4 +75,21 @@ assert.strictEqual(hostedSrc, "https://sdk.games.s3.yandex.net/sdk.js",
   "self-hosted game embedded by Yandex loads the absolute SDK URL");
 HostedPlatform.fullscreen();
 assert(calls.indexOf("native-full") >= 0, "ordinary supported browsers use the native fullscreen API");
+
+var retryCalls = 0, lockCalls = 0;
+global.document = {
+  hidden: false, referrer: "", fullscreenElement: null,
+  documentElement: { classList: { add: function () {} }, requestFullscreen: function () {
+    retryCalls++; if (retryCalls === 1) throw new Error("denied"); return Promise.resolve();
+  } },
+  addEventListener: function () {}, createElement: function () { return {}; }
+};
+global.window = { location: { hostname: "127.0.0.1" }, navigator: { userAgent: "test" },
+  screen: { orientation: { lock: function (mode) { if (mode === "landscape") lockCalls++; return Promise.resolve(); } } },
+  addEventListener: function () {}, scrollTo: function () {} };
+delete require.cache[require.resolve("../js/platform.js")];
+var RetryPlatform = require("../js/platform.js");
+RetryPlatform.fullscreen(); RetryPlatform.fullscreen();
+assert.strictEqual(retryCalls, 2, "a rejected fullscreen request can be retried on the next gesture");
+assert.strictEqual(lockCalls, 2, "fullscreen gestures also request landscape orientation where supported");
 console.log("ok optional Yandex readiness, gameplay, and lifecycle bridge");

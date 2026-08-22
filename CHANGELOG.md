@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-08-22 — Replaced the opaque NES-style mobile controller deck with separated semantic controls, non-overlapping responsive hit regions, and dedicated branded landscape control rails.
+
 ## 2026-08-22 — release closure audit
 
 - Added first-gesture fullscreen orchestration: Yandex SDK fullscreen inside its

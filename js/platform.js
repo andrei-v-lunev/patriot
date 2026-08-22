@@ -61,18 +61,26 @@
     try { window.scrollTo(0, 1); } catch (e) {}
     setTimeout(function () { try { window.scrollTo(0, 1); } catch (e) {} }, 80);
   }
+  function requestLandscape() {
+    var orientation = window.screen && window.screen.orientation;
+    if (!orientation || !orientation.lock) return;
+    try { Promise.resolve(orientation.lock("landscape")).catch(function () {}); } catch (e) {}
+  }
   function requestFullscreen() {
     var full = sdk && sdk.screen && sdk.screen.fullscreen;
     var root = document.documentElement;
     var nativeRequest = root && (root.requestFullscreen || root.webkitRequestFullscreen);
     collapseChrome();
+    requestLandscape();
     if (full && full.request && !sdkFullscreenTried) {
       sdkFullscreenTried = true;
-      try { return Promise.resolve(full.request()).catch(function () { return false; }); } catch (e) { return Promise.resolve(false); }
+      try { return Promise.resolve(full.request()).catch(function () { sdkFullscreenTried = false; return false; }); }
+      catch (e) { sdkFullscreenTried = false; return Promise.resolve(false); }
     }
     if (nativeRequest && !nativeFullscreenTried) {
       nativeFullscreenTried = true;
-      try { return Promise.resolve(nativeRequest.call(root)).catch(function () { return false; }); } catch (e2) { return Promise.resolve(false); }
+      try { return Promise.resolve(nativeRequest.call(root)).catch(function () { nativeFullscreenTried = false; return false; }); }
+      catch (e2) { nativeFullscreenTried = false; return Promise.resolve(false); }
     }
     return Promise.resolve(false);
   }
@@ -111,6 +119,9 @@
     });
     document.addEventListener("pointerdown", firstGesture, { passive: true });
     document.addEventListener("keydown", firstGesture, { passive: true });
+    document.addEventListener("fullscreenchange", function () {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) nativeFullscreenTried = false;
+    });
     window.addEventListener("pagehide", pauseExternal);
     window.addEventListener("pageshow", resumeExternal);
     loadYandex();
