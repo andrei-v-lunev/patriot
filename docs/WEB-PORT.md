@@ -53,8 +53,12 @@ For the Yandex draft:
 - All screen overlays use safe-area insets for the notch and home indicator.
 - Touch uses labeled contextual actions and Pointer Events with `touch-action:none`.
 - Backgrounding, page hide and host pause suspend audio and enter PAUSE.
-- The canvas keeps its native backing buffers and fractionally fits small CSS
-  viewports; it never clips the 16:9 playfield.
+- The canvas fractionally fills every sub-960×540 CSS viewport regardless of
+  device-pixel ratio, while allocating a sharp DPR-aware backing buffer. Large
+  screens may retain integer scaling; the complete 16:9 playfield is never clipped.
+- iPhone Safari itself keeps browser chrome around ordinary tabs. The published
+  web-app manifest and club touch icon make Share → Add to Home Screen launch the
+  game in landscape fullscreen mode without Safari's URL or tab bars.
 
 Useful platform guidance:
 

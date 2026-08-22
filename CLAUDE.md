@@ -94,8 +94,10 @@ regression test.
 960×540 UI buffer (HUD/portraits/menus draw here via a ctx.scale(2,2) wrapper —
 same 480×270 coordinates, double pixel density) → visible canvas at integer k in
 **device pixels** when the viewport fits the native UI buffer (DPR-aware,
-boot.js `fit()`). Below 960×540 CSS pixels, keep a native backing buffer and use a
-fractional CSS fit so no edge is clipped. Never draw world entities on the UI layer.
+boot.js `fit()`). Below 960×540 CSS pixels, always use a fractional CSS fit even
+when high DPR would yield a positive device-pixel integer; allocate a separate
+DPR-aware backing scale so iPhone Safari never collapses to a tiny canvas. Never
+draw world entities on the UI layer.
 
 ### Determinism
 

@@ -54,7 +54,7 @@
 
 ## Responsive behavior
 - Supported breakpoints/devices: 480×270 native world, 960×540 UI, fractional CSS fit below that size, integer scaling above; iPhone 14-class through desktop.
-- Layout adaptations: landscape gameplay, safe-area-aware centering, portrait rotate screen, mirrored controller swaps left/right groups without changing action meaning.
+- Layout adaptations: landscape gameplay, safe-area-aware centering, fractional full-height fit on every sub-native high-DPR viewport, portrait rotate screen, mirrored controller swaps left/right groups without changing action meaning.
 - Touch/hover differences: touch displays persistent controller hardware after first contact; mouse/keyboard/gamepad do not show it; invisible hit padding exceeds visible geometry.
 
 ## Interaction states

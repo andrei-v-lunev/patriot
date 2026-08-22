@@ -20,6 +20,7 @@ function contrast(a, b) { var x = rgb(a), y = rgb(b), l1 = 0.2126 * x[0] + 0.715
 
 var boot = fs.readFileSync(path.join(__dirname, "../js/boot.js"), "utf8");
 assert(boot.indexOf("Math.min(vw / UW, vh / UH)") >= 0, "small viewports need fractional fit");
+assert(boot.indexOf("fitScale < 1") >= 0, "high-DPR small viewports must not fall back to tiny device-pixel integer scaling");
 assert(boot.indexOf("visualViewport") >= 0 && boot.indexOf("offsetTop") >= 0, "mobile visual viewport offsets are required");
 var page = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
 assert(page.indexOf("user-scalable=no") < 0 && page.indexOf("maximum-scale=1") < 0, "mobile zoom must remain available");

@@ -24,24 +24,33 @@
     if (c.msImageSmoothingEnabled !== undefined) c.msImageSmoothingEnabled = false;
   }
 
+  function layout(vw, vh, dpr, fitMode) {
+    var fitScale = Math.min(vw / UW, vh / UH);
+    var fractional = fitMode || fitScale < 1;
+    var k = Math.floor(fitScale * dpr);
+    var cssScale = fractional ? fitScale : k / dpr;
+    var backingScale = Math.max(1, fractional ? Math.ceil(fitScale * dpr) : k);
+    return { cssScale: cssScale, backingScale: backingScale,
+      cssW: UW * cssScale, cssH: UH * cssScale };
+  }
+
   function fit() {
     if (!vis) return;
     var vv = window.visualViewport;
     var vw = (vv && vv.width) || window.innerWidth || W;
     var vh = (vv && vv.height) || window.innerHeight || H;
     var dpr = window.devicePixelRatio || 1;
-    var fitScale = Math.min(vw / UW, vh / UH);
     var prefs = window.PSettings && window.PSettings.get ? window.PSettings.get() : null;
     var fitMode = prefs && prefs.video && prefs.video.scaleMode === "fit";
-    var k = Math.floor(fitScale * dpr);
-    var cssScale = fitMode || k <= 0 ? fitScale : k / dpr;
-    var backingScale = Math.max(1, fitMode ? Math.ceil(fitScale * dpr) : k);
+    var box = layout(vw, vh, dpr, fitMode);
+    var cssScale = box.cssScale;
+    var backingScale = box.backingScale;
     uiScale = backingScale;
     scale = backingScale * 2;
     vis.width = UW * backingScale;
     vis.height = UH * backingScale;
-    var cssW = UW * cssScale;
-    var cssH = UH * cssScale;
+    var cssW = box.cssW;
+    var cssH = box.cssH;
     vis.style.width = cssW + "px";
     vis.style.height = cssH + "px";
     vis.style.position = "absolute";
@@ -202,7 +211,8 @@
     ui: null,
     uictx: null,
     scale: 2,
-    uiScale: 1
+    uiScale: 1,
+    _layout: layout
   };
   if (typeof window !== "undefined") window.PBoot = api;
   if (typeof global !== "undefined") global.PBoot = api;

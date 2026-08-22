@@ -28,6 +28,8 @@ function request(port, target, method) {
     assert.strictEqual(index.headers["x-content-type-options"], "nosniff");
     assert.strictEqual((await request(port, "/js/game.js")).status, 200);
     assert.strictEqual((await request(port, "/assets/ui/club-crest.png")).status, 200);
+    var manifest = await request(port, "/assets/manifest.webmanifest");
+    assert.strictEqual(manifest.status, 200); assert(/application\/manifest\+json/.test(manifest.headers["content-type"]));
     assert.strictEqual((await request(port, "/server.js")).status, 404, "server source must not be public");
     assert.strictEqual((await request(port, "/package.json")).status, 404, "package metadata must not be public");
     assert.strictEqual((await request(port, "/test/sim.test.js")).status, 404, "tests must not be public");
