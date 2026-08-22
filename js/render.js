@@ -46,7 +46,8 @@
   function collect(state) {
     var n = 0;
     function add(ent, kind) {
-      if (!ent || ent.alive === false) return;
+      /* Solo tag partners remain alive for bench regen but must not be drawn. */
+      if (!ent || ent.alive === false || (kind === "hero" && ent.benched)) return;
       if (n >= 64) return;
       var slot = sortBuf[n];
       slot.d = ent.d || 0;
@@ -238,7 +239,7 @@
 
   function init() {}
 
-  var api = { draw: draw, init: init, W: W, H: H };
+  var api = { draw: draw, init: init, W: W, H: H, _collect: collect };
   if (typeof window !== "undefined") window.PRender = api;
   if (typeof global !== "undefined") global.PRender = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;

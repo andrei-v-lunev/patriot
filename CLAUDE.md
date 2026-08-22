@@ -111,7 +111,12 @@ JavaScript. Do not introduce a framework or engine merely to publish on Yandex.
 standalone, while a Yandex host loads `/sdk.js`, reports loading/gameplay state,
 and maps host pause/resume events to the existing pause screen and audio graph.
 The primary phone layout is landscape; portrait shows a safe-area-aware rotate
-screen. See `docs/WEB-PORT.md` for packaging and device QA.
+screen. Touch uses a fixed pixel-art D-pad and a NES-inspired gray A/B action deck,
+with contextual Russian captions, rectangular TAG/SPECIAL auxiliaries, 80–130%
+scaling and mirrored handedness. This owner-directed hardware treatment supersedes
+the PRD's older floating-stick/circular-button visuals without changing its action,
+gesture, safe-area or minimum-target contracts. See `DESIGN.md` and
+`docs/WEB-PORT.md` for design, packaging and device QA.
 
 ### Sim/UI contracts
 

@@ -10,6 +10,14 @@ h.requireFile("js/combat.hit.js");
 var g = h.createGame(77, { levelId: "w1l1" });
 var hero = h.getHero(g), dummy = h.getEnemies(g).filter(function (e) { return e.archetype === "DUMMY"; })[0];
 assert(g.tutorial && g.tutorial.phase === 0 && dummy.tutorialGripOnly, "W1L1 initializes its grip-only dojo lesson");
+assert(g.segment.width === 480, "W1L1 dojo is exactly one viewport wide");
+hero.x = 340;
+var dummyX = dummy.x;
+for (var moveT = 0; moveT < 60; moveT++) h.step(g, h.intents({ moveX: 1 }));
+assert(g.cam.x === 0, "W1L1 movement never scrolls the viewport-sized dojo plate");
+assert(dummy.x === dummyX, "W1L1 camera lock leaves the stationary dummy fixed in the room");
+g = h.createGame(77, { levelId: "w1l1" }); hero = h.getHero(g);
+dummy = h.getEnemies(g).filter(function (e) { return e.archetype === "DUMMY"; })[0];
 
 hero.x = 170; Tutorial.tick(g, h.intents());
 assert(g.tutorial.phase === 1 && g.tutorial.hint === "ХВАТАЙ ЕГО", "walking into the dojo reveals the grip beat");

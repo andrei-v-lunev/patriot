@@ -2,6 +2,14 @@
 
 ## 2026-08-22 — release closure audit
 
+- Replaced the generic circular mobile overlay with a fixed NES-inspired pixel
+  D-pad and gray A/B action deck, while preserving contextual throws, auxiliary
+  actions, mirroring, scaling, gestures and minimum touch targets.
+- Locked the viewport-sized W1L1 dojo camera so its stationary training dummy no
+  longer appears to slide across the background, and stopped solo TAG from drawing
+  the alive benched fighter underneath the incoming hero.
+- Added the active repo design contract in `DESIGN.md` and renamed the Railway
+  service domain to `patriot.up.railway.app`.
 - Hardened the existing HTML5 build for iPhone/Yandex play: safe-area-aware
   landscape gating, optional Yandex loading/gameplay lifecycle events, audio pause
   on host/background transitions, and real iPhone 14 viewport verification.

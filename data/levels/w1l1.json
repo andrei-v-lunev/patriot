@@ -10,11 +10,11 @@
     {
       "id": "s1",
       "mode": "plat",
-      "width": 960,
+      "width": 480,
       "dLock": 24,
       "floorZ": 0,
       "solids": [
-        { "x": 0, "z": 0, "w": 960, "h": 16, "type": "solid" },
+        { "x": 0, "z": 0, "w": 480, "h": 16, "type": "solid" },
         { "x": 280, "z": 48, "w": 96, "h": 10, "type": "oneway" }
       ],
       "hazards": [],
