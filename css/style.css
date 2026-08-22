@@ -12,6 +12,15 @@ html, body {
   color-scheme: dark;
 }
 
+/* iPhone Safari has no element fullscreen API. A 1px programmatic scroll on a
+   real user gesture lets WebKit collapse its toolbar without making gameplay
+   gestures scroll the page (`touch-action:none` remains authoritative). */
+html.ios-web-game body {
+  height: calc(100% + 2px);
+  overflow-y: auto;
+  overscroll-behavior: none;
+}
+
 #game {
   display: block;
   position: absolute;

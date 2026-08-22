@@ -112,6 +112,9 @@ JavaScript. Do not introduce a framework or engine merely to publish on Yandex.
 `PPlatform` is an optional adapter: localhost and ordinary web hosts remain fully
 standalone, while a Yandex host loads `/sdk.js`, reports loading/gameplay state,
 and maps host pause/resume events to the existing pause screen and audio graph.
+The first real pointer/Enter/Space gesture requests host/native fullscreen; iPhone
+WebKit receives the bounded toolbar-collapse fallback. Self-hosted Yandex embeds
+are detected by referrer and load the absolute hosted SDK URL.
 The primary phone layout is landscape; portrait shows a safe-area-aware rotate
 screen. Touch uses a fixed pixel-art D-pad and a NES-inspired gray A/B action deck,
 with contextual Russian captions, rectangular TAG/SPECIAL auxiliaries, 80–130%

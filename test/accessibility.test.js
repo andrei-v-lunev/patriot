@@ -32,6 +32,8 @@ var css = fs.readFileSync(path.join(__dirname, "../css/style.css"), "utf8");
 assert(css.indexOf("@media (orientation: portrait)") >= 0, "portrait devices need a deterministic landscape prompt");
 assert(css.indexOf("safe-area-inset-top") >= 0 && css.indexOf("safe-area-inset-left") >= 0,
   "phone overlays must respect display cutouts and home-indicator safe areas");
+assert(css.indexOf("ios-web-game") >= 0 && css.indexOf("height: calc(100% + 2px)") >= 0,
+  "iPhone Safari needs a bounded scroll surface for toolbar collapse");
 var render = fs.readFileSync(path.join(__dirname, "../js/render.js"), "utf8");
 assert(render.indexOf("prefs.reducedMotion || prefs.video && prefs.video.flashReduction") >= 0, "flash reduction does not reach hazards");
 assert(render.indexOf("screenShake") >= 0, "screen-shake scaling is not consumed");

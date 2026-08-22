@@ -2,6 +2,10 @@
 
 ## 2026-08-22 — release closure audit
 
+- Added first-gesture fullscreen orchestration: Yandex SDK fullscreen inside its
+  shell, standard browser fullscreen elsewhere, and controlled iPhone WebKit
+  toolbar collapse when element fullscreen is unavailable. Self-hosted Yandex
+  embeds now load the required absolute SDK URL.
 - Fixed high-DPR iPhone Safari sizing so short landscape viewports fractionally
   fill the available height instead of collapsing the game to a tiny device-pixel
   integer scale; large desktop integer scaling remains unchanged. Added the club-
