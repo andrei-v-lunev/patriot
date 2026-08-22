@@ -59,12 +59,12 @@
   function clampGates(state, e) {
     var a = state.segment && state.segment.arena;
     var hw, lo, hi;
-    if (!a || e.kind !== "hero") return;
-    if (!state.cam.locked && !(state.go && state.go.active)) return;
+    if (!a) return;
+    if (e.kind === "hero" && !state.cam.locked && !(state.go && state.go.active)) return;
     hw = e.w * 0.5;
     lo = a.xMin;
     hi = a.xMax;
-    if (state.go && state.go.active) hi = a.xMax + 1e6;
+    if (e.kind === "hero" && state.go && state.go.active) hi = a.xMax + 1e6;
     if (e.x - hw < lo) {
       e.x = lo + hw;
       if (e.vx < 0) e.vx = 0;
@@ -90,7 +90,7 @@
 
   function pushBodies(state) {
     var all = [], i, j, a, b, push, tol, spd;
-    for (i = 0; i < state.heroes.length; i++) if (state.heroes[i].alive) all.push(state.heroes[i]);
+    for (i = 0; i < state.heroes.length; i++) if (state.heroes[i].alive && !state.heroes[i].benched) all.push(state.heroes[i]);
     for (i = 0; i < state.enemies.length; i++) if (state.enemies[i].alive) all.push(state.enemies[i]);
     spd = PConst && PConst.PUSH_SPEED != null ? PConst.PUSH_SPEED : 40;
     tol = PConst && PConst.DEPTH_HIT != null ? PConst.DEPTH_HIT : 10;
@@ -132,6 +132,7 @@
 
   function beginSwap(state, idx) {
     var air = false, i, e;
+    if (state.pendingSeg >= 0) return;
     releaseGrips(state);
     for (i = 0; i < state.heroes.length; i++) {
       e = state.heroes[i];
@@ -162,11 +163,11 @@
   function tryAdvance(state) {
     var a = state.segment && state.segment.arena;
     var zone, i, e, living = 0, inZ = 0, next;
-    if (!a || !state.go || !state.go.active) return;
+    if (!a || !state.go || !state.go.active || !state.go.opened) return;
     zone = a.xMax - ((PConst && PConst.GO_ZONE) || 180);
     for (i = 0; i < state.heroes.length; i++) {
       e = state.heroes[i];
-      if (!e.alive || e.downed) continue;
+      if (!e.alive || e.downed || e.benched) continue;
       living++;
       if (e.x >= zone) inZ++;
     }
@@ -175,19 +176,25 @@
     if (living && inZ === living) {
       next = state.segIndex + 1;
       if (state.level && state.level.segments && next < state.level.segments.length) beginSwap(state, next);
-      else state.go.opened = true;
+      else {
+        state.go.opened = true;
+        /* Last segment cleared+exited: emit level completion for the UI. */
+        if (!state.results) state.results = { score: state.score, levelId: state.levelId };
+      }
     }
   }
 
   function platExit(state) {
     var w, i, e, next;
     if (state.mode !== "plat" || !state.level) return;
+    if (state.levelId === "w1l1" && state.tutorial && !state.tutorial.done) return;
     w = state.width || 0;
     for (i = 0; i < state.heroes.length; i++) {
       e = state.heroes[i];
-      if (e.alive && e.x > w - 24) {
+      if (e.alive && !e.benched && e.x > w - 24) {
         next = state.segIndex + 1;
         if (state.level.segments && next < state.level.segments.length) beginSwap(state, next);
+        else if (!state.results) state.results = { score: state.score, levelId: state.levelId };
         return;
       }
     }
@@ -196,7 +203,7 @@
   function tick(state) {
     var openN = toTicks(PConst && PConst.GATE_DESPAWN_F != null ? PConst.GATE_DESPAWN_F : 10);
     if (state.go && state.go.active) {
-      state.go.openT++;
+      state.go.openT = (state.go.openT || 0) + 1;
       if (state.go.openT >= openN) state.go.opened = true;
       tryAdvance(state);
     }
@@ -208,6 +215,7 @@
     if (!seg || !seg.arena) return;
     state.cam.x = seg.arena.camX || 0;
     state.cam.targetX = state.cam.x;
+    state.cam.bgX = 0;
     state.cam.locked = true;
     state.xMin = seg.arena.xMin;
     state.xMax = seg.arena.xMax;

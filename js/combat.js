@@ -51,6 +51,26 @@
     return !!(e && (e.kind === "hero" || e.team === "hero"));
   }
 
+  function consumedKey(name) {
+    return "_consumed" + name.charAt(0).toUpperCase() + name.slice(1) + "At";
+  }
+
+  function bufferedPress(state, e, inn, name) {
+    var at, age;
+    if (!inn) return false;
+    at = inn.pressedAtTick && inn.pressedAtTick[name];
+    if (typeof at === "number" && e && e[consumedKey(name)] === at) return false;
+    if (inn[name + "Pressed"]) return true;
+    if (typeof at !== "number") return false;
+    age = (state.tick | 0) - at;
+    return age >= 0 && age <= (C.BUFFER_TICKS || 6);
+  }
+
+  function consumePress(state, e, inn, name) {
+    var at = inn && inn.pressedAtTick && inn.pressedAtTick[name];
+    if (e) e[consumedKey(name)] = typeof at === "number" ? at : (state.tick | 0);
+  }
+
   function thaw(state) {
     function clr(e) {
       e.frozen = false;
@@ -66,9 +86,11 @@
     var st = h.combatState || "FREE";
     if (st === "FREE") {
       var G = Grip(), H = Hit();
-      if (inn.gripPressed && G && G.startGrip) G.startGrip(state, h);
+      if (bufferedPress(state, h, inn, "grip") && G && G.startGrip && G.startGrip(state, h))
+        consumePress(state, h, inn, "grip");
       else if (inn.throwPressed && H && H.startSweep) H.startSweep(state, h);
-      else if (inn.specialPressed && H && H.startSpecial) H.startSpecial(state, h);
+      else if (bufferedPress(state, h, inn, "special") && H && H.startSpecial && H.startSpecial(state, h))
+        consumePress(state, h, inn, "special");
     }
   }
 

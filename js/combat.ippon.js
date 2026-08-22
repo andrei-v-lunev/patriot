@@ -21,6 +21,12 @@
     if (!state.ippon) {
       state.ippon = { chain: 0, timer: 0, banner: "", score: 0, mul: 1, throwScore: 0 };
     }
+    /* The sim pre-creates a partial ippon object ({chain,timer,paused}) —
+       backfill numeric fields so += arithmetic never runs on undefined. */
+    if (state.ippon.score == null || state.ippon.score !== state.ippon.score) state.ippon.score = 0;
+    if (state.ippon.mul == null) state.ippon.mul = 1;
+    if (state.ippon.throwScore == null || state.ippon.throwScore !== state.ippon.throwScore) state.ippon.throwScore = 0;
+    if (state.ippon.banner == null) state.ippon.banner = "";
     return state.ippon;
   }
 
@@ -40,12 +46,20 @@
 
   function extendChain(state, n) {
     if (!state) return 0;
-    var p = ensure(state);
+    var p = ensure(state), before = p.banner, audio = "";
     n = n == null ? 1 : n | 0;
     p.chain = (p.chain | 0) + n;
     p.timer = C.IPPON_F || 300;
     p.banner = bannerOf(p.chain);
     p.mul = mulOf(p.chain);
+    if (p.banner !== before) {
+      if (p.banner === "WAZA-ARI") audio = "wazaari";
+      else if (p.banner === "IPPON") audio = "ippon";
+      else if (p.banner === "IPPON GACHI" || p.banner === "KODOKAN") audio = "ippon_gachi";
+      if (audio && state.events && state.events.length < 32) {
+        state.events.push({ name: "audio_only", audio: audio, alive: true });
+      }
+    }
     return p.chain;
   }
 

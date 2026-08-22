@@ -3,6 +3,12 @@ node_modules/
 dist/
 *.log
 shot*.png
+.omx/
+tools/__pycache__/
+tools/_music_raw/
+tools/_music_masters/
+tools/_sfx_raw/
+tools/_sfx_masters/
 
 # Android build outputs
 android/app/build/

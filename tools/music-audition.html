@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE PATRIOT — Music Audition</title>
+<style>
+  :root { color-scheme: dark; font: 15px/1.4 system-ui,sans-serif; background:#101318; color:#f5f0dc; }
+  body { margin:0 auto; max-width:1120px; padding:24px; }
+  h1 { margin:0; color:#ffd65c; } .sub { color:#aeb7c6; margin:4px 0 20px; }
+  .bar { position:sticky; top:0; z-index:2; display:flex; gap:10px; align-items:center; padding:10px; background:#171c24ee; border:1px solid #313a49; }
+  button,select,textarea { font:inherit; color:inherit; background:#222a36; border:1px solid #49566a; border-radius:4px; }
+  button { padding:7px 11px; cursor:pointer; } button:hover { border-color:#ffd65c; }
+  #summary { margin-left:auto; font-weight:700; }
+  article { margin:16px 0; padding:16px; border:1px solid #313a49; background:#171c24; border-radius:7px; }
+  article.approve { border-color:#4ecb71; } article.reject { border-color:#ef6a6a; }
+  h2 { margin:0 0 10px; font-size:18px; } .meta { color:#aeb7c6; font-size:13px; }
+  .takes { display:grid; grid-template-columns:repeat(4,minmax(160px,1fr)); gap:8px; margin:12px 0; }
+  .take { padding:8px; background:#101318; border-radius:4px; } audio { width:100%; height:32px; }
+  .review { display:grid; grid-template-columns:150px 1fr; gap:10px; } textarea { min-height:58px; padding:7px; resize:vertical; }
+  .checks { display:flex; flex-wrap:wrap; gap:10px; margin:10px 0; } label { white-space:nowrap; }
+  .warn { color:#ff9a68; } code { color:#9fd7ff; }
+  @media(max-width:760px){ .takes{grid-template-columns:1fr 1fr}.review{grid-template-columns:1fr}.bar{position:static;flex-wrap:wrap} }
+</style>
+</head>
+<body>
+<h1>THE PATRIOT — Music Audition</h1>
+<p class="sub">Creative approval gate. Audition A/B/C/D, the mastered result, loop seam and stem blend. Nothing is approved automatically.</p>
+<div class="bar">
+  <button id="stop">Stop all</button>
+  <button id="export">Export verdict JSON</button>
+  <button id="clear">Clear local review</button>
+  <span id="summary">Loading…</span>
+</div>
+<main id="tracks"></main>
+<script>
+(function(){
+  "use strict";
+  var storeKey="patriot.music.review.v1", review=JSON.parse(localStorage.getItem(storeKey)||"{}");
+  var criteria=["1993 register","folk lead","funk spine","no modern EDM","clean loop","phase-safe stems"];
+  function el(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;}
+  function save(){localStorage.setItem(storeKey,JSON.stringify(review));summary();}
+  function summary(){var values=Object.keys(review).map(function(k){return review[k].verdict;});var ok=values.filter(function(v){return v==="approve";}).length;document.getElementById("summary").textContent=ok+" / 16 approved";}
+  function audio(src){var a=el("audio");a.controls=true;a.preload="metadata";a.src="../"+src;return a;}
+  function row(track,report){
+    var id=track.id,r=review[id]||{verdict:"pending",notes:"",checks:{}};review[id]=r;
+    var card=el("article",r.verdict);card.dataset.id=id;
+    var description=track.intent||(track.style||"").split(",")[0]||"music cue";
+    var title=el("h2",null,id+" — "+description);card.appendChild(title);
+    card.appendChild(el("div","meta",track.bpm+" BPM · "+track.key+" · target "+track.target_len+" · selected "+(report.selected_take||report.take||"?")+" · master "+report.duration_s+"s"));
+    var takes=el("div","takes");["a","b","c","d"].forEach(function(take){var box=el("div","take");box.appendChild(el("strong",null,"Take "+take.toUpperCase()));box.appendChild(audio("tools/_music_raw/"+id+"_"+take+".mp3"));takes.appendChild(box);});card.appendChild(takes);
+    var mastered=el("div","take");mastered.appendChild(el("strong",null,"Mastered runtime mix"));mastered.appendChild(audio("assets/audio/music/"+id+".ogg"));card.appendChild(mastered);
+    var checks=el("div","checks");criteria.forEach(function(name){var label=el("label"),input=el("input");input.type="checkbox";input.checked=!!r.checks[name];input.onchange=function(){r.checks[name]=input.checked;save();};label.appendChild(input);label.appendChild(document.createTextNode(" "+name));checks.appendChild(label);});card.appendChild(checks);
+    var form=el("div","review"),select=el("select"),notes=el("textarea");
+    ["pending","approve","reject"].forEach(function(value){var option=el("option",null,value.toUpperCase());option.value=value;option.selected=r.verdict===value;select.appendChild(option);});
+    select.onchange=function(){r.verdict=select.value;card.className=r.verdict;save();};notes.value=r.notes;notes.placeholder="Creative notes, loop click timestamp, motif/era issue…";notes.oninput=function(){r.notes=notes.value;save();};form.appendChild(select);form.appendChild(notes);card.appendChild(form);return card;
+  }
+  Promise.all([fetch("music_manifest.json").then(function(r){return r.json();}),fetch("music_report.json").then(function(r){return r.json();})]).then(function(data){
+    var tracks=data[0].tracks||[],rows=data[1].process||[],by={};rows.forEach(function(r){by[r.id]=r;});var main=document.getElementById("tracks");
+    tracks.forEach(function(track){main.appendChild(row(track,by[track.id]||{}));});save();
+  }).catch(function(error){document.getElementById("tracks").textContent="Could not load audition data: "+error;});
+  document.getElementById("stop").onclick=function(){document.querySelectorAll("audio").forEach(function(a){a.pause();a.currentTime=0;});};
+  document.getElementById("clear").onclick=function(){if(confirm("Clear every local music verdict?")){review={};localStorage.removeItem(storeKey);location.reload();}};
+  document.getElementById("export").onclick=function(){var body={schema:1,project:"patriot",reviewedAt:new Date().toISOString(),tracks:review};var blob=new Blob([JSON.stringify(body,null,2)],{type:"application/json"});var a=el("a");a.href=URL.createObjectURL(blob);a.download="patriot-music-verdict.json";a.click();URL.revokeObjectURL(a.href);};
+}());
+</script>
+</body>
+</html>

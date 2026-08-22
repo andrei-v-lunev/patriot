@@ -109,6 +109,9 @@
     t.d = hero.d; t.vx = 0; t.vz = 0; t.vd = 0;
     t.facing = -f; t.grounded = true;
   }
+  function emitAudio(state, name) {
+    if (state && state.events && state.events.length < 32) state.events.push({ name: "audio_only", audio: name, alive: true });
+  }
   function lock(state, hero, t) {
     hero.combatState = "GRIPPED"; t.combatState = "GRIPPED";
     hero.gripTarget = t; t.gripTarget = hero;
@@ -121,6 +124,7 @@
     if (H && H.addMeter) H.addMeter(state, hero, 2);
     else { hero.meter = (hero.meter || 0) + 2; if (hero.meter > 100) hero.meter = 100; }
     hold(hero, t);
+    emitAudio(state, "grip");
   }
   function breakGrip(state, e, heroHit) {
     var a = e, b = e && e.gripTarget;
@@ -184,6 +188,7 @@
         hero.combatState = "FREE";
         hero.recoveryT = toTicks((C.WHIFF_REC_F || 11) + (C.E6_FRONT_EXTRA_F || 8));
         hero.x += (hero.x >= t.x ? 1 : -1) * (C.E6_PUSH || 14);
+        emitAudio(state, "grip_fail");
         return;
       }
       lock(state, hero, t);
@@ -246,11 +251,17 @@
     if (e.gripIgnoreT > 0) e.gripIgnoreT--;
     var inn = e.intent || (state.intents && state.intents[e.player | 0]);
     if (inn) {
-      if (inn.gripPressed && (e.tightenT | 0) <= 0 && (e.gripIgnoreT | 0) <= 0) {
+      /* Desktop grip/throw is contextual: acquire/sustain while L is held,
+         then release L (plus optional direction) to throw. */
+      if (inn.gripReleased) {
+        var Th = Throw();
+        if (Th && Th.startThrow) Th.startThrow(state, e, inn);
+        return;
+      } else if (inn.gripPressed && (e.tightenT | 0) <= 0 && (e.gripIgnoreT | 0) <= 0) {
         e.gripTier = Math.min(2, (e.gripTier | 0) + 1);
         e.tightenT = toTicks(12);
       } else if (inn.throwPressed) {
-        var Th = Throw();
+        Th = Throw();
         if (Th && Th.startThrow) Th.startThrow(state, e, inn);
         return;
       }

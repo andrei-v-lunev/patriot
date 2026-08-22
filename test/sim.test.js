@@ -47,6 +47,29 @@ var wantVd = (PConst.heroes.idris.runMax) * (PConst.DEPTH_RATIO || 0.6);
 assert(Math.abs(Math.abs(hero.vd) - wantVd) < 0.01 || Math.abs(hero.vd) === 90,
   "belt moveD=1 |vd|===runMax*0.6 (90) got " + hero.vd);
 
+var easy = h.createEmpty("belt", { difficulty: "easy" });
+var hard = h.createEmpty("belt", { difficulty: "hard" });
+var easyFoe = h.spawnEnemy(easy, "E1", 220, 24);
+var hardFoe = h.spawnEnemy(hard, "E1", 220, 24);
+assert(easy.lives === 5 && easy.maxAlive === 4 && easy.attackTokensMax === 2,
+  "Easy applies 5 lives, maxAlive 4, and 2 attack tokens");
+assert(hard.lives === 2 && hard.maxAlive === 7 && hard.attackTokensMax === 3,
+  "Hard applies 2 lives, maxAlive 7, and 3 attack tokens");
+assert(easyFoe.hp === Math.ceil(24 * 0.75) && hardFoe.hp === Math.ceil(24 * 1.30),
+  "difficulty scales enemy HP (easy=" + easyFoe.hp + " hard=" + hardFoe.hp + ")");
+assert(easyFoe.damageMul === 0.70 && hardFoe.damageMul === 1.35 &&
+  easyFoe.telegraphMul === 1.30 && hardFoe.telegraphMul === 0.85,
+  "difficulty attaches damage and telegraph multipliers to spawned enemies");
+assert(easy.bossEnrageS === 360 && hard.bossEnrageS === 180 &&
+  easy.meterGainMul === 1.25 && hard.scoreMul === 1.25,
+  "difficulty applies enrage, meter, and score multipliers");
+var dojo = h.createGame(1337, { levelId: "w1l1", training: true });
+assert(dojo.training === true && dojo.levelId === "w1l1",
+  "DOJO creates a distinct non-campaign training run on the authored dojo level");
+var invalidLevel = h.createGame(1337, { levelId: "💥/../\\0" });
+assert(invalidLevel.level && invalidLevel.levelId === "w1l1" && invalidLevel.segment,
+  "invalid nonempty level ids fall back to the canonical first level instead of a blank softlock");
+
 var a = { d: 20 };
 var b = { d: 30 };
 var c = { d: 31 };
@@ -80,6 +103,18 @@ var g2 = h.createEmpty("plat", { seed: 1337 });
 var t;
 for (t = 0; t < runA.log.length; t++) h.step(g2, runA.log[t]);
 assert(h.hashWorld(g2) === runA.hash, "same seed+intent log 600 ticks identical hashWorld");
+
+g = h.createEmpty("belt");
+var duplicateEnemy = h.spawnEnemy(g, "E1", 180, 24);
+duplicateEnemy.scoreVal = 100;
+g.enemies.push(duplicateEnemy);
+duplicateEnemy.hp = 0;
+h.step(g, h.intents());
+assert(g.score === 100, "duplicate enemy references award score exactly once");
+var reuseA = h.spawnEnemy(g, "E1", 180, 24);
+var reuseB = h.spawnEnemy(g, "E1", 220, 24);
+assert(reuseA && reuseB && reuseA !== reuseB && g.pools.enemies.inUse() === 2,
+  "duplicate release cannot poison the enemy pool or alias later allocations");
 
 if (h.fails()) {
   console.error(h.oks() + " ok, " + h.fails() + " fail");

@@ -7,6 +7,7 @@
     for (i = 0; i < n; i++) {
       var o = factory(i);
       o._pool = true;
+      o._inPool = true;
       o.alive = false;
       all.push(o);
       free.push(o);
@@ -18,18 +19,21 @@
       alloc: function () {
         if (!free.length) return null;
         var x = free.pop();
+        x._inPool = false;
         x.alive = true;
         return x;
       },
       release: function (o) {
-        if (!o || !o._pool) return;
+        if (!o || !o._pool || o._inPool) return;
         o.alive = false;
+        o._inPool = true;
         free.push(o);
       },
       reset: function () {
         free.length = 0;
         for (i = 0; i < all.length; i++) {
           all[i].alive = false;
+          all[i]._inPool = true;
           free.push(all[i]);
         }
       },

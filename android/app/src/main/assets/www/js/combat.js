@@ -17,6 +17,9 @@
     }
   }
 
+  /* Lazy lookup (mirrors js/sim.js): index.html loads combat.js BEFORE
+     combat.grip/throw/ippon/hit, so window.PCombat* must be resolved at
+     call time, never cached at IIFE-eval time. */
   function loadMod(path, glob) {
     if (typeof window !== "undefined" && window[glob]) return window[glob];
     if (typeof global !== "undefined" && global[glob]) return global[glob];
@@ -30,10 +33,10 @@
     return null;
   }
 
-  var Grip = loadMod("./combat.grip", "PCombatGrip");
-  var Throw = loadMod("./combat.throw", "PCombatThrow");
-  var Ippon = loadMod("./combat.ippon", "PCombatIppon");
-  var Hit = loadMod("./combat.hit", "PCombatHit");
+  function Grip() { return loadMod("./combat.grip", "PCombatGrip"); }
+  function Throw() { return loadMod("./combat.throw", "PCombatThrow"); }
+  function Ippon() { return loadMod("./combat.ippon", "PCombatIppon"); }
+  function Hit() { return loadMod("./combat.hit", "PCombatHit"); }
 
   function eachAlive(group, fn) {
     if (!group) return;
@@ -46,6 +49,26 @@
 
   function isHero(e) {
     return !!(e && (e.kind === "hero" || e.team === "hero"));
+  }
+
+  function consumedKey(name) {
+    return "_consumed" + name.charAt(0).toUpperCase() + name.slice(1) + "At";
+  }
+
+  function bufferedPress(state, e, inn, name) {
+    var at, age;
+    if (!inn) return false;
+    at = inn.pressedAtTick && inn.pressedAtTick[name];
+    if (typeof at === "number" && e && e[consumedKey(name)] === at) return false;
+    if (inn[name + "Pressed"]) return true;
+    if (typeof at !== "number") return false;
+    age = (state.tick | 0) - at;
+    return age >= 0 && age <= (C.BUFFER_TICKS || 6);
+  }
+
+  function consumePress(state, e, inn, name) {
+    var at = inn && inn.pressedAtTick && inn.pressedAtTick[name];
+    if (e) e[consumedKey(name)] = typeof at === "number" ? at : (state.tick | 0);
   }
 
   function thaw(state) {
@@ -62,8 +85,12 @@
     if (!inn) return;
     var st = h.combatState || "FREE";
     if (st === "FREE") {
-      if (inn.gripPressed && Grip && Grip.startGrip) Grip.startGrip(state, h);
-      else if (inn.throwPressed && Hit && Hit.startSweep) Hit.startSweep(state, h);
+      var G = Grip(), H = Hit();
+      if (bufferedPress(state, h, inn, "grip") && G && G.startGrip && G.startGrip(state, h))
+        consumePress(state, h, inn, "grip");
+      else if (inn.throwPressed && H && H.startSweep) H.startSweep(state, h);
+      else if (bufferedPress(state, h, inn, "special") && H && H.startSpecial && H.startSpecial(state, h))
+        consumePress(state, h, inn, "special");
     }
   }
 
@@ -84,26 +111,28 @@
     if (e.frozen && (state.hitstop | 0) > 0) return;
     tickTimers(e);
     maybeAct(state, e);
+    var G = Grip(), T = Throw(), H = Hit();
     var st = e.combatState || "FREE";
-    if (st === "APPROACH" && Grip) Grip.tickApproach(state, e);
-    else if (st === "GRIPPED" && Grip) Grip.tickGripped(state, e);
-    else if (st === "THROWING" && Throw) Throw.tickThrowing(state, e);
-    else if (st === "THROWN_FLIGHT" && Throw) Throw.tickFlight(state, e);
-    else if (st === "KNOCKDOWN" && Hit) Hit.tickKnockdown(state, e);
-    else if (st === "GETUP" && Hit) Hit.tickGetup(e);
-    else if (st === "UKEMI" && Hit) Hit.tickUkemi(e);
-    else if (st === "HITSTUN" && Hit) Hit.tickHitstun(state, e);
-    else if (st === "GRIP_BROKEN" && Grip) Grip.tickBroken(e);
+    if (st === "APPROACH" && G) G.tickApproach(state, e);
+    else if (st === "GRIPPED" && G) G.tickGripped(state, e);
+    else if (st === "THROWING" && T) T.tickThrowing(state, e);
+    else if (st === "THROWN_FLIGHT" && T) T.tickFlight(state, e);
+    else if (st === "KNOCKDOWN" && H) H.tickKnockdown(state, e);
+    else if (st === "GETUP" && H) H.tickGetup(e);
+    else if (st === "UKEMI" && H) H.tickUkemi(e);
+    else if (st === "HITSTUN" && H) H.tickHitstun(state, e);
+    else if (st === "GRIP_BROKEN" && G) G.tickBroken(e);
     else if (st === "SPECIAL") {
       e.stateT = (e.stateT | 0) - 1;
       if (e.stateT <= 0) e.combatState = "FREE";
-    } else if (st === "FREE" && Hit) Hit.tickFree(state, e);
-    if (Hit && Hit.tryUkemi) Hit.tryUkemi(state, e);
+    } else if (st === "FREE" && H) H.tickFree(state, e);
+    if (H && H.tryUkemi) H.tryUkemi(state, e);
   }
 
   function tick(state) {
     if (!state) return;
-    if (Ippon && Ippon.tick) Ippon.tick(state);
+    var Ip = Ippon();
+    if (Ip && Ip.tick) Ip.tick(state);
     eachAlive(state.heroes, function (h) {
       tickEnt(state, h);
     });
@@ -117,25 +146,36 @@
   }
 
   function startGrip(state, hero) {
-    return Grip && Grip.startGrip ? Grip.startGrip(state, hero) : false;
+    var G = Grip();
+    return G && G.startGrip ? G.startGrip(state, hero) : false;
   }
   function startThrow(state, hero, intent) {
-    return Throw && Throw.startThrow ? Throw.startThrow(state, hero, intent) : false;
+    var T = Throw();
+    return T && T.startThrow ? T.startThrow(state, hero, intent) : false;
   }
   function startSweep(state, hero) {
-    return Hit && Hit.startSweep ? Hit.startSweep(state, hero) : false;
+    var H = Hit();
+    return H && H.startSweep ? H.startSweep(state, hero) : false;
+  }
+  function startSpecial(state, hero) {
+    var H = Hit();
+    return H && H.startSpecial ? H.startSpecial(state, hero) : false;
   }
   function applyDamage(state, target, amount, src, flags) {
-    return Hit && Hit.applyDamage ? Hit.applyDamage(state, target, amount, src, flags) : 0;
+    var H = Hit();
+    return H && H.applyDamage ? H.applyDamage(state, target, amount, src, flags) : 0;
   }
   function extendChain(state, n) {
-    return Ippon && Ippon.extendChain ? Ippon.extendChain(state, n) : 0;
+    var Ip = Ippon();
+    return Ip && Ip.extendChain ? Ip.extendChain(state, n) : 0;
   }
   function breakChain(state) {
-    if (Ippon && Ippon.breakChain) Ippon.breakChain(state);
+    var Ip = Ippon();
+    if (Ip && Ip.breakChain) Ip.breakChain(state);
   }
   function pickThrowId(hero, intent) {
-    return Throw && Throw.pickThrowId ? Throw.pickThrowId(hero, intent) : "i1_ogoshi";
+    var T = Throw();
+    return T && T.pickThrowId ? T.pickThrowId(hero, intent) : "i1_ogoshi";
   }
   function startMove(state, ent, id) {
     var def, total;
@@ -157,7 +197,8 @@
     return true;
   }
   function depthOk(a, b, tol) {
-    if (Grip && Grip.depthOk) return Grip.depthOk(a, b, tol);
+    var G = Grip();
+    if (G && G.depthOk) return G.depthOk(a, b, tol);
     if (!a || !b) return false;
     var dd = (a.d || 0) - (b.d || 0);
     if (dd < 0) dd = -dd;
@@ -169,6 +210,7 @@
     tick: tick,
     startThrow: startThrow,
     startSweep: startSweep,
+    startSpecial: startSpecial,
     applyDamage: applyDamage,
     extendChain: extendChain,
     breakChain: breakChain,

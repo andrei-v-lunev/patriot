@@ -1,5 +1,6 @@
-/* Sky / parallax mountains / floor. 6 layers: 0, 0.25, 0.55, 1, 1.25, 1.
-   World 1 prefers painted art: sliced bg layers, else full w1-dawn crops, else procedural. */
+/* Six-layer world renderer: painted sky/far/mid, collision-aligned floor,
+   deterministic foreground dressing and atmosphere. Procedural art remains a
+   graceful fallback while image files load or when a build omits a world. */
 (function () {
   var W = 480;
   var H = 270;
@@ -18,31 +19,47 @@
   }
 
   /* --- image-backed background (world 1) --- */
-  var imgs = null;
+  var imgs = {};
 
   function loadImg(src) {
+    var resolve;
     var o = { img: new Image(), ok: false };
-    o.img.onload = function () { o.ok = true; };
-    o.img.onerror = function () { o.ok = false; };
+    o.promise = new Promise(function (done) { resolve = done; });
+    o.img.onload = function () { o.ok = true; resolve(true); };
+    o.img.onerror = function () { o.ok = false; resolve(false); };
     o.img.src = src;
     return o;
   }
 
-  function ensureImgs() {
-    if (imgs) return imgs;
+  function ensureImgs(world) {
+    world = world || 1;
+    if (imgs[world]) return imgs[world];
     if (typeof Image === "undefined") return null;
-    imgs = {
-      sky: loadImg("assets/bg/w1-sky.png"),
-      far: loadImg("assets/bg/w1-far.png"),
-      mid: loadImg("assets/bg/w1-mid.png"),
-      ground: loadImg("assets/bg/w1-ground.png"),
-      dawn: loadImg("assets/bg/w1-dawn.png")
+    var prefix = "assets/bg/w" + world + "-";
+    imgs[world] = {
+      sky: loadImg(prefix + "sky.png"),
+      far: loadImg(prefix + "far.png"),
+      mid: loadImg(prefix + "mid.png"),
+      ground: loadImg(prefix + "ground.png"),
+      dawn: world === 1 ? loadImg("assets/bg/w1-dawn.png") : null,
+      dojo: world === 1 ? loadImg("assets/bg/w1-dojo.png") : null
     };
-    return imgs;
+    return imgs[world];
   }
 
   function ready(o) {
     return !!(o && o.ok && o.img.naturalWidth > 0);
+  }
+
+  function preload(worlds) {
+    if (typeof Image === "undefined") return Promise.resolve(false);
+    if (!Array.isArray(worlds)) worlds = [worlds || 1];
+    var promises = [];
+    worlds.forEach(function (world) {
+      var im = ensureImgs(world);
+      Object.keys(im || {}).forEach(function (key) { if (im[key] && im[key].promise) promises.push(im[key].promise); });
+    });
+    return Promise.all(promises).then(function (rows) { return rows.every(Boolean); });
   }
 
   /* Tile a source crop horizontally at a parallax factor, integer-snapped. */
@@ -183,18 +200,51 @@
     ctx.fillRect(0, 0, W, H);
   }
 
-  function draw(ctx, cam, world) {
+  function dressing() {
+    if (typeof window !== "undefined" && window.PDressing) return window.PDressing;
+    if (typeof global !== "undefined" && global.PDressing) return global.PDressing;
+    return null;
+  }
+
+  function drawTrain(ctx, camx, backdrop) {
+    var x, off = (camx | 0) % 64;
+    if (backdrop === "roof") {
+      ctx.fillStyle = "#202A42";
+      ctx.fillRect(0, 174, W, 72);
+      ctx.fillStyle = "#59647A";
+      for (x = -off; x < W; x += 64) ctx.fillRect(x, 178, 3, 68);
+      ctx.fillStyle = "#AAB4C7";
+      ctx.fillRect(0, 184, W, 3);
+      ctx.fillRect(0, 240, W, 3);
+    } else if (backdrop === "freight") {
+      ctx.fillStyle = "#3B2630";
+      ctx.fillRect(0, 116, W, 130);
+      ctx.fillStyle = "#70404A";
+      for (x = -off; x < W; x += 64) {
+        ctx.fillRect(x, 120, 3, 122);
+        ctx.fillRect(x + 8, 132, 48, 3);
+        ctx.fillRect(x + 8, 222, 48, 3);
+      }
+      ctx.fillStyle = "#B88957";
+      ctx.fillRect(0, 184, W, 3);
+    }
+  }
+
+  function draw(ctx, cam, world, backdrop, opts) {
     world = world || 1;
+    opts = opts || {};
     var p = pal(world);
-    var camx = (cam && cam.x) || 0;
-    var imgBg = false;
+    var camx = (cam && cam.bgX != null ? cam.bgX : cam && cam.x) || 0;
+    var imgBg = false, dojoBg = false;
     var im = null;
-    if (world === 1) {
-      im = ensureImgs();
-      if (im && ready(im.sky)) {
+    im = ensureImgs(world);
+    if (im) {
+      if (opts.levelId === "w1l1" && ready(im.dojo)) {
+        ctx.imageSmoothingEnabled = false; ctx.drawImage(im.dojo.img, 0, 0); imgBg = dojoBg = true;
+      } else if (im && ready(im.sky)) {
         drawSliced(ctx, camx, im);
         imgBg = true;
-      } else if (im && ready(im.dawn)) {
+      } else if (world === 1 && ready(im.dawn)) {
         drawDawn(ctx, camx, im.dawn.img);
         imgBg = true;
       }
@@ -206,16 +256,21 @@
       drawRidge(ctx, camx, 0.25, p.far, p.snow, 3, 50, 130);
       drawRidge(ctx, camx, 0.55, p.mid, null, 7, 36, 150);
     }
-    drawFloor(ctx, camx, p, imgBg, im && im.ground);
-    drawFore(ctx, camx, p);
-    drawLight(ctx, world);
+    if (!dojoBg) {
+      drawFloor(ctx, camx, p, imgBg, im && im.ground);
+      if (world === 3) drawTrain(ctx, camx, backdrop);
+      var dress = dressing();
+      if (dress && dress.draw) dress.draw(ctx, camx, world, opts.levelId || "", opts.tick || 0, !!opts.reducedMotion);
+      drawFore(ctx, camx, p);
+      drawLight(ctx, world);
+    }
   }
 
   function floorY(d) {
     return FLOOR_BASE - (d || 0);
   }
 
-  var api = { draw: draw, floorY: floorY, FLOOR_BASE: FLOOR_BASE, pal: pal, bakeSky: bakeSky };
+  var api = { draw: draw, preload: preload, floorY: floorY, FLOOR_BASE: FLOOR_BASE, pal: pal, bakeSky: bakeSky };
   if (typeof window !== "undefined") window.PLayers = api;
   if (typeof global !== "undefined") global.PLayers = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;

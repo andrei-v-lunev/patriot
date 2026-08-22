@@ -38,6 +38,9 @@
     p.h = 24;
     p.life = (c.PICKUP_LIFE_S || 12) * hz();
     p.blink = 0;
+    /* Pool storage is the authoritative tick list, while state.pickups is
+       the compact render list consumed by render.js. Keep both wired. */
+    if (s.pickups && s.pickups.indexOf(p) < 0) s.pickups.push(p);
     return p;
   }
 
@@ -67,6 +70,9 @@
         s.meter = (typeof s.meter === "number" ? s.meter : 0) + 50;
       }
     } else if (p.kind === "medal") s.score = (s.score || 0) + 500;
+    if (s.events && s.events.length < 32) {
+      s.events.push({ name: "audio_only", audio: p.kind === "medal" ? "coin" : "pickup", alive: true });
+    }
     p.alive = false;
     if (s.pools && s.pools.pickups && s.pools.pickups.release) s.pools.pickups.release(p);
   }

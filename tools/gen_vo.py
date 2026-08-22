@@ -32,6 +32,7 @@ RAW_DIR = ROOT / "tools" / "_vo_raw"
 MASTER_DIR = ROOT / "tools" / "_vo_masters"
 OUT_DIR = ROOT / "assets" / "audio" / "vo"
 REPORT = ROOT / "tools" / "vo_report.json"
+AUDIO_DATA = ROOT / "data" / "audio.json"
 
 TP_CEILING_LINEAR = 0.891  # -1.0 dBTP
 HEAD_PAD_MS = 20           # spec: <= 30 ms
@@ -240,6 +241,7 @@ def do_process(clips, voices) -> list[dict]:
              "-c:a", "aac", "-b:a", "96k", "-ac", "1", str(m4a)])
 
         final_lufs = measure_lufs(master)
+        final_rms = measure_rms(master)
         dur = run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
                    "-of", "csv=p=0", str(master)]).stdout.strip()
         rows.append({
@@ -248,7 +250,7 @@ def do_process(clips, voices) -> list[dict]:
             "duration_s": round(float(dur), 3) if dur else None,
             "target_lufs": target, "measured_lufs": measured,
             "measure_basis": basis, "gain_applied_db": gain,
-            "final_lufs": final_lufs,
+            "final_lufs": final_lufs, "final_rms_db": final_rms,
             "ogg_bytes": ogg.stat().st_size if ogg.exists() else 0,
             "m4a_bytes": m4a.stat().st_size if m4a.exists() else 0,
         })
@@ -258,15 +260,27 @@ def do_process(clips, voices) -> list[dict]:
     return rows
 
 
+def sync_audio(clips) -> None:
+    audio = json.loads(AUDIO_DATA.read_text())
+    for clip in clips:
+        cid = clip["id"]
+        audio["assets"][cid] = {
+            "bus": "vo",
+            "files": [f"assets/audio/vo/{cid}.ogg", f"assets/audio/vo/{cid}.m4a"],
+        }
+    AUDIO_DATA.write_text(json.dumps(audio, ensure_ascii=False, indent=2) + "\n")
+
+
 # ---------------------------------------------------------------------------- cli
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--tts", action="store_true")
     ap.add_argument("--process", action="store_true")
+    ap.add_argument("--sync", action="store_true", help="publish existing VO paths into data/audio.json")
     ap.add_argument("--force", action="store_true", help="re-TTS even if raw mp3 exists")
     ap.add_argument("--only", help="comma-separated clip ids")
     args = ap.parse_args()
-    if not args.tts and not args.process:
+    if not args.tts and not args.process and not args.sync:
         args.tts = args.process = True
 
     if not shutil.which("ffmpeg"):
@@ -280,7 +294,8 @@ def main() -> None:
         if not clips:
             sys.exit("--only matched no clips")
 
-    report: dict = {"clips": len(clips)}
+    report: dict = json.loads(REPORT.read_text()) if REPORT.exists() else {}
+    report["clips"] = len(clips)
     if args.tts:
         print(f"=== TTS: {len(clips)} clips ===")
         report["tts"] = do_tts(clips, voices, args.force)
@@ -293,6 +308,8 @@ def main() -> None:
             if b:
                 tot = sum(r["ogg_bytes"] + r["m4a_bytes"] for r in b)
                 print(f"bus {bus}: {len(b)} clips, {tot/1024:.0f} KB (ogg+m4a)")
+    if args.sync or (args.process and len(clips) == len(data["clips"])):
+        sync_audio(clips)
 
     REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=2))
     print(f"\nreport -> {REPORT}")

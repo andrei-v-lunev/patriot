@@ -51,7 +51,9 @@
   }
 
   function heroId(e) {
-    var k = (e && (e.heroId || e.hero || e.kind || e.archetype || e.id || "")) + "";
+    /* archetype before kind: sim stores the hero id in e.archetype while
+       e.kind is always the truthy generic "hero" and would shadow it. */
+    var k = (e && (e.heroId || e.hero || e.archetype || e.kind || e.id || "")) + "";
     k = k.toLowerCase();
     if (k.indexOf("otajon") >= 0 || k === "o") return "otajon";
     if (k.indexOf("idris") >= 0 || k === "i") return "idris";
@@ -75,6 +77,15 @@
   function moving(e) {
     return e.grounded !== false && (Math.abs(e.vx || 0) + Math.abs(e.vd || 0)) > 10;
   }
+
+  var ACTION_ALIAS = {
+    "b1-pound": "b1-charge",
+    "b2-grab": "b2-lash",
+    "b3-duel": "b3-tunnel",
+    "b3-stance": "b3-telegraph",
+    "b5-combo": "b5-counter",
+    "b5-enrage": "b5-telegraph"
+  };
 
   /* Procedural motion polish + pose from sim state. Pure read of sim fields. */
   function pose(e, tick) {
@@ -120,9 +131,17 @@
     ctx.restore();
   }
 
+  function blitCentered(ctx, fr, x, y) {
+    ctx.save(); ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(fr.img, fr.sx, fr.sy, fr.sw, fr.sh,
+      (x - (fr.sw >> 1)) | 0, (y - (fr.sh >> 1)) | 0, fr.sw, fr.sh);
+    ctx.restore();
+  }
+
   /* Anim id + frame for a hero from sim state. */
   function heroFrame(A, e, hid, tick) {
     var st = e.combatState || "FREE";
+    if ((e.sweepLen | 0) > 0) return A.frameOnce(hid + "-throw", e.sweepT | 0);
     if (st === "THROWING") return A.frameOnce(hid + "-throw", e.throwT | 0);
     if (st === "SPECIAL") return A.frameOnce(hid + "-throw", e.moveT | 0);
     if (st === "GRIPPED" && e.gripTarget) return A.frameAt(hid + "-throw", 0);
@@ -138,23 +157,49 @@
     return A.frame(hid + "-idle", tick);
   }
 
-  /* Anim id + frame for an enemy (only e1/e2 sheets exist in the atlas). */
+  /* Anim id + frame for any generated enemy/boss rig. Missing sheets fall back. */
   function enemyFrame(A, e, tick) {
     var arch = (e.archetype || "") + "";
-    var base = arch === "E1" ? "e1" : arch === "E2" ? "e2" : null;
+    var base = /^(E[1-8]|B[1-5])$/.test(arch) ? arch.toLowerCase() : arch === "DUMMY" ? "dummy" : null;
     if (!base) return null;
+    /* The training dummy has a single idle sheet — no walk/attack states. */
+    if (base === "dummy") return A.frame("dummy-idle", tick);
     var st = e.combatState || "FREE";
-    var m, n;
+    var m, n, attackId, activeMax, recoverMax, elapsed, total, frameI;
+    if (base === "e7" && e.grounded === false && A.meta("e7-glide")) return A.frame("e7-glide", tick);
+    if (base === "e8" && (st === "COUNTER_STANCE" || e.aiState === "COUNTER_STANCE") && A.meta("e8-counter"))
+      return A.frameOnce("e8-counter", Math.max(0, (e.counterStanceMax || 60) - (e.counterStanceT || 0)));
+    if (base === "b4" && e.dropTelT > 0 && A.meta("b4-signal"))
+      return A.frameOnce("b4-signal", Math.max(0, 80 - e.dropTelT));
+    if (base === "b4" && !e.cabBroken && A.meta("b4-cab")) return A.frameAt("b4-cab", 0);
+    if (base === "b5" && (st === "COUNTER_STANCE" || e.aiState === "COUNTER_STANCE") && A.meta("b5-counter"))
+      return A.frameOnce("b5-counter", Math.max(0, (e.counterStanceMax || 60) - (e.counterStanceT || 0)));
     if (st === "ATTACK" || (e.aiState === "ATTACK" && (e.atkPhase | 0) < 3)) {
-      m = A.meta(base + "-attack");
+      attackId = e.patternName && A.meta(base + "-" + e.patternName) ? base + "-" + e.patternName :
+        e.patternName && ACTION_ALIAS[base + "-" + e.patternName] && A.meta(ACTION_ALIAS[base + "-" + e.patternName]) ? ACTION_ALIAS[base + "-" + e.patternName] :
+        A.meta(base + "-attack") ? base + "-attack" :
+        A.meta(base + "-idle") ? base + "-idle" : base + "-model";
+      m = A.meta(attackId);
       n = (m && m.frames) || 5;
-      if (e.telegraphT > 0) return A.frameAt(base + "-attack", ((tick >> 3) & 1));
-      if (e.atkPhase === 1) return A.frameAt(base + "-attack", (e.activeT > 1) ? n - 3 : n - 2);
-      return A.frameAt(base + "-attack", n - 1);
+      if (e.telegraphT > 0 && A.meta(base + "-telegraph")) {
+        return A.frameOnce(base + "-telegraph", Math.max(0, (e.telegraphMax || e.telegraphT) - e.telegraphT));
+      }
+      if (e.telegraphT > 0) return A.frameAt(attackId, ((tick >> 3) & 1));
+      activeMax = e.activeMax | 0; recoverMax = e.recoverMax | 0;
+      if (activeMax > 0 && recoverMax >= 0) {
+        elapsed = e.atkPhase === 1 ? Math.max(0, activeMax - (e.activeT | 0)) :
+          activeMax + Math.max(0, recoverMax - (e.recoverT | 0));
+        total = Math.max(1, activeMax + recoverMax);
+        frameI = Math.min(n - 1, Math.floor(elapsed * n / total));
+        return A.frameAt(attackId, frameI);
+      }
+      if (e.atkPhase === 1) return A.frameAt(attackId, (e.activeT > 1) ? Math.max(0, n - 3) : Math.max(0, n - 2));
+      return A.frameAt(attackId, n - 1);
     }
-    if (st === "KNOCKDOWN" || st === "THROWN_FLIGHT") return A.frameAt(base + "-idle", 0);
-    if (st === "FREE" && moving(e)) return A.frame(base + "-walk", tick);
-    return A.frame(base + "-idle", tick);
+    if (st === "KNOCKDOWN" || st === "THROWN_FLIGHT") return A.meta(base + "-idle") ? A.frameAt(base + "-idle", 0) : A.frameAt(base + "-model", 0);
+    if (st === "FREE" && moving(e) && A.meta(base + "-walk")) return A.frame(base + "-walk", tick);
+    if (base === "b5" && (e.phase | 0) <= 1 && A.meta("b5-telegraph")) return A.frame("b5-telegraph", tick);
+    return A.meta(base + "-idle") ? A.frame(base + "-idle", tick) : A.frameAt(base + "-model", 0);
   }
 
   function rect(ctx, x, y, w, h, col) {
@@ -224,6 +269,7 @@
     var fr = A ? enemyFrame(A, e, tick) : null;
     if (fr) {
       blitFrame(ctx, fr, fx + (w >> 1), top + h, facing, pose(e, tick));
+      if (e.invuln) drawGuard(ctx, fx, top, w, h, tick);
       return;
     }
     var arch = e.archetype || e.kind || "E1";
@@ -234,6 +280,18 @@
     rect(ctx, cx - 6, top - bob, 12, 12, "#D2A07A");
     rect(ctx, cx - 6, top - bob, 12, 4, pal[1]);
     rect(ctx, fx + 2, top + h - 4, w - 4, 4, pal[1]);
+    if (e.invuln) drawGuard(ctx, fx, top, w, h, tick);
+  }
+
+  function drawGuard(ctx, x, y, w, h, tick) {
+    var c = ((tick >> 2) & 1) ? "#49D7FF" : "#D8FBFF";
+    ctx.fillStyle = c;
+    ctx.fillRect(x - 4, y + 4, 2, h - 8);
+    ctx.fillRect(x + w + 2, y + 4, 2, h - 8);
+    ctx.fillRect(x, y, 8, 2);
+    ctx.fillRect(x + w - 8, y, 8, 2);
+    ctx.fillRect(x, y + h - 2, 8, 2);
+    ctx.fillRect(x + w - 8, y + h - 2, 8, 2);
   }
 
   function drawHero(ctx, e, fx, top, w, h, facing) {
@@ -271,6 +329,15 @@
     var facing = e.facing == null ? 1 : e.facing;
     var fx = sx - (w >> 1);
     var top = sy - h;
+    var A = anim(), itemI = { tea: 0, plov: 1, charm: 2, medal: 3 }, itemFr;
+    if (A && itemI[e.kind] != null && A.meta("pickup-core")) {
+      itemFr = A.frameAt("pickup-core", itemI[e.kind]);
+      if (itemFr) { blitCentered(ctx, itemFr, sx, sy - 12); return; }
+    }
+    if (A && e.kind === "melon" && A.meta("proj-melon")) {
+      itemFr = A.frame("proj-melon", simTick());
+      if (itemFr) { blitCentered(ctx, itemFr, sx, sy); return; }
+    }
     if (e.team === "hero" || e.kind === "hero" || e.heroId || e.hero || e.slot != null) {
       drawHero(ctx, e, fx, top, w, h, facing);
     } else {
@@ -285,7 +352,8 @@
     drawHero: drawHero,
     portrait: portrait,
     heroId: heroId,
-    pick: pick
+    pick: pick,
+    actionAliases: ACTION_ALIAS
   };
   if (typeof window !== "undefined") window.PSprites = api;
   if (typeof global !== "undefined") global.PSprites = api;

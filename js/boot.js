@@ -1,4 +1,4 @@
-/* Offscreen 480×270 world + 960×540 UI buffer, DPR-aware integer letterbox, preload. */
+/* Offscreen 480×270 world + 960×540 UI buffer, DPR-aware letterbox, preload. */
 (function () {
   var W = 480;
   var H = 270;
@@ -30,13 +30,18 @@
     var vw = (vv && vv.width) || window.innerWidth || W;
     var vh = (vv && vv.height) || window.innerHeight || H;
     var dpr = window.devicePixelRatio || 1;
-    var k = Math.max(1, Math.floor(Math.min((vw * dpr) / UW, (vh * dpr) / UH)));
-    uiScale = k;
-    scale = k * 2;
-    vis.width = UW * k;
-    vis.height = UH * k;
-    var cssW = (UW * k) / dpr;
-    var cssH = (UH * k) / dpr;
+    var fitScale = Math.min(vw / UW, vh / UH);
+    var prefs = window.PSettings && window.PSettings.get ? window.PSettings.get() : null;
+    var fitMode = prefs && prefs.video && prefs.video.scaleMode === "fit";
+    var k = Math.floor(fitScale * dpr);
+    var cssScale = fitMode || k <= 0 ? fitScale : k / dpr;
+    var backingScale = Math.max(1, fitMode ? Math.ceil(fitScale * dpr) : k);
+    uiScale = backingScale;
+    scale = backingScale * 2;
+    vis.width = UW * backingScale;
+    vis.height = UH * backingScale;
+    var cssW = UW * cssScale;
+    var cssH = UH * cssScale;
     vis.style.width = cssW + "px";
     vis.style.height = cssH + "px";
     vis.style.position = "absolute";
@@ -137,6 +142,13 @@
     }
     if (window.PAudio && PAudio.init) {
       PAudio.init(window.PDataRaw && PDataRaw.audio);
+    }
+    if (window.PSave && window.PSettings) {
+      var saved = PSave.load();
+      if (saved && PSettings.validate(saved.settings || {}).length === 0) {
+        PSettings.use(saved.settings);
+        if (window.PAudio && PAudio.setVolumes) PAudio.setVolumes(saved.settings.audio);
+      }
     }
     if (window.PInput && PInput.init) PInput.init();
     if (window.PInputTouch && PInputTouch.init) PInputTouch.init(vis);

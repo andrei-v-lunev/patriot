@@ -78,6 +78,7 @@
   }
   function steer(e, tx, td, sp, sd) {
     var dx = tx - e.x, dd = td - e.d;
+    sp *= e.moveMul || 1; sd *= e.moveMul || 1;
     e.vx = dx > 4 ? sp : dx < -4 ? -sp : 0;
     e.vd = (dx > 80 || dx < -80) ? 0 : (dd > 2 ? sd : dd < -2 ? -sd : 0);
     if (dx > 2) e.facing = 1; else if (dx < -2) e.facing = -1;
@@ -102,18 +103,54 @@
   }
   function startAtk(e, def) {
     var atk = def.attack || {}, tel = tt(atk.startup != null ? atk.startup : 24), act = tt(atk.active || 4);
+    tel = Math.round(tel * (e.telegraphMul || 1));
     if (tel < tt(24)) tel = tt(24);
-    e.aiState = "ATTACK"; e.telegraphT = tel; e.activeT = act; e.recoverT = tt(atk.recovery || 22);
-    e.atkDmg = atk.damage || 8; e.atkPhase = 0; e.tell = 1; e.fired = 0;
+    e.aiState = "ATTACK"; e.telegraphT = tel; e.telegraphMax = tel;
+    e.activeT = act; e.activeMax = act;
+    e.recoverT = tt(atk.recovery || 22); e.recoverMax = e.recoverT;
+    e.atkDmg = (atk.damage || 8) * (e.damageMul || 1); e.atkPhase = 0; e.tell = 1; e.fired = 0;
+    /* melee hit application: reset per-attack hero-hit mask; projectile (E3)
+       and grab (E5) attacks resolve elsewhere and never land a melee hit. */
+    e.atkHitMask = 0;
+    e.atkMelee = !(atk.proj || atk.grab);
     e.dashVx = atk.dash ? atk.dash * hz() / act : 0;
     if (e.combatState === "FREE" || e.combatState === "IDLE" || !e.combatState) e.combatState = "ATTACK";
   }
-  function stepAtk(e) {
+  /* Apply e.atkDmg to any living hero inside the attack's reach during the
+     active phase. Once per hero per attack (atkHitMask). Damage goes through
+     the public combat API (PCombat.applyDamage) which already respects hero
+     iFrames/ukemi and grip-break rules. */
+  function hitHeroes(s, e, dmg, reach, radial) {
+    var P = G("PCombat"), H = G("PCombatHit"), hs = living(s), tol = C().DEPTH_HIT || 10;
+    var i, h, bit, dx, rx, ez, hz2, dealt;
+    if (!P || !P.applyDamage || !(dmg > 0)) return;
+    for (i = 0; i < hs.length; i++) {
+      h = hs[i];
+      bit = 1 << (h.playerIndex || 0);
+      if (e.atkHitMask & bit) continue;
+      if (h.combatState === "THROWN_FLIGHT" || h.combatState === "DOWN") continue;
+      if (Math.abs((h.d || 0) - (e.d || 0)) > tol) continue;
+      dx = h.x - e.x;
+      rx = reach != null ? reach : ((e.w || 30) + (h.w || 34)) * 0.5 + 8;
+      if (Math.abs(dx) > rx) continue;
+      if (!radial && dx * (e.facing || 1) < -(e.w || 30) * 0.5) continue;
+      ez = e.z || 0; hz2 = h.z || 0;
+      if (hz2 >= ez + (e.h || 40) + 12 || ez >= hz2 + (h.h || 62) + 12) continue;
+      e.atkHitMask |= bit;
+      dealt = P.applyDamage(s, h, dmg, e, {});
+      if (dealt > 0) {
+        if (H && H.enterHitstun) H.enterHitstun(h, 12);
+        h.vx = (e.facing || 1) * 140;
+      }
+    }
+  }
+  function stepAtk(s, e) {
     if (e.telegraphT > 0) { e.telegraphT--; e.tell = 1; e.atkPhase = 0; e.vx = 0; e.vd = 0; return "tel"; }
     e.tell = 0;
     if (e.activeT > 0) {
       e.activeT--; e.atkPhase = 1;
       if (e.dashVx) e.vx = (e.facing || 1) * e.dashVx;
+      if (e.atkMelee) hitHeroes(s, e, e.atkDmg || 8);
       return "act";
     }
     if (e.recoverT > 0) { e.recoverT--; e.atkPhase = 2; e.vx = 0; e.vd = 0; return "rec"; }
@@ -139,6 +176,9 @@
     p.kind = "melon"; p.x = e.x + (e.facing || 1) * 12; p.z = (e.z || 0) + 20; p.d = e.d;
     p.vx = (e.facing || 1) * (atk.projSpeed || 300); p.vz = 0; p.w = 12; p.h = 12;
     p.dmg = atk.damage || 10; p.ownerId = e.id; p.life = (C().FLIGHT_LIFE_S || 2.5) * hz(); p.hitN = 0;
+    /* BUGFIX: the melon was allocated from the pool but never entered the
+       world — state.projectiles is the list the sim ticks and render draws. */
+    if (s.projectiles) s.projectiles.push(p);
   }
   function thinkE3(s, e, def, hx, hd) {
     var dist = Math.abs(e.x - hx), sp = def.speed || 84, sd = def.speedD || 50, r;
@@ -149,7 +189,7 @@
     else if (dist > 320) steer(e, hx - e.facing * 270, hd, sp, sd);
     else { e.vx = 0; e.vd = hd > e.d + 4 ? sd * 0.4 : hd < e.d - 4 ? -sd * 0.4 : 0; }
     if (e.aiState === "ATTACK") {
-      r = stepAtk(e);
+      r = stepAtk(s, e);
       if (r === "act" && !e.fired) { e.fired = 1; fireMelon(s, e, def); }
       if (r === "done") { e.aiState = "KITE"; e.fireCdT = 1.6 * hz(); }
       return;
@@ -172,7 +212,7 @@
       return;
     }
     if (e.aiState === "ATTACK") {
-      if (stepAtk(e) === "act" && Math.abs(e.x - hx) < 40 && Math.abs(e.d - hd) <= (C().DEPTH_GRIP || 12)) {
+      if (stepAtk(s, e) === "act" && Math.abs(e.x - hx) < 40 && Math.abs(e.d - hd) <= (C().DEPTH_GRIP || 12)) {
         e.holdingHero = 1; e.heldId = h.id; e.holdT = 0; e.holdDmgT = 0;
         h.combatState = "GRIPPED"; h.gripperId = e.id;
       }
@@ -191,7 +231,7 @@
     if (diff > rate) e.faceAng += rate; else if (diff < -rate) e.faceAng -= rate; else e.faceAng = want;
     if (e.faceAng < 0) e.faceAng += 360; if (e.faceAng >= 360) e.faceAng -= 360;
     e.facing = (e.faceAng < 90 || e.faceAng > 270) ? 1 : -1;
-    if (e.aiState === "ATTACK") { if (stepAtk(e) === "done") e.aiState = "IDLE"; return; }
+    if (e.aiState === "ATTACK") { if (stepAtk(s, e) === "done") e.aiState = "IDLE"; return; }
     steer(e, hx, hd, def.speed || 66, def.speedD || 40);
     e.aiState = "ADVANCE";
     if (melee(e, hx, hd) && Math.abs(diff) < 25 && claim(s, e, def.tokenCost || 1)) startAtk(e, def);
@@ -201,7 +241,7 @@
     if (!e._landed) { if (e.grounded) { e._landed = 1; e.aerialOnly = false; } else e.aerialOnly = true; } else e.aerialOnly = false;
     if (e.aiState === "ATTACK") {
       if (e.atkPhase === 0 && e.telegraphT === 1) e.vz = jv;
-      if (stepAtk(e) === "done") { e.aiState = "IDLE"; e.recoverT = tt(20); }
+      if (stepAtk(s, e) === "done") { e.aiState = "IDLE"; e.recoverT = tt(20); }
       return;
     }
     if ((e.hopT || 0) <= 0) { e.hopT = 1.2 * hz(); if (e.grounded) e.vz = jv * 0.45; } else e.hopT--;
@@ -212,11 +252,11 @@
   function thinkE8(s, e, def, hx, hd, t, sn) {
     var cost = def.tokenCost || 2, app;
     if (e.counterStanceT > 0) {
-      e.counterStanceT--; e.vx = 0; e.vd = 0; e.aiState = "COUNTER_STANCE";
-      if (e.counterStanceT <= 0) e.aiState = "IDLE";
+      /* combat.js owns the timer; AI only enforces stance behavior. */
+      e.vx = 0; e.vd = 0; e.aiState = "COUNTER_STANCE";
       return;
     }
-    if (e.aiState === "ATTACK" || e.aiState === "COMBO") { if (stepAtk(e) === "done") e.aiState = "IDLE"; return; }
+    if (e.aiState === "ATTACK" || e.aiState === "COMBO") { if (stepAtk(s, e) === "done") e.aiState = "IDLE"; return; }
     app = (e.x > hx && t.vx > 8) || (e.x < hx && t.vx < -8);
     if (sn && sn.wT && claim(s, e, cost)) { startAtk(e, def); return; }
     if (app && R(s).chance(0.4)) { e.counterStanceT = tt(C().E8_STANCE_F || 30); e.aiState = "COUNTER_STANCE"; return; }
@@ -227,7 +267,7 @@
   function thinkGoons(s, e, def, hx, hd) {
     var sp = def.speed || 78, sd = def.speedD || 47, arch = e.archetype || def.id;
     if (e.aiState === "ATTACK") {
-      if (stepAtk(e) === "done") {
+      if (stepAtk(s, e) === "done") {
         if (arch === "E1" && R(s).chance(0.2)) { e.aiState = "CIRCLE"; e.circleT = hz(); }
         else e.aiState = "IDLE";
       }

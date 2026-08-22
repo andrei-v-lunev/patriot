@@ -109,9 +109,13 @@
     t.d = hero.d; t.vx = 0; t.vz = 0; t.vd = 0;
     t.facing = -f; t.grounded = true;
   }
+  function emitAudio(state, name) {
+    if (state && state.events && state.events.length < 32) state.events.push({ name: "audio_only", audio: name, alive: true });
+  }
   function lock(state, hero, t) {
     hero.combatState = "GRIPPED"; t.combatState = "GRIPPED";
     hero.gripTarget = t; t.gripTarget = hero;
+    hero.gripperId = -1;
     hero.gripTier = 0;
     hero.gripTimerT = toTicks(C.GRIP_MAX_F || 300);
     hero.tightenT = 0; hero.gripIgnoreT = toTicks(4);
@@ -120,6 +124,7 @@
     if (H && H.addMeter) H.addMeter(state, hero, 2);
     else { hero.meter = (hero.meter || 0) + 2; if (hero.meter > 100) hero.meter = 100; }
     hold(hero, t);
+    emitAudio(state, "grip");
   }
   function breakGrip(state, e, heroHit) {
     var a = e, b = e && e.gripTarget;
@@ -183,6 +188,7 @@
         hero.combatState = "FREE";
         hero.recoveryT = toTicks((C.WHIFF_REC_F || 11) + (C.E6_FRONT_EXTRA_F || 8));
         hero.x += (hero.x >= t.x ? 1 : -1) * (C.E6_PUSH || 14);
+        emitAudio(state, "grip_fail");
         return;
       }
       lock(state, hero, t);
@@ -194,8 +200,38 @@
       hero.recoveryT = toTicks(C.WHIFF_REC_F || 11);
     }
   }
+  /* Hero held BY an enemy (E5/B3 hero-grab sets hero.combatState="GRIPPED"
+     + hero.gripperId, no gripTarget). PRD 4.3.6: escape by alternating
+     left/right (12 inputs); the AI side auto-releases after 1.4 s. */
+  function tickHeldByEnemy(state, h) {
+    var g = null, gid = h.gripperId | 0;
+    eachAlive(state.enemies, function (e) { if ((e.id | 0) === gid) g = e; });
+    if (!g || g.alive === false || !g.holdingHero) {
+      h.gripperId = -1; h.escN = 0; h.escLastDir = 0;
+      if (h.combatState === "GRIPPED") h.combatState = "FREE";
+      return;
+    }
+    h.vx = 0; h.vz = 0; h.vd = 0; h.grounded = true;
+    var inn = h.intent || (state.intents && state.intents[h.player | 0]);
+    var mx = inn && inn.moveX ? (inn.moveX > 0 ? 1 : -1) : 0;
+    if (mx !== 0 && mx !== (h.escLastDir | 0)) {
+      h.escN = (h.escN | 0) + 1;
+      h.escLastDir = mx;
+    }
+    if ((h.escN | 0) >= 12) {
+      h.escN = 0; h.escLastDir = 0; h.gripperId = -1;
+      g.holdingHero = 0; g.heldId = -1; g.holdT = 0; g.holdDmgT = 0;
+      h.combatState = "GRIP_BROKEN"; h.stateT = toTicks(C.GRIP_BROKEN_F || 14);
+      var sep = C.GRIP_SEP || 22, dir = h.x >= g.x ? 1 : -1;
+      h.x += dir * sep * 0.5; g.x -= dir * sep * 0.5;
+    }
+  }
   function tickGripped(state, e) {
     if (!isHero(e)) return;
+    if (!e.gripTarget && e.gripperId != null && (e.gripperId | 0) >= 0) {
+      tickHeldByEnemy(state, e);
+      return;
+    }
     var t = e.gripTarget;
     if (!t || t.alive === false) { breakGrip(state, e, false); return; }
     if (t.archetype === "E5" || flag(t, "reversal")) {
@@ -215,11 +251,17 @@
     if (e.gripIgnoreT > 0) e.gripIgnoreT--;
     var inn = e.intent || (state.intents && state.intents[e.player | 0]);
     if (inn) {
-      if (inn.gripPressed && (e.tightenT | 0) <= 0 && (e.gripIgnoreT | 0) <= 0) {
+      /* Desktop grip/throw is contextual: acquire/sustain while L is held,
+         then release L (plus optional direction) to throw. */
+      if (inn.gripReleased) {
+        var Th = Throw();
+        if (Th && Th.startThrow) Th.startThrow(state, e, inn);
+        return;
+      } else if (inn.gripPressed && (e.tightenT | 0) <= 0 && (e.gripIgnoreT | 0) <= 0) {
         e.gripTier = Math.min(2, (e.gripTier | 0) + 1);
         e.tightenT = toTicks(12);
       } else if (inn.throwPressed) {
-        var Th = Throw();
+        Th = Throw();
         if (Th && Th.startThrow) Th.startThrow(state, e, inn);
         return;
       }

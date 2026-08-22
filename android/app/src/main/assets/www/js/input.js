@@ -20,6 +20,7 @@
       jumpPressed: false,
       grip: false,
       gripPressed: false,
+      gripReleased: false,
       throwPressed: false,
       throwDir: -1,
       tag: false,
@@ -83,6 +84,7 @@
   function edge(p, name, held) {
     var it = intents[p];
     var pr = prevBtn[p];
+    it[name + "Released"] = !held && !!pr[name];
     it[name] = held;
     it[name + "Pressed"] = held && !pr[name];
     if (it[name + "Pressed"]) {
@@ -111,11 +113,24 @@
       c === "KeyW" || c === "KeyA" || c === "KeyS" || c === "KeyD" ||
       c === "Space" || c === "KeyJ" || c === "KeyK" || c === "KeyL" ||
       c === "KeyU" || c === "KeyP" || c === "Escape" ||
+      c === "KeyZ" || c === "KeyX" || c === "KeyC" || c === "KeyV" ||
+      c === "KeyB" || c === "KeyN" || c === "KeyO" || c === "KeyI" ||
+      c === "Period" || c === "Slash" || c === "Semicolon" || c === "Quote" || c === "Comma" ||
       c === "ShiftLeft" || c === "ShiftRight" ||
       c === "Enter" || c === "NumpadEnter" ||
       c === "ArrowUp" || c === "ArrowDown" || c === "ArrowLeft" || c === "ArrowRight" ||
       (c && c.indexOf("Numpad") === 0)
     );
+  }
+
+  /* Part 5 §5.3.2: P1's alt keys (arrows as alt-move, Z/X/C/V/B/N alt actions
+     implied by the alt columns) are only "live" in solo. In 2P keyboard
+     fallback (COOP with <2 pads) arrows must belong to P2 with zero overlap.
+     Looked up lazily (not cached at load time) since PScreens loads after
+     input.js in index.html's script order. */
+  function coopKeyboard() {
+    return !!(window.PScreens && PScreens.modeId && PScreens.get &&
+      PScreens.get() === "PLAY" && PScreens.modeId() === "COOP");
   }
 
   function kbdAxis(up, down, left, right) {
@@ -124,58 +139,136 @@
     return { x: mx, d: md };
   }
 
+  function configured(p, action, fallback) {
+    var ps = window.PSettings;
+    var cfg = ps && ps.get ? ps.get() : null;
+    var who = p === 1 ? "p2" : "p1";
+    var list = cfg && cfg.bindings && cfg.bindings[who] && cfg.bindings[who].keyboard && cfg.bindings[who].keyboard[action];
+    return Array.isArray(list) && list.length ? list : fallback;
+  }
+
+  function configuredPad(p, action, fallback) {
+    var ps = window.PSettings;
+    var cfg = ps && ps.get ? ps.get() : null;
+    var who = p === 1 ? "p2" : "p1";
+    var list = cfg && cfg.bindings && cfg.bindings[who] && cfg.bindings[who].gamepad && cfg.bindings[who].gamepad[action];
+    return Array.isArray(list) && list.length ? list : fallback;
+  }
+
+  function padHeld(buttons, list) {
+    var i, m, n;
+    for (i = 0; i < list.length; i++) {
+      m = /^Button([0-9]+)$/.exec(list[i]);
+      if (m) { n = Number(m[1]); if (buttons[n] && buttons[n].pressed) return true; }
+    }
+    return false;
+  }
+
+  function padBindingHeld(gp, list) {
+    var i, m, n, v, buttons = gp.buttons || [], axes = gp.axes || [];
+    if (padHeld(buttons, list)) return true;
+    for (i = 0; i < list.length; i++) {
+      m = /^Axis([0-9]+)([+-])$/.exec(list[i]);
+      if (!m) continue;
+      n = Number(m[1]); v = axes[n] || 0;
+      if ((m[2] === "+" && v > DZ) || (m[2] === "-" && v < -DZ)) return true;
+    }
+    return false;
+  }
+
+  function padDirectionValue(gp, list) {
+    var i, m, n, v, best = 0, buttons = gp.buttons || [], axes = gp.axes || [];
+    for (i = 0; i < list.length; i++) {
+      m = /^Button([0-9]+)$/.exec(list[i]);
+      if (m && buttons[Number(m[1])] && buttons[Number(m[1])].pressed) best = 1;
+      m = /^Axis([0-9]+)([+-])$/.exec(list[i]);
+      if (m) {
+        n = Number(m[1]); v = axes[n] || 0;
+        v = m[2] === "+" ? Math.max(0, v) : Math.max(0, -v);
+        if (v > best) best = v;
+      }
+    }
+    return best;
+  }
+
+  function held(list, coop, p) {
+    var i, code;
+    for (i = 0; i < list.length; i++) {
+      code = list[i];
+      if (coop && p === 0 && code.indexOf("Arrow") === 0) continue;
+      if (keys[code]) return true;
+    }
+    return false;
+  }
+
+  function configuredAxis(p, coop, fallback) {
+    var up = configured(p, "up", [fallback[0]]);
+    var down = configured(p, "down", [fallback[1]]);
+    var left = configured(p, "left", [fallback[2]]);
+    var right = configured(p, "right", [fallback[3]]);
+    return { x: (held(right, coop, p) ? 1 : 0) - (held(left, coop, p) ? 1 : 0),
+      d: (held(up, coop, p) ? 1 : 0) - (held(down, coop, p) ? 1 : 0) };
+  }
+
   function applyMove(p, mx, md) {
     intents[p].moveX = quant(mx);
     intents[p].moveD = quant(md);
   }
 
   function pollKeyboard() {
-    var a = kbdAxis("KeyW", "KeyS", "KeyA", "KeyD");
-    applyMove(0, a.x, a.d);
-    edge(0, "jump", !!keys.Space);
-    edge(0, "grip", !!keys.KeyJ);
-    edge(0, "throw", !!keys.KeyK);
-    edge(0, "tag", !!keys.KeyL);
-    edge(0, "special", !!keys.KeyU);
-    edge(0, "ukemi", !!(keys.ShiftLeft || keys.ShiftRight));
-    edge(0, "pause", !!(keys.Escape || keys.KeyP));
-    edge(0, "start", !!(keys.Enter || keys.NumpadEnter || keys.Space));
+    var coop = coopKeyboard();
+    var w = configuredAxis(0, coop, ["KeyW", "KeyS", "KeyA", "KeyD"]);
+    var arrows = configuredAxis(1, false, ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
+    var mx = w.x, md = w.d;
+    if (!coop) {
+      /* P1 solo: arrows are alt-move (Part 5 §5.3.2), live alongside WASD. */
+      mx += arrows.x; md += arrows.d;
+      if (mx > 1) mx = 1; else if (mx < -1) mx = -1;
+      if (md > 1) md = 1; else if (md < -1) md = -1;
+    }
+    applyMove(0, mx, md);
+    /* P1 (solo & 2P-coop, identical per Part 5 §5.3.2 — zero overlap with P2 below). */
+    edge(0, "throw", held(configured(0, "strike", ["KeyJ", "KeyZ"]), coop, 0));
+    edge(0, "jump", held(configured(0, "jump", ["KeyK", "KeyX", "Space"]), coop, 0));
+    edge(0, "grip", held(configured(0, "grip", ["KeyL", "KeyC"]), coop, 0));
+    edge(0, "special", held(configured(0, "special", ["KeyU", "KeyV"]), coop, 0));
+    edge(0, "tag", held(configured(0, "tag", ["KeyI", "KeyB"]), coop, 0));
+    edge(0, "ukemi", held(configured(0, "ukemi", ["KeyO", "KeyN"]), coop, 0));
+    edge(0, "pause", held(configured(0, "pause", ["Escape", "KeyP"]), coop, 0));
+    edge(0, "start", !!(keys.Enter || keys.NumpadEnter));
     intents[0].throwDir = octant(intents[0].moveX, intents[0].moveD);
 
-    a = kbdAxis("ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight");
-    applyMove(1, a.x, a.d);
-    edge(1, "jump", !!(keys.Numpad0 || keys.Numpad2));
-    edge(1, "grip", !!keys.Numpad1);
-    edge(1, "throw", !!keys.Numpad3);
-    edge(1, "tag", !!(keys.Numpad4 || keys.Numpad6));
-    edge(1, "special", !!keys.Numpad5);
-    edge(1, "ukemi", !!(keys.NumpadDecimal || keys.NumpadEnter));
-    edge(1, "pause", !!(keys.Escape || keys.KeyP));
+    /* P2 — 2P keyboard fallback (Part 5 §5.3.2), zero overlap with P1 map. */
+    applyMove(1, arrows.x, arrows.d);
+    edge(1, "throw", held(configured(1, "strike", ["Numpad1", "Period"]), false, 1));
+    edge(1, "jump", held(configured(1, "jump", ["Numpad2", "Slash"]), false, 1));
+    edge(1, "grip", held(configured(1, "grip", ["Numpad3", "ShiftRight"]), false, 1));
+    edge(1, "special", held(configured(1, "special", ["Numpad5", "Semicolon"]), false, 1));
+    edge(1, "tag", held(configured(1, "tag", ["Numpad6", "Quote"]), false, 1));
+    edge(1, "ukemi", held(configured(1, "ukemi", ["Numpad0", "Comma"]), false, 1));
+    edge(1, "pause", held(configured(1, "pause", ["Escape", "KeyP"]), false, 1));
     edge(1, "start", !!(keys.Enter || keys.NumpadEnter));
     intents[1].throwDir = octant(intents[1].moveX, intents[1].moveD);
   }
 
   function pollPad(p, gp) {
     if (!gp || !gp.buttons) return;
-    var ax = gp.axes || [];
-    var bx = ax[0] || 0;
-    var by = ax[1] || 0;
-    if (gp.buttons[14] && gp.buttons[14].pressed) bx = -1;
-    if (gp.buttons[15] && gp.buttons[15].pressed) bx = 1;
-    if (gp.buttons[12] && gp.buttons[12].pressed) by = -1;
-    if (gp.buttons[13] && gp.buttons[13].pressed) by = 1;
+    var bx = padDirectionValue(gp, configuredPad(p, "right", ["Axis0+", "Button15"])) -
+      padDirectionValue(gp, configuredPad(p, "left", ["Axis0-", "Button14"]));
+    var by = padDirectionValue(gp, configuredPad(p, "down", ["Axis1+", "Button13"])) -
+      padDirectionValue(gp, configuredPad(p, "up", ["Axis1-", "Button12"]));
     var dz = deadzone(bx, by);
     applyMove(p, dz.x, -dz.y);
     var b = gp.buttons;
     function pressed(i) { return b[i] && b[i].pressed; }
-    edge(p, "jump", pressed(0));
-    edge(p, "grip", pressed(2));
-    edge(p, "special", pressed(1));
-    edge(p, "tag", pressed(3));
-    edge(p, "ukemi", pressed(4) || pressed(5));
-    edge(p, "pause", pressed(9));
+    edge(p, "jump", padHeld(b, configuredPad(p, "jump", ["Button0"])));
+    edge(p, "grip", padHeld(b, configuredPad(p, "grip", ["Button2"])));
+    edge(p, "special", padHeld(b, configuredPad(p, "special", ["Button1"])));
+    edge(p, "tag", padHeld(b, configuredPad(p, "tag", ["Button3"])));
+    edge(p, "ukemi", padHeld(b, configuredPad(p, "ukemi", ["Button4", "Button5"])));
+    edge(p, "pause", padHeld(b, configuredPad(p, "pause", ["Button9"])));
     edge(p, "start", pressed(9) || pressed(0));
-    edge(p, "throw", pressed(7) || pressed(6));
+    edge(p, "throw", padHeld(b, configuredPad(p, "strike", ["Button7", "Button6"])));
     intents[p].throwDir = octant(intents[p].moveX, intents[p].moveD);
     if (pressed(0) || pressed(1) || pressed(2) || pressed(3) || pressed(9)) note("pad");
   }

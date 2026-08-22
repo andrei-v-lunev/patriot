@@ -17,6 +17,20 @@
     return [];
   }
   function is2P(s) { return s.players === 2 || s.coop === true || s.p2 === true; }
+  function bufferedPress(s, intent, name) {
+    var at, age;
+    if (!intent) return false;
+    at = intent.pressedAtTick && intent.pressedAtTick[name];
+    if (typeof at === "number" && s._consumedTagAt === at) return false;
+    if (intent[name + "Pressed"]) return true;
+    if (typeof at !== "number") return false;
+    age = (s.tick | 0) - at;
+    return age >= 0 && age <= (C().BUFFER_TICKS || 6);
+  }
+  function consumePress(s, intent) {
+    var at = intent && intent.pressedAtTick && intent.pressedAtTick.tag;
+    s._consumedTagAt = typeof at === "number" ? at : (s.tick | 0);
+  }
   function heroOf(s, i) { return ents(s, "heroes")[i] || null; }
   function maxHp(h) {
     var c, id, rec;
@@ -118,16 +132,19 @@
       transferGrip(s, a, b);
       cd = (c.TAG_GRIP_CD || 8) * hz();
       applySwap(s, a, b, cd, false);
+      consumePress(s, intent);
       return true;
     }
     if (hitstun) {
       cd = ((c.TAG_CD || 12) + (c.TAG_EMERGENCY_EXTRA || 6)) * hz();
       applySwap(s, a, b, cd, false);
+      consumePress(s, intent);
       return true;
     }
-    if (intent && intent.tagPressed === false) return false;
+    if (!bufferedPress(s, intent, "tag")) return false;
     cd = (c.TAG_CD || 12) * hz();
     applySwap(s, a, b, cd, true);
+    consumePress(s, intent);
     return true;
   }
 
@@ -172,11 +189,47 @@
       h.hp = frac * maxHp(h);
       h.alive = true;
       h.combatState = "FREE";
+      h._outOfLives = false;
       h.iFrames = ifr;
       h.downT = 0;
       h.reviveHoldT = 0;
       h.benched = !is2P(s) && i !== (s.activeHero || 0);
     }
+  }
+
+  function respawnAt(s, h) {
+    var cp = s.currentCheckpoint || (s.segment && s.segment.checkpoints && s.segment.checkpoints[0]);
+    if (!h) return;
+    h.x = cp ? cp.x : 80;
+    h.d = cp ? cp.d : (s.dLock != null ? s.dLock : 24);
+    h.z = 16;
+    h.vx = h.vz = h.vd = 0;
+    h.grounded = true;
+  }
+
+  /* Vehicle falls consume a life immediately. They bypass the normal solo
+     tag-save/downed flow and relocate before the next hazard tick, preventing
+     one gap from killing the incoming partner and every remaining credit. */
+  function fallLife(s, h) {
+    var idx, i, hh, left;
+    if (!s || !h) return false;
+    ensure(s);
+    idx = h.playerIndex || 0;
+    h.hp = 0; h.alive = false;
+    left = loseLife(s, is2P(s) ? idx : 0);
+    if (left) {
+      if (is2P(s)) {
+        h.hp = 0.6 * maxHp(h); h.alive = true; h.combatState = "FREE";
+        h.iFrames = tt(120); h._outOfLives = false; respawnAt(s, h);
+      } else {
+        reviveBoth(s, 0.6, tt(120));
+        for (i = 0; i < 2; i++) { hh = heroOf(s, i); if (hh) respawnAt(s, hh); }
+      }
+    } else if (is2P(s) && s.lifeState === "playing") {
+      h._outOfLives = true;
+      h.combatState = "DOWN";
+    }
+    return true;
   }
 
   function loseLife(s, idx) {
@@ -207,7 +260,7 @@
 
   function downed(s, h, idx, intents) {
     var partner, pin, holding, dx, dd, dist, dmg;
-    if (!h) return;
+    if (!h || h._outOfLives) return;
     if (h.respawnT > 0) {
       h.respawnT--;
       if (h.respawnT === 0) {
@@ -253,6 +306,15 @@
       if (loseLife(s, idx)) {
         h.respawnT = 3 * hz();
         h.downT = 0;
+      } else if (is2P(s)) {
+        /* A co-op fighter who spent their last stock is out until Continue;
+           leaving an alive DOWN body here permanently blocked GO gates. */
+        h.hp = 0;
+        h.alive = false;
+        h._outOfLives = true;
+        h.respawnT = 0;
+        h.downT = 0;
+        h.reviveHoldT = 0;
       }
     }
   }
@@ -287,13 +349,13 @@
         if (h) downed(s, h, i, intents);
       }
     } else {
-      if (intents && intents[0] && intents[0].tagPressed) trySwap(s, 0, intents[0]);
+      if (intents && intents[0] && bufferedPress(s, intents[0], "tag")) trySwap(s, 0, intents[0]);
       death1P(s);
     }
     stampHp(s);
   }
 
-  var api = { tick: tick, trySwap: trySwap };
+  var api = { tick: tick, trySwap: trySwap, fallLife: fallLife };
   if (typeof window !== "undefined") window.PTag = api;
   if (typeof global !== "undefined") global.PTag = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;

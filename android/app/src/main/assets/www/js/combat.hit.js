@@ -13,6 +13,20 @@
   function HitMod(g, p) { return load(g, p); }
   function toTicks(f) { return D && D.toTicks ? D.toTicks(f) : (f | 0) * 2; }
   function isHero(e) { return !!(e && (e.kind === "hero" || e.team === "hero")); }
+  function bufferedPress(state, e, inn, name) {
+    var at, age;
+    if (!inn) return false;
+    at = inn.pressedAtTick && inn.pressedAtTick[name];
+    if (typeof at === "number" && e && e._consumedUkemiAt === at) return false;
+    if (inn[name + "Pressed"]) return true;
+    if (typeof at !== "number") return false;
+    age = (state.tick | 0) - at;
+    return age >= 0 && age <= (C.BUFFER_TICKS || 6);
+  }
+  function consumePress(state, e, inn) {
+    var at = inn && inn.pressedAtTick && inn.pressedAtTick.ukemi;
+    if (e) e._consumedUkemiAt = typeof at === "number" ? at : (state.tick | 0);
+  }
   function isOta(h) {
     var id = (h && (h.heroId || h.hero || h.charId || h.archetype)) || "";
     return id === "otajon" || (h && h.weight === "LIGHT");
@@ -39,6 +53,7 @@
     for (i = 0; i < n; i++) { e = a[i]; if (e && e.alive !== false) fn(e); }
   }
   function addMeter(state, h, n) {
+    if (state) n *= state.meterGainMul || 1;
     if (h) { h.meter = (h.meter || 0) + n; if (h.meter > 100) h.meter = 100; }
     if (state && state.meter != null) { state.meter += n; if (state.meter > 100) state.meter = 100; }
   }
@@ -63,7 +78,7 @@
     if (e.prevTeam) { e.team = e.prevTeam; e.prevTeam = ""; }
     e.combatState = "KNOCKDOWN";
     e.otgHit = false;
-    e.vx = 0; e.vz = 0; e.vd = 0; e.z = 0;
+    e.vx = 0; e.vz = 0; e.vd = 0; e.z = e.mode === "belt" ? 16 : 0;
     e.grounded = true; e.slam = false; e.frozen = false; e.thrower = null;
     e.stateT = toTicks(isHero(e) ? (C.KNOCKDOWN_H_F || 26) : (C.KNOCKDOWN_E_F || 34));
   }
@@ -76,6 +91,7 @@
   function applyDamage(state, target, amount, src, flags) {
     if (!target) return 0;
     flags = flags || {};
+    if (target.invuln && !flags.bypassInvuln) return 0;
     if ((target.iFrames | 0) > 0 && !flags.isThrow) return 0;
     amount = amount || 0;
     if (amount < 0) amount = 0;
@@ -87,6 +103,7 @@
         if (amount < 0) amount = 0;
       }
     }
+    var hpBefore = target.hp;
     target.hp -= amount;
     if (target.hp < 0) target.hp = 0;
     if (!target.lastDmgFlags) target.lastDmgFlags = { isThrow: false, isChip: false, isOTG: false, isI8: false };
@@ -96,6 +113,28 @@
     f.isOTG = !!flags.isOTG;
     f.isI8 = !!flags.isI8;
     if (state) state.lastDmgFlags = f;
+    if (state && amount > 0 && state.events && state.events.length < 32) {
+      state.events.push({
+        name: flags.isThrow ? "throw_slam" : "hit_light",
+        audio: flags.audioEvent || (flags.isThrow ? "throw_slam" : "hit_light"),
+        x: target.x,
+        z: (target.z || 0) + (target.h || 40) * 0.5,
+        d: target.d || 0,
+        alive: true
+      });
+      if (hpBefore > 0 && target.hp <= 0 && state.events.length < 32) {
+        state.events.push({
+          name: "ko", x: target.x,
+          z: (target.z || 0) + (target.h || 40), d: target.d || 0, alive: true
+        });
+      }
+    }
+    if (target.boss && amount > 0) {
+      var Boss = HitMod("PAIBoss", "./ai.boss");
+      if (Boss && Boss.addStag) {
+        Boss.addStag(target, flags.stagger != null ? flags.stagger : (flags.isThrow ? 40 : (flags.isOTG ? 0 : 6)));
+      }
+    }
     if (isHero(target) && amount > 0) {
       var Ip = Ippon();
       if (Ip && Ip.breakChain) Ip.breakChain(state);
@@ -122,6 +161,29 @@
     hero.sweepLen = su + ac + rc;
     return true;
   }
+  /* Special (meter burn): idris_special / otajon_special from data/moves.json.
+     Reuses the sweep pipeline — wider AoE box, damage/timing from move data. */
+  function startSpecial(state, hero) {
+    if (!hero || (hero.combatState && hero.combatState !== "FREE")) return false;
+    if ((hero.recoveryT | 0) > 0 || (hero.sweepLen | 0) > 0) return false;
+    var id = isOta(hero) ? "otajon_special" : "idris_special";
+    var def = mv(id);
+    var cost = def && def.meterCost != null ? def.meterCost : 100;
+    if ((hero.meter || 0) < cost) return false;
+    hero.meter -= cost;
+    if (state && state.meter != null) {
+      state.meter -= cost;
+      if (state.meter < 0) state.meter = 0;
+    }
+    hero.sweepId = id; hero.sweepDef = def; hero.sweepT = 0; hero.sweepHitN = 0;
+    if (!hero.sweepHits) hero.sweepHits = [0, 0, 0, 0, 0, 0, 0, 0];
+    var su = def && def.startupT != null ? def.startupT : toTicks(def && def.startup != null ? def.startup : 12);
+    var ac = def && def.activeT != null ? def.activeT : toTicks(def && def.active != null ? def.active : 80);
+    var rc = def && def.recoveryT != null ? def.recoveryT : toTicks(def && def.recovery != null ? def.recovery : 20);
+    hero.sweepSu = su; hero.sweepAc = ac; hero.sweepRec = rc;
+    hero.sweepLen = su + ac + rc;
+    return true;
+  }
   function sweepHit(hero, t) {
     var i, key = (isHero(t) ? 1000 : 2000) + (t.id | 0);
     for (i = 0; i < (hero.sweepHitN | 0); i++) if (hero.sweepHits[i] === key) return true;
@@ -130,9 +192,10 @@
   }
   function resolveSweep(state, hero) {
     var def = hero.sweepDef || mv(hero.sweepId);
-    var w = isOta(hero) ? 44 : 40, ht = isOta(hero) ? 16 : 18;
+    var special = !!(def && def.special);
+    var w = special ? 180 : (isOta(hero) ? 44 : 40), ht = special ? 44 : (isOta(hero) ? 16 : 18);
     var f = hero.facing >= 0 ? 1 : -1, hw = hero.w || 34;
-    var x0 = f > 0 ? hero.x + hw * 0.5 : hero.x - hw * 0.5 - w;
+    var x0 = special ? hero.x - w * 0.5 : (f > 0 ? hero.x + hw * 0.5 : hero.x - hw * 0.5 - w);
     var z0 = (hero.z || 0) + 10 - ht * 0.5;
     var dmg = def && def.damage != null ? def.damage : (isOta(hero) ? 5 : 7);
     var otgS = def && def.otgScale != null ? def.otgScale : 0.6;
@@ -142,6 +205,7 @@
     };
     eachAlive(state.enemies, function (t) {
       if (t === hero || sweepHit(hero, t) || !depthOk(hero, t, C.DEPTH_HIT || 10)) return;
+      if (t.tutorialGripOnly) return;
       var tw = t.w || 30, th = t.h || 40, tx = t.x - tw * 0.5, tz = t.z || 0;
       if (!(x0 < tx + tw && tx < x0 + w && z0 < tz + th && tz < z0 + ht)) return;
       if (t.combatState === "KNOCKDOWN") {
@@ -152,10 +216,23 @@
         applyHitstop(state, (def && def.hitstop) || 4, hero, t);
         return;
       }
-      applyDamage(state, t, dmg, hero, { isChip: true });
-      t.vx = 170 * f;
-      applyHitstop(state, (def && def.hitstop) || 4, hero, t);
-      addMeter(state, hero, def && def.meterGain != null ? def.meterGain : 3);
+      /* A meter special launches, but it is not a completed grip throw and
+         must not bypass B5's throw-only chip floor. */
+      applyDamage(state, t, dmg, hero, { isChip: true, isSpecial: special });
+      if (special && def.throw) {
+        var td = t.x >= hero.x ? 1 : -1;
+        t.vx = (def.throw.vx || 300) * td;
+        t.vz = def.throw.vz || 0;
+      } else t.vx = 170 * f;
+      applyHitstop(state, (def && def.hitstop) || (special ? 6 : 4), hero, t);
+      if (!special) addMeter(state, hero, def && def.meterGain != null ? def.meterGain : 3);
+      /* applyDamage may have filled a boss's stagger meter and entered the
+         authoritative STAGGERED state. Do not overwrite that transition with
+         the sweep's generic heavy-enemy hitstun in the same callback. */
+      if (t.boss && (t.combatState === "STAGGERED" || t.staggeredT > 0)) {
+        t.vx = 0;
+        return;
+      }
       var heavy = t.archetype === "E2" || t.archetype === "E6" || t.archetype === "E8" || t.unlaunchable;
       if (heavy) enterHitstun(t, (def && def.hitstun) || 12);
       else {
@@ -184,11 +261,14 @@
     e.iFrames = short ? toTicks(6) : 0;
     e.ukemiCdT = toTicks(hd.ukemiCd || 30);
     addMeter(state, e, 4);
+    if (state && state.events && state.events.length < 32) {
+      state.events.push({ name: "audio_only", audio: "ukemi", alive: true });
+    }
   }
   function tryUkemi(state, e) {
     if (!isHero(e)) return false;
     var inn = e.intent || (state.intents && state.intents[e.player | 0]);
-    if (!inn || !inn.ukemiPressed) return false;
+    if (!bufferedPress(state, e, inn, "ukemi")) return false;
     var st = e.combatState, win = false;
     if (st === "HITSTUN") {
       var el = (e.hitstunMax | 0) - (e.stateT | 0);
@@ -197,6 +277,7 @@
     else if (st === "KNOCKDOWN") win = true;
     if (!win) return false;
     doUkemi(state, e);
+    consumePress(state, e, inn);
     return true;
   }
   function tickHitstun(state, e) {
@@ -225,6 +306,7 @@
 
   var api = {
     applyDamage: applyDamage, applyHitstop: applyHitstop, startSweep: startSweep,
+    startSpecial: startSpecial,
     tickSweep: tickSweep, tickFree: tickFree, enterHitstun: enterHitstun,
     enterKnockdown: enterKnockdown, enterGetup: enterGetup, tryUkemi: tryUkemi,
     tickHitstun: tickHitstun, tickKnockdown: tickKnockdown, tickGetup: tickGetup,

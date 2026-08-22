@@ -14,8 +14,10 @@
       "arena": { "camX": 0, "xMin": 0, "xMax": 480, "dMin": 0, "dMax": 60, "backdrop": "cage" },
       "gimmick": "cage",
       "hazards": [
-        { "type": "cage_wall", "x": 0, "w": 8, "dMin": 0, "dMax": 60, "damage": 12 },
-        { "type": "cage_wall", "x": 472, "w": 8, "dMin": 0, "dMax": 60, "damage": 12 }
+        { "type": "cage_wall", "wallIndex": 0, "x": 0, "w": 8, "dMin": 0, "dMax": 60, "damage": 12 },
+        { "type": "cage_wall", "wallIndex": 1, "x": 472, "w": 8, "dMin": 0, "dMax": 60, "damage": 12 },
+        { "type": "cage_wall", "wallIndex": 2, "d": 0, "depth": 8, "xMin": 0, "xMax": 480, "damage": 12 },
+        { "type": "cage_wall", "wallIndex": 3, "d": 52, "depth": 8, "xMin": 0, "xMax": 480, "damage": 12 }
       ],
       "waves": [
         {
