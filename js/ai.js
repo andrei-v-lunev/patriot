@@ -311,6 +311,7 @@
     if (e.x < (s.cam ? s.cam.x : 0) - 60) { e.vx = (def.speed || 70) * 1.3; e.vd = 0; e.aiState = "LEASH"; return; }
     if (e.x > (s.cam ? s.cam.x : 0) + 860) { e.vx = -(def.speed || 70) * 1.3; e.vd = 0; e.aiState = "LEASH"; return; }
     if (arch === "DUMMY" || def.dummy) { e.vx = 0; e.vd = 0; e.aiState = "IDLE"; return; }
+    if (e.tutorialGuard) { e.vx = 0; e.vd = 0; e.aiState = "COUNTER_STANCE"; return; }
     t = near(e, sn, living(s));
     if (!t) { e.vx = 0; e.vd = 0; e.aiState = "IDLE"; return; }
     if (arch === "E3") thinkE3(s, e, def, t.x, t.d);

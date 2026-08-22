@@ -103,6 +103,7 @@
         x: item.spec.x,
         d: item.spec.d,
         facing: item.spec.facing,
+        tutorialGuard: item.spec.tutorialGuard,
         waveId: item.waveId
       };
       if (!item.boss && arena && spec.x >= arena.xMin && spec.x <= arena.xMax) spec.z = 120;

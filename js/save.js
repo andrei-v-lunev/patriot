@@ -92,6 +92,7 @@
   function normalize(v) {
     v = object(v);
     var c = object(v.campaign);
+    var onboarding = object(v.onboarding);
     var current = typeof c.currentLevel === "string" && c.currentLevel ? c.currentLevel.slice(0, 64) : "w1l1";
     var complete = strings(c.completedLevels);
     var unlocked = strings(Array.isArray(c.unlockedLevels) ? c.unlockedLevels : []);
@@ -100,6 +101,7 @@
       v: VERSION,
       campaign: { currentLevel: current, unlockedLevels: unlocked, completedLevels: complete },
       records: records(v.records),
+      onboarding: { seenHints: strings(onboarding.seenHints) },
       settings: settings(v.settings)
     };
   }
@@ -116,6 +118,7 @@
           completedLevels: p.levelsCleared || v.completedLevels
         },
         records: v.scores || v.records,
+        onboarding: v.onboarding,
         settings: v.settings
       });
     }
@@ -149,6 +152,13 @@
     out.campaign.completedLevels = strings(done);
     out.campaign.unlockedLevels = strings(unlocked);
     if (typeof nextId === "string" && nextId) out.campaign.currentLevel = nextId.slice(0, 64);
+    return normalize(out);
+  }
+
+  function markHint(save, hintId) {
+    var out = normalize(save);
+    if (typeof hintId !== "string" || !hintId) return out;
+    out.onboarding.seenHints = strings(out.onboarding.seenHints.concat(hintId.slice(0, 64)));
     return normalize(out);
   }
 
@@ -209,7 +219,7 @@
   var api = {
     VERSION: VERSION, KEY: KEY, MAX_CHARS: MAX_CHARS,
     defaults: defaults, normalize: normalize, migrate: migrate,
-    record: record, completeLevel: completeLevel, createAdapter: createAdapter,
+    record: record, completeLevel: completeLevel, markHint: markHint, createAdapter: createAdapter,
     load: function (slot) { return defaultAdapter(slot).load(); },
     save: function (v, slot) { return defaultAdapter(slot).save(v); },
     clear: function (slot) { return defaultAdapter(slot).clear(); },

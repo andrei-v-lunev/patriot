@@ -32,7 +32,9 @@ expanded parts in `sections/part1..6`.
 - W1L1 is a deterministic seven-beat dojo tutorial: walk, grip-only dummy, three
   neutral throws, forward/back chalk circles, repeatable ukemi sandbag, tag, then
   a four-second skippable throw table. `PTutorialSim` owns progression and
-  `PTutorialUI` owns the code-native chalk/hint layer.
+  `PTutorialUI` owns the code-native chalk/hint layer. The same sim module owns
+  all ten PRD §5.5 contextual triggers; `PScreens` persists their seen IDs in the
+  active `PSave` slot without writing render state back into deterministic sim.
 - Audio production is split into cached paid generation and deterministic mastering:
   `tools/gen_music.py`/`master_music.py`, `gen_sfx.py`, and `gen_vo.py`. Never
   resubmit a failed paid task when its provider task ID can be recovered. The SFX
@@ -102,7 +104,9 @@ anim phase) must never write into sim state.
 - Level complete → `state.results`; boss levels set `state.vs` at start. Campaign order: `data/campaign.json`.
 - Save data uses `PSave` schema v1 and three isolated local slots. Level results
   update records/unlocks before returning to `PMap`; settings are validated by
-  `PSettings` before they reach input, touch, rendering, or audio.
+  `PSettings` before they reach input, touch, rendering, or audio. Per-slot
+  onboarding history lives at `onboarding.seenHints`; `once` records IDs there,
+  `always` repeats once per run, and `off` suppresses contextual hints.
 - Enemy melee damage: AI applies `e.atkDmg` in attack active phase via `PCombat.applyDamage`.
 - The PRD six-tick action buffer applies to grip, special, tag, and ukemi. Consumers
   record the consumed press tick on sim state/entities; never mutate the caller's

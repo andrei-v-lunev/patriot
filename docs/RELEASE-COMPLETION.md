@@ -61,7 +61,7 @@ Git history.
 | Enemy/boss coverage | Every live telegraph/pattern/movement/reaction selects a readable animation; no skating/static active attacks; full frame reachability tests. |
 | FX coverage | Light/large impact, dust, shockwave, throw arc, KO stars, projectile and pickup routes; no panels/crops; warning art matches damaging geometry. |
 | Narrative presentation | 12-panel intro, five VS exchanges/cards, boss intros/defeats, final ceremony, ending/post-credits, portraits/captions, skip/advance behavior. |
-| Front/back matter | W1L1 onboarding, rich results/records, credits, save indicator, complete Russian-first UI and responsive HUD. |
+| Front/back matter | W1L1 onboarding, ten per-slot contextual hints, W1L2 down-throw guard lesson, rich results/records, credits, save indicator, complete Russian-first UI and responsive HUD. |
 
 All generated raster work follows `tools/asset-manifest.json`, strict pixelpipe,
 canonical-base comparison, visual approval, and atlas regeneration. Failed outputs

@@ -2,6 +2,11 @@
 
 ## 2026-08-22 — release closure audit
 
+- Completed PRD §5.5 contextual onboarding: all ten deterministic first-time
+  triggers now honor per-slot `once` / per-run `always` / `off`, persist seen
+  hints through the versioned save, and suppress prompts after the action is
+  performed. W1L2 now opens with a readable guard lesson that only a down throw
+  can break.
 - Extended the deterministic world hash to cover W1L1 tutorial progress and made
   the five remaining release gates distinguish finished build artifacts from the
   human creative, protected-likeness, recording-release and physical-device

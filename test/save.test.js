@@ -18,6 +18,7 @@ assert.strictEqual(empty.v, 1);
 assert.deepStrictEqual(empty.campaign, {
   currentLevel: "w1l1", unlockedLevels: ["w1l1"], completedLevels: []
 });
+assert.deepStrictEqual(empty.onboarding, { seenHints: [] });
 assert.strictEqual(empty.settings.lang, "ru");
 assert.strictEqual(empty.settings.musicVol, 0.65);
 
@@ -56,6 +57,11 @@ var scored = PSave.record(progressed, "w1l1", 900, "B", 800, false);
 scored = PSave.record(scored, "w1l1", 700, "A", 750, true);
 assert.deepStrictEqual(scored.records.w1l1, { best: 900, bestTimeFrames: 750, rank: "A", noHit: true });
 assert.strictEqual(empty.records.w1l1, undefined, "progress helpers do not mutate input");
+var hinted = PSave.markHint(empty, "guard");
+hinted = PSave.markHint(hinted, "guard");
+hinted = PSave.markHint(hinted, "meter-full");
+assert.deepStrictEqual(hinted.onboarding.seenHints, ["guard", "meter-full"], "hint history is pure, deduplicated, and slot-persistable");
+assert.deepStrictEqual(empty.onboarding.seenHints, [], "hint history does not mutate its input save");
 
 var store = memory();
 var adapter = PSave.createAdapter(store);

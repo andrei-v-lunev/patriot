@@ -10,6 +10,7 @@
   var extTick = false;
   var padSlot = [null, null];
   var padGrace = [0, 0];
+  var padPresent = false;
   var inited = false;
 
   function makeIntent() {
@@ -281,9 +282,11 @@
       list = [];
     }
     var i, gp, p;
+    padPresent = false;
     for (i = 0; i < list.length; i++) {
       gp = list[i];
       if (!gp) continue;
+      padPresent = true;
       p = -1;
       if (padSlot[0] === gp.index) p = 0;
       else if (padSlot[1] === gp.index) p = 1;
@@ -319,6 +322,7 @@
     if (!extTick) tick++;
     pollKeyboard();
     pollPads();
+    intents[0].padDetected = padPresent;
     if (window.PInputTouch && PInputTouch.poll) PInputTouch.poll(intents[0], tick);
   }
 

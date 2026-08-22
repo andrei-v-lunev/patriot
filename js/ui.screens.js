@@ -134,6 +134,27 @@
 
   function store() { if (window.PSave && saveState) PSave.save(saveState); }
 
+  function hintConfig() {
+    var save = saves(), prefs = save && save.settings;
+    return {
+      mode: prefs && prefs.accessibility && prefs.accessibility.hints || "once",
+      seen: save && save.onboarding && save.onboarding.seenHints || []
+    };
+  }
+
+  function syncHints(state) {
+    var t = state && state.tutorial, stored, changed = false, i;
+    if (!t || !window.PSave || !PSave.markHint) return false;
+    saves(); stored = saveState && saveState.onboarding && saveState.onboarding.seenHints || [];
+    for (i = 0; i < (t.seen || []).length; i++) {
+      if (stored.indexOf(t.seen[i]) >= 0) continue;
+      saveState = PSave.markHint(saveState, t.seen[i]); changed = true;
+    }
+    if (!changed) return false;
+    store();
+    return true;
+  }
+
   function openMap() {
     var save = saves();
     mapModel = window.PMap && PMap.fromData ? PMap.fromData(save) : null;
@@ -504,6 +525,8 @@
     modeId: function () { return mode; },
     heroId: function () { return hero; },
     difficultyId: function () { return difficulty; },
+    hintConfig: hintConfig,
+    syncHints: syncHints,
     onPlay: function (fn) { onPlay = fn; }
   };
   if (typeof window !== "undefined") window.PScreens = api;

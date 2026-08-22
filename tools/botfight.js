@@ -107,7 +107,8 @@ function botIntent(g) {
         goal = goals[0] || null;
       }
       extra.throwPressed = true;
-      if (g.tutorial && g.tutorial.phase === 3) extra.throwDir = g.tutorial.forward ? 6 : 2;
+      if (held.tutorialGuard) extra.throwDir = 2;
+      else if (g.tutorial && g.tutorial.phase === 3) extra.throwDir = g.tutorial.forward ? 6 : 2;
       else extra.throwDir = goal && goal.d < held.d ? 4 : 0;
       extra.moveX = hero.facing || 1;
     } else {

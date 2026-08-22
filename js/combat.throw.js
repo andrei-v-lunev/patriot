@@ -146,7 +146,7 @@
     t.baseThrowDmg = dmg;
     var H = Hit();
     var heavy = t.boss || flag(t, "boss") || heavyFF(t);
-    if (H && H.applyDamage) H.applyDamage(state, t, dmg, hero, { isThrow: true,
+    if (H && H.applyDamage) H.applyDamage(state, t, dmg, hero, { isThrow: true, isSlam: td === 2 || !!(def && def.slam),
       audioEvent: heavy ? "throw_whoosh_hv" : "throw_whoosh_lt" });
     if (!def || def.chain !== false) {
       if (Ip && Ip.extendChain) Ip.extendChain(state, 1);

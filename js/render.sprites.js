@@ -166,6 +166,7 @@
     if (base === "dummy") return A.frame("dummy-idle", tick);
     var st = e.combatState || "FREE";
     var m, n, attackId, activeMax, recoverMax, elapsed, total, frameI;
+    if (e.tutorialGuard && A.meta(base + "-telegraph")) return A.frame(base + "-telegraph", tick);
     if (base === "e7" && e.grounded === false && A.meta("e7-glide")) return A.frame("e7-glide", tick);
     if (base === "e8" && (st === "COUNTER_STANCE" || e.aiState === "COUNTER_STANCE") && A.meta("e8-counter"))
       return A.frameOnce("e8-counter", Math.max(0, (e.counterStanceMax || 60) - (e.counterStanceT || 0)));

@@ -92,6 +92,8 @@
     if (!target) return 0;
     flags = flags || {};
     if (target.invuln && !flags.bypassInvuln) return 0;
+    if (target.tutorialGuard && !flags.isSlam) return 0;
+    if (target.tutorialGuard && flags.isSlam) target.tutorialGuard = false;
     if ((target.iFrames | 0) > 0 && !flags.isThrow) return 0;
     amount = amount || 0;
     if (amount < 0) amount = 0;

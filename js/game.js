@@ -99,13 +99,16 @@
     if (opts.hero) lastUI.hero = opts.hero;
     if (opts.difficulty) lastUI.difficulty = opts.difficulty;
     var hero = opts.hero || lastUI.hero || "idris";
+    var hints = window.PScreens && PScreens.hintConfig ? PScreens.hintConfig() : { mode: "once", seen: [] };
     var simOpts = {
       levelId: opts.levelId || campaignLevels()[0],
       players: lastUI.mode === "COOP" ? 2 : 1,
       hero: hero,
       hero2: opts.hero2 || (hero === "idris" ? "otajon" : "idris"),
       difficulty: opts.difficulty || lastUI.difficulty || "normal",
-      training: lastUI.mode === "DOJO"
+      training: lastUI.mode === "DOJO",
+      hintMode: hints.mode,
+      hintsSeen: hints.seen
     };
     if (window.PSim && PSim.createGame) {
       try {
@@ -244,6 +247,7 @@
     }
 
     if (window.PScreens) PScreens.update(intents, state);
+    if (window.PScreens && PScreens.syncHints) PScreens.syncHints(state);
 
     if (window.PRender && PRender.draw) {
       PRender.draw(state, playing && !paused ? acc / SIM_DT : 0);

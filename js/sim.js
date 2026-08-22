@@ -122,6 +122,7 @@
     e.x = spec.x != null ? spec.x : 400; e.d = spec.d != null ? spec.d : 24;
     e.z = spec.z != null ? spec.z : 16; e.facing = spec.facing != null ? spec.facing : -1;
     e.mode = state.mode || "plat"; e.waveId = spec.waveId || "";
+    e.tutorialGuard = !!spec.tutorialGuard;
     if (e.aerialOnly) { if (spec.z == null) e.z = 80; e.grounded = false; }
     state.enemies.push(e); return e;
   }
@@ -212,6 +213,8 @@
       level: null, levelId: opts.levelId || "", worldName: "", name: "",
       players: players, pendingSeg: -1, airSwapT: 0,
       training: !!opts.training,
+      hintMode: /^(once|always|off)$/.test(opts.hintMode) ? opts.hintMode : "once",
+      hintsSeen: Array.isArray(opts.hintsSeen) ? opts.hintsSeen.slice(0, 32) : [],
       lifeState: "playing", continueT: 0, activeHero: 0, _consumedTagAt: -9999,
       /* Browser default is unlimited continues (PRD §4.10.3); non-negative
          values opt into a finite/purist pool. -1 is the deterministic
