@@ -57,8 +57,11 @@ For the Yandex draft:
   device-pixel ratio, while allocating a sharp DPR-aware backing buffer. Large
   screens may retain integer scaling; the complete 16:9 playfield is never clipped.
 - iPhone Safari itself keeps browser chrome around ordinary tabs. The published
-  web-app manifest and club touch icon make Share → Add to Home Screen launch the
-  game in landscape fullscreen mode without Safari's URL or tab bars.
+web-app manifest and club touch icon make Share → Add to Home Screen launch the
+game in landscape fullscreen mode without Safari's URL or tab bars.
+- Runtime HTML/JavaScript/data/manifests use revalidation caching because their
+  filenames are not content-hashed; heavy image/audio assets retain a short public
+  cache. Version the boot URL when shipping a viewport-critical hotfix.
 
 Useful platform guidance:
 

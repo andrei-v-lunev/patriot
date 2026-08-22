@@ -5,7 +5,8 @@
 - Fixed high-DPR iPhone Safari sizing so short landscape viewports fractionally
   fill the available height instead of collapsing the game to a tiny device-pixel
   integer scale; large desktop integer scaling remains unchanged. Added the club-
-  branded fullscreen landscape web-app manifest for toolbar-free Home Screen play.
+  branded fullscreen landscape web-app manifest for toolbar-free Home Screen play,
+  plus revalidation caching and a versioned boot URL so deployed fixes arrive immediately.
 - Replaced the generic circular mobile overlay with a fixed NES-inspired pixel
   D-pad and gray A/B action deck, while preserving contextual throws, auxiliary
   actions, mirroring, scaling, gestures and minimum touch targets.

@@ -69,10 +69,12 @@ function createServer() {
       res.end("Not found");
       return;
     }
-    var type = TYPES[path.extname(file).toLowerCase()] || "application/octet-stream";
+    var ext = path.extname(file).toLowerCase();
+    var type = TYPES[ext] || "application/octet-stream";
+    var runtimeCode = file === path.join(ROOT, "index.html") || ext === ".js" || ext === ".json" || ext === ".webmanifest";
     res.writeHead(200, {
       "content-type": type,
-      "cache-control": file === path.join(ROOT, "index.html") ? "no-cache" : "public, max-age=3600",
+      "cache-control": runtimeCode ? "no-cache" : "public, max-age=3600",
       "referrer-policy": "no-referrer",
       "x-content-type-options": "nosniff"
     });
