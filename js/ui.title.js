@@ -9,6 +9,27 @@
 
   var HERO_IDS = ["idris", "otajon"];
   var HERO_KEYS = ["IDRIS", "OTAJON"];
+  var crest = null;
+  var crestTried = false;
+
+  function crestImage() {
+    if (!crestTried && typeof Image !== "undefined") {
+      crestTried = true;
+      crest = new Image();
+      crest.src = "assets/ui/club-crest.png";
+    }
+    return crest && crest.complete && crest.naturalWidth ? crest : null;
+  }
+
+  function drawCrest(ctx, x, y, size) {
+    var img = crestImage();
+    if (!ctx || !img) return false;
+    var prevSmooth = ctx.imageSmoothingEnabled;
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(img, x | 0, y | 0, size | 0, size | 0);
+    ctx.imageSmoothingEnabled = prevSmooth;
+    return true;
+  }
 
   function measure(str, scale) {
     return window.PFont ? PFont.measure(str, scale) : String(str).length * 6 * (scale || 1);
@@ -45,12 +66,13 @@
     var t = tick || 0;
     backdrop(ctx);
 
-    /* Logotype: big gold "ПАТРИОТ", dark drop shadow, 2px sine bob. */
+    /* Club crest + logotype. The text-only composition remains the load fallback. */
+    var branded = drawCrest(ctx, 204, 34, 72);
     var title = S("TITLE");
-    var scale = 4;
+    var scale = branded ? 3 : 4;
     var tw = PFont.measure(title, scale);
     var tx = (480 - tw) >> 1;
-    var ty = 66 + Math.round(Math.sin(t * 0.05) * 2);
+    var ty = (branded ? 112 : 66) + Math.round(Math.sin(t * 0.05) * 2);
 
     /* Plate behind logotype. */
     var padX = 14, padY = 10;
@@ -66,11 +88,11 @@
     PFont.draw(ctx, title, tx, ty - 1, scale, "rgba(255,233,168,0.35)");
 
     /* Subtitle. */
-    shadowCenter(ctx, "ДЗЮДО-АРКАДА", 116, 1, "#FFE9A8", "#14121C", 1);
+    shadowCenter(ctx, "ДЗЮДО-АРКАДА", branded ? 151 : 116, 1, "#FFE9A8", "#14121C", 1);
 
     /* Blinking press-start, ~30-tick period. */
     if (((t / 30) | 0) % 2 === 0) {
-      shadowCenter(ctx, S("PRESS_START"), 170, 2, "#FFFFFF", "#14121C", 2);
+      shadowCenter(ctx, S("PRESS_START"), branded ? 184 : 170, 2, "#FFFFFF", "#14121C", 2);
     }
 
     /* Credit line. */
@@ -127,7 +149,7 @@
     if (((t / 30) | 0) % 2 === 0) center(ctx, S("PRESS_START_FIGHT"), 236, 1, "#FFE9A8");
   }
 
-  var api = { drawTitle: drawTitle, drawChar: drawChar };
+  var api = { drawTitle: drawTitle, drawChar: drawChar, drawCrest: drawCrest };
   if (typeof window !== "undefined") window.PUITitle = api;
   if (typeof global !== "undefined") global.PUITitle = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;

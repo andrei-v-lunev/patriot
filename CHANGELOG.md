@@ -2,6 +2,9 @@
 
 ## 2026-08-22 — release closure audit
 
+- Added the club's shield-and-sword crest as a faithful pixel-art brand asset,
+  with a transparent 128px runtime export, preserved generation source, branded
+  title composition, text-only loading fallback, browser icon, and asset tests.
 - Completed PRD §5.5 contextual onboarding: all ten deterministic first-time
   triggers now honor per-slot `once` / per-run `always` / `off`, persist seen
   hints through the versioned save, and suppress prompts after the action is
